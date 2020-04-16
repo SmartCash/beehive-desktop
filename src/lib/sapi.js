@@ -64,6 +64,16 @@ export function getAddress(privateKey){
     return key.getAddress().toString();
 }
 
+export function createNewWalletKeyPair(){
+    let keyPair = smartCash.ECPair.makeRandom();
+    let address = keyPair.getAddress();
+    let key = keyPair.toWIF();
+    return {
+        privateKey: key,
+        address: address
+    };
+}
+
 /*
     This method should be public
     This is used to get the FROM address and the amount
