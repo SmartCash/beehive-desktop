@@ -3,7 +3,7 @@ const request = require('request-promise');
 const _ = require('lodash');
 let getSapiUrl = require('./poolSapi');
 
-module.exports = async function createAndSendRawTransaction(toAddress, amount, keyString) {
+export async function createAndSendRawTransaction(toAddress, amount, keyString) {
 
     let key = smartCash.ECPair.fromWIF(keyString);
 
@@ -11,7 +11,7 @@ module.exports = async function createAndSendRawTransaction(toAddress, amount, k
 
     let transaction = new smartCash.TransactionBuilder();
 
-    let sapiUnspent = await getUnspent(fromAddress, amount);
+    let sapiUnspent = await getUnspentWithAmount(fromAddress, amount);
 
     let totalUnspent = _.sumBy(sapiUnspent.utxos, 'amount');
 
@@ -58,29 +58,39 @@ module.exports = async function createAndSendRawTransaction(toAddress, amount, k
     }
 };
 
-function calculateFee(listUnspent) {
+export function getAddress(privateKey){
+    let key = smartCash.ECPair.fromWIF(privateKey);
 
-    let fee = 0.002;
-
-    let countUnspent = listUnspent.length;
-
-    var newFee = (((countUnspent * 148) + (2 * 34) + 10 + 9) / 1024) * fee;
-
-    newFee = (0.00003 + (((countUnspent * 148) + (2 * 34) + 10 + 9) / 1024)) * fee;
-
-    if (newFee > fee)
-        fee = newFee;
-
-    return roundUp(fee, 4);
+    return key.getAddress().toString();
 }
 
-function roundUp(num, precision) {
-    precision = Math.pow(10, precision)
-    return Math.ceil(num * precision) / precision
+/*
+    This method should be public
+    This is used to get the FROM address and the amount
+    After it does call private methods to calculate the fee
+*/
+export async function getFee(amount, fromAddress) {
+
+    let sapiUnspent = await getUnspentWithAmount(fromAddress, amount);
+
+    let fee = calculateFee(sapiUnspent.utxos);
+
+    return fee;
+};
+
+export async function getBalance(_address) {
+    try {
+        return await request.get(`${getSapiUrl()}/v1/address/balance/${_address}`)
+    } catch (err) {
+        throw err;
+    }
 }
 
-async function getUnspent(_address, _amount) {
-    var options = {
+export async function getUnspentWithAmount(_address, _amount) {
+    
+    let utxos = {};
+
+    let options = {
         method: 'POST',
         uri: `${getSapiUrl()}/v1/address/unspent/amount`,
         body: {
@@ -93,13 +103,46 @@ async function getUnspent(_address, _amount) {
     };
 
     try {
-        return await request.post(options);
+        utxos = await request.post(options);
+    } catch (err) {
+        utxos = {};
+    }
+    return utxos;
+}
+
+export async function getUnspent(_address) {
+    
+    let utxos = {};
+
+    let options = {
+        method: 'POST',
+        uri: `${getSapiUrl()}/v1/address/unspent`,
+        body: {
+            address: _address,
+            pageNumber: 1,
+            pageSize: 10,
+            ascending: false
+        },
+        json: true
+    };
+
+    try {
+        utxos = await request.post(options);
+    } catch (err) {
+        utxos = {};
+    }
+    return utxos;
+}
+
+export async function getTransactionHistory(_address) {
+    try {
+        return await request.get(`https://insight.smartcash.cc/api/txs/apps/?address=${_address}&limit=5`);
     } catch (err) {
         throw err;
     }
 }
 
-async function sendTransaction(hex) {
+export async function sendTransaction(hex) {
     var options = {
         method: 'POST',
         uri: `${getSapiUrl()}/v1/transaction/send`,
@@ -116,4 +159,27 @@ async function sendTransaction(hex) {
     } catch (err) {
         throw err;
     }
+}
+
+function calculateFee(listUnspent) {
+
+    let MIN_FEE = 0.002;
+
+    if(_.isUndefined(listUnspent)) return MIN_FEE;
+
+    let countUnspent = listUnspent.length;
+
+    let newFee = (((countUnspent * 148) + (2 * 34) + 10 + 9) / 1024) * MIN_FEE;
+
+    newFee = (0.00003 + (((countUnspent * 148) + (2 * 34) + 10 + 9) / 1024)) * MIN_FEE;
+
+    if (newFee > MIN_FEE)
+        MIN_FEE = newFee;
+
+    return roundUp(MIN_FEE, 4);
+}
+
+function roundUp(num, precision) {
+    precision = Math.pow(10, precision)
+    return Math.ceil(num * precision) / precision
 }
