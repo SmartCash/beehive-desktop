@@ -6,9 +6,19 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "big.js": "^5.2.2",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "random": "^2.1.1",
+    "random-js": "^2.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.4.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.5",
+    "smartcashjs-lib": "^3.3.6",
+    "string-format": "^2.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
