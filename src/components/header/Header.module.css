@@ -1,0 +1,10 @@
+.root {
+  flex: 0 0 100%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.logo {
+  max-width: 160px;
+}

@@ -1,0 +1,26 @@
+.root {
+  display: flex;
+  flex-direction: column;
+}
+
+.btnWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 25px -15px;
+  justify-content: center;
+}
+
+.btn {
+  background-color: transparent;
+  border: 0;
+  border-bottom: 2px solid #fec726;
+  padding: 10px;
+  font-size: 12px;
+  text-decoration: none;
+  margin: 0 15px;
+  color: #333;
+  text-transform: uppercase;
+}
+
+.balance {
+}

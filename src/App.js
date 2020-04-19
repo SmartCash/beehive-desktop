@@ -1,42 +1,80 @@
-import React from "react";
-import {
-  getBalance,
-  getFee,
-  getTransactionHistory,
-  getUnspent,
-  getUnspentWithAmount,
-} from "./lib/sapi";
-import Send from "./send/Send";
+import React, { useEffect, useState } from "react";
+import style from "./App.module.css";
+import Header from "./components/header/Header";
+import Input from "./components/input/Input";
+import SendForm from "./components/sendForm/SendForm";
+import { getBalance } from "./lib/sapi";
+import useDebounce from "./util/useDebounce";
 
 function App() {
-  getFee(0.00000001, "SgPMhNeG16Ty6VaPSnAtxNJAQ2JRnhTGaQ").then((res) => {
-    console.log(res);
-  });
+  const [address, setAddress] = useState();
+  const [validAddress, setValidAddres] = useState();
+  const [balance, setBalance] = useState(false);
+  const addressDebounced = useDebounce(address, 500);
+  const [showSendForm, setShowSendForm] = useState(false);
 
-  getUnspentWithAmount("SgPMhNeG16Ty6VaPSnAtxNJAQ2JRnhTGaQ", 0)
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((e) => console.log(e[0].code, e[0].message));
+  useEffect(() => {
+    if (addressDebounced && address) {
+      handleSetAddress(address);
+    }
+  }, [address, addressDebounced]);
 
-  getUnspent("SgPMhNeG16Ty6VaPSnAtxNJAQ2JRnhTGaQ")
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((e) => console.log(e[0].code, e[0].message));
-
-  getBalance("SgPMhNeG16Ty6VaPSnAtxNJAQ2JRnhTGaQ").then((res) => {
-    console.log(res);
-  });
-  getTransactionHistory("SgPMhNeG16Ty6VaPSnAtxNJAQ2JRnhTGaQ").then((res) => {
-    console.log(res);
-  });
+  const handleSetAddress = (address) => {
+    getBalance(address)
+      .then((res) => {
+        setBalance(res.balance);
+        setValidAddres(true);
+      })
+      .catch((error) => setValidAddres(false));
+  };
 
   return (
-    <>
-      {/* <Header /> */}
-      <Send />
-    </>
+    <div className={style.root}>
+      <Header />
+
+      <div className="container">
+        <div className="cardWrapper">
+          <Input
+            label="Your Address"
+            value={address}
+            onChange={(e) => setAddress(e)}
+            showModal={true}
+          />
+
+          {validAddress ? <p>Your Balance: {balance}</p> : null}
+        </div>
+      </div>
+
+      {validAddress ? (
+        <div>
+          <div className="container">
+            <div className={style.btnWrapper}>
+              <button
+                className={style.btn}
+                onClick={() => setShowSendForm(!showSendForm)}
+              >
+                Send founds
+              </button>
+              <a
+                className={style.btn}
+                href={`https://insight.smartcash.cc/address/${address}`}
+                target="_blank"
+              >
+                Transactions
+              </a>
+            </div>
+          </div>
+
+          {showSendForm ? (
+            <div className="container">
+              <div className="cardWrapper">
+                <SendForm address={address} />
+              </div>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
   );
 }
 

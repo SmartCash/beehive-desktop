@@ -89,7 +89,9 @@ export async function getFee(amount, fromAddress) {
 
 export async function getBalance(_address) {
   try {
-    return await request.get(`${getSapiUrl()}/v1/address/balance/${_address}`);
+    return await request.get(`${getSapiUrl()}/v1/address/balance/${_address}`, {
+      json: true,
+    });
   } catch (err) {
     throw err;
   }
