@@ -33,7 +33,8 @@ function Send({ address, balance }) {
     }
   }, [address, amount, amountDebounced, balance, error]);
 
-  const handleOnSubmit = () => {
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
     createAndSendRawTransaction(addressTo, Number(amount), privateKey)
       .then((data) => setTxId(data?.txid))
       .catch((error) => console.error(error));
