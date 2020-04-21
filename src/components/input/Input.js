@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import barcode from "../../assets/images/barcode.svg";
 import useModal from "../../util/useModal";
 import Modal from "../modal/Modal";
@@ -18,19 +18,21 @@ function Input({ label, value, onChange, showModal = false }) {
     );
   };
 
-  return (
-    <div className={style.formControl}>
-      <label className={style.label}>
-        {label}
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        />
-      </label>
-      {showModal ? <ModalButton /> : null}
-    </div>
-  );
+  return useMemo(() => {
+    return (
+      <div className={style.formControl}>
+        <label className={style.label}>
+          {label}
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        </label>
+        {showModal ? <ModalButton /> : null}
+      </div>
+    );
+  }, [label, onChange, showModal, value]);
 }
 
 export default Input;

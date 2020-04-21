@@ -16,6 +16,8 @@ function App() {
   useEffect(() => {
     if (addressDebounced && address) {
       handleSetAddress(address);
+    } else {
+      setValidAddres(false);
     }
   }, [address, addressDebounced]);
 
@@ -53,12 +55,13 @@ function App() {
                 className={style.btn}
                 onClick={() => setShowSendForm(!showSendForm)}
               >
-                Send founds
+                Send
               </button>
               <a
                 className={style.btn}
                 href={`https://insight.smartcash.cc/address/${address}`}
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 Transactions
               </a>
@@ -68,7 +71,7 @@ function App() {
           {showSendForm ? (
             <div className="container">
               <div className="cardWrapper">
-                <SendForm address={address} />
+                <SendForm address={address} balance={balance} />
               </div>
             </div>
           ) : null}
