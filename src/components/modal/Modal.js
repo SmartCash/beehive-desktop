@@ -7,8 +7,22 @@ const Modal = ({ isShowing, hide, onChange }) => {
   const handleScan = (data) => {
     if (data) {
       hide();
-      onChange(data);
+      onChange(getQrCode(data));
     }
+  };
+
+  const getQrCode = (content) => {
+    var qrCode = content;
+
+    if (qrCode.includes(":")) {
+      qrCode = qrCode.substring(qrCode.indexOf(":") + 1);
+    }
+
+    if (qrCode.includes("?")) {
+      qrCode = qrCode.substring(0, qrCode.indexOf("?"));
+    }
+
+    return qrCode;
   };
 
   const handleError = (err) => {
