@@ -21,7 +21,7 @@ function InputAmount({ label, value, onChange }) {
             type="text"
             pattern="^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:((\.)\d{0,8})+)?$"
             value={localValue}
-            onKeyUp={handleInput}
+            onInput={handleInput}
           />
         </label>
       </div>
