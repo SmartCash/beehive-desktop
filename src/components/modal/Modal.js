@@ -10,7 +10,6 @@ const Modal = ({ isShowing, hide, onChange, setAmount }) => {
       onChange(getQrCode(data));
 
       const amountFromQrCode = getAmountFromQrCode(data);
-      console.log(amountFromQrCode);
 
       if (amountFromQrCode) {
         setAmount(amountFromQrCode);
@@ -34,7 +33,7 @@ const Modal = ({ isShowing, hide, onChange, setAmount }) => {
 
   const getAmountFromQrCode = (content) => {
     const results = new RegExp("[?&]amount=([^&#]*)").exec(content);
-    return results[1];
+    return results?.length ? results[1] : null;
   };
 
   const handleError = (err) => {
