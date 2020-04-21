@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import style from "./InputAmount.module.css";
 
 function InputAmount({ label, value, onChange }) {
-  const [localValue, setlocalValue] = useState();
+  const [localValue, setlocalValue] = useState(value);
 
   return useMemo(() => {
     const handleInput = (e) => {
@@ -26,7 +26,7 @@ function InputAmount({ label, value, onChange }) {
         </label>
       </div>
     );
-  }, [localValue, label, onChange]);
+  }, [label, localValue, onChange]);
 }
 
 export default InputAmount;

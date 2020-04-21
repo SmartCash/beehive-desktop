@@ -3,11 +3,18 @@ import ReactDOM from "react-dom";
 import QrReader from "react-qr-reader";
 import style from "./Modal.module.css";
 
-const Modal = ({ isShowing, hide, onChange }) => {
+const Modal = ({ isShowing, hide, onChange, setAmount }) => {
   const handleScan = (data) => {
     if (data) {
       hide();
       onChange(getQrCode(data));
+
+      const amountFromQrCode = getAmountFromQrCode(data);
+      console.log(amountFromQrCode);
+
+      if (amountFromQrCode) {
+        setAmount(amountFromQrCode);
+      }
     }
   };
 
@@ -23,6 +30,11 @@ const Modal = ({ isShowing, hide, onChange }) => {
     }
 
     return qrCode;
+  };
+
+  const getAmountFromQrCode = (content) => {
+    const results = new RegExp("[?&]amount=([^&#]*)").exec(content);
+    return results[1];
   };
 
   const handleError = (err) => {

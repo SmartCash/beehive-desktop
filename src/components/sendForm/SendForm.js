@@ -64,6 +64,7 @@ function Send({ address, balance }) {
           label="Address to send"
           value={addressTo}
           onChange={(e) => setAddressTo(e)}
+          setAmount={(e) => setAmount(e)}
           showModal={true}
         />
         <InputAmount

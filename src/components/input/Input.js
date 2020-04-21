@@ -4,7 +4,7 @@ import useModal from "../../util/useModal";
 import Modal from "../modal/Modal";
 import style from "./Input.module.css";
 
-function Input({ label, value, onChange, showModal = false }) {
+function Input({ label, value, onChange, showModal = false, setAmount }) {
   const ModalButton = () => {
     const { isShowing, toggle } = useModal(false);
     return (
@@ -12,7 +12,7 @@ function Input({ label, value, onChange, showModal = false }) {
         <button type="button" className={style.modalButton} onClick={toggle}>
           <img className={style.barCode} src={barcode} alt="Barcode" />
         </button>
-        <Modal isShowing={isShowing} hide={toggle} onChange={onChange} />
+        <Modal isShowing={isShowing} hide={toggle} onChange={onChange} setAmount={setAmount} />
       </>
     );
   };
