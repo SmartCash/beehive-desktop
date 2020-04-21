@@ -5,9 +5,8 @@ import Modal from "../modal/Modal";
 import style from "./Input.module.css";
 
 function Input({ label, value, onChange, showModal = false }) {
-  const { isShowing, toggle } = useModal();
-
   const ModalButton = () => {
+    const { isShowing, toggle } = useModal(false);
     return (
       <>
         <button type="button" className={style.modalButton} onClick={toggle}>
