@@ -20,13 +20,13 @@ function InputAmount({ label, value, onChange }) {
           <input
             type="text"
             pattern="^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:((\.)\d{0,8})+)?$"
-            value={localValue}
+            value={localValue || value}
             onInput={handleInput}
           />
         </label>
       </div>
     );
-  }, [label, localValue, onChange]);
+  }, [label, localValue, onChange, value]);
 }
 
 export default InputAmount;
