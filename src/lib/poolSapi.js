@@ -1,5 +1,5 @@
-const random = require('random');
+const random = require("random");
 
-let sapis = ['https://sapi2.smartcash.org', 'https://core-sapi.smartcash.cc'];
+let sapis = ["https://sapi2.smartcash.org"];
 
-module.exports = () => sapis[random.int( 0,  (sapis.length - 1))];
+module.exports = () => sapis[random.int(0, sapis.length - 1)];
