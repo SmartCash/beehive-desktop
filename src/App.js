@@ -11,7 +11,6 @@ function App() {
   const [validAddress, setValidAddres] = useState();
   const [balance, setBalance] = useState(false);
   const addressDebounced = useDebounce(address, 500);
-  const [showSendForm, setShowSendForm] = useState(false);
 
   useEffect(() => {
     if (addressDebounced && address) {
@@ -42,8 +41,6 @@ function App() {
             onChange={(e) => setAddress(e)}
             showModal={true}
           />
-
-          {validAddress ? <p>Your Balance: {balance}</p> : null}
         </div>
       </div>
 
@@ -51,30 +48,23 @@ function App() {
         <div>
           <div className="container">
             <div className={style.btnWrapper}>
-              <button
-                className={style.btn}
-                onClick={() => setShowSendForm(!showSendForm)}
-              >
-                Send
-              </button>
+              <p>Your Balance: {balance}</p>
               <a
                 className={style.btn}
                 href={`https://insight.smartcash.cc/address/${address}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Transactions
+                Show Transactions
               </a>
             </div>
           </div>
 
-          {showSendForm ? (
-            <div className="container">
-              <div className="cardWrapper">
-                <SendForm address={address} balance={balance} />
-              </div>
+          <div className="container">
+            <div className="cardWrapper">
+              <SendForm address={address} balance={balance} />
             </div>
-          ) : null}
+          </div>
         </div>
       ) : null}
     </div>
