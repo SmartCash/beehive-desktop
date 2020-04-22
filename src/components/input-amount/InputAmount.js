@@ -1,16 +1,15 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef } from "react";
 import style from "./InputAmount.module.css";
 
-function InputAmount({ label, value, onChange }) {
-  const [localValue, setlocalValue] = useState();
+function InputAmount({ label, initialValue, onChange }) {
+  const inputEl = useRef(initialValue);
 
   return useMemo(() => {
-    const handleInput = (e) => {
+    const handleOnChange = (e) => {
       if (e.target.validity.valid) {
-        onChange(e.target.value);
-        setlocalValue(e.target.value);
+        onChange(inputEl.current.value);
       } else {
-        onChange(localValue);
+        inputEl.current.value = initialValue ? initialValue : null;
       }
     };
     return (
@@ -18,15 +17,15 @@ function InputAmount({ label, value, onChange }) {
         <label className={style.label}>
           {label}
           <input
+            ref={inputEl}
             type="text"
             pattern="^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:((\.)\d{0,8})+)?$"
-            value={localValue}
-            onInput={handleInput}
+            onInput={(e) => handleOnChange(e)}
           />
         </label>
       </div>
     );
-  }, [label, localValue, onChange]);
+  }, [initialValue, label, onChange]);
 }
 
 export default InputAmount;

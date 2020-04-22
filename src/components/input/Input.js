@@ -1,10 +1,18 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import barcode from "../../assets/images/barcode.svg";
 import useModal from "../../util/useModal";
 import Modal from "../modal/Modal";
 import style from "./Input.module.css";
 
-function Input({ label, value, onChange, showModal = false, setAmount }) {
+function Input({
+  label,
+  initialValue,
+  onChange,
+  showModal = false,
+  setAmount,
+}) {
+  const inputEl = useRef(initialValue);
+
   const ModalButton = () => {
     const { isShowing, toggle } = useModal(false);
     return (
@@ -12,7 +20,12 @@ function Input({ label, value, onChange, showModal = false, setAmount }) {
         <button type="button" className={style.modalButton} onClick={toggle}>
           <img className={style.barCode} src={barcode} alt="Barcode" />
         </button>
-        <Modal isShowing={isShowing} hide={toggle} onChange={onChange} setAmount={setAmount} />
+        <Modal
+          isShowing={isShowing}
+          hide={toggle}
+          onChange={onChange}
+          setAmount={setAmount}
+        />
       </>
     );
   };
@@ -23,15 +36,15 @@ function Input({ label, value, onChange, showModal = false, setAmount }) {
         <label className={style.label}>
           {label}
           <input
+            ref={inputEl}
             type="text"
-            value={value}
             onChange={(e) => onChange(e.target.value)}
           />
         </label>
         {showModal ? <ModalButton /> : null}
       </div>
     );
-  }, [label, onChange, showModal, value]);
+  }, [label, onChange, showModal]);
 }
 
 export default Input;

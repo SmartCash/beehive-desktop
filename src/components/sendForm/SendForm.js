@@ -62,20 +62,20 @@ function Send({ address, balance }) {
         {error ? <div className={style.alertWarning}>{error}</div> : null}
         <Input
           label="Address to send"
-          value={addressTo}
+          initialValue={addressTo}
           onChange={(e) => setAddressTo(e)}
           setAmount={(e) => setAmount(e)}
           showModal={true}
         />
         <InputAmount
           label="Amount to send"
-          onChange={setAmount}
-          value={amount}
+          initialValue={amount}
+          onChange={(e) => setAmount(e)}
         />
         {fee && !error ? <div className={style.fee}>Fee: {fee}</div> : null}
         <Input
           label="Your Private Key"
-          value={privateKey}
+          initialValue={privateKey}
           onChange={(e) => setPrivateKey(e)}
           showModal={true}
         />
