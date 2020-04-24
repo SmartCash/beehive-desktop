@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createAndSendRawTransaction, getFee } from "../../lib/sapi";
+import { isAddress, isPK } from "../../lib/smart";
 import useDebounce from "../../util/useDebounce";
 import InputAmount from "../input-amount/InputAmount";
 import Input from "../input/Input";
@@ -15,29 +16,52 @@ function Send({ address, balance }) {
   const [error, setError] = useState();
 
   useEffect(() => {
-    if (amount > balance) {
-      setError("Amount exceeds balance");
-    } else if (Number(amount) < 0.001) {
-      setError("Mininum amount to send is 0.001");
-    } else {
+    if (amountDebounced) {
+      if (amountDebounced > balance) {
+        return setError("Amount exceeds balance");
+      }
+
+      if (Number(amountDebounced) < 0.001) {
+        return setError("Mininum amount to send is 0.001");
+      }
+
       setError();
-      setFee();
-    }
-    if (Boolean(amountDebounced) && address && !error) {
+
       getFee(Number(amountDebounced), address)
         .then((data) => setFee(data))
         .catch((error) => {
           setError(console.log(error?.error[0]?.message));
           setFee();
         });
+    } else {
+      setError();
+      setFee();
     }
-  }, [address, amount, amountDebounced, balance, error]);
+  }, [address, amountDebounced, balance]);
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
     createAndSendRawTransaction(addressTo, Number(amount), privateKey)
       .then((data) => setTxId(data?.txid))
       .catch((error) => console.error(error));
+  };
+
+  const handleAddressTo = (e) => {
+    isAddress(e)
+      .then((data) => {
+        setAddressTo(e);
+        setError();
+      })
+      .catch((error) => setError("Invalid Address To"));
+  };
+
+  const handlePrivateKey = (e) => {
+    isPK(e)
+      .then((data) => {
+        setPrivateKey(e);
+        setError();
+      })
+      .catch((error) => setError("Invalid Private Key"));
   };
 
   if (txid) {
@@ -63,20 +87,20 @@ function Send({ address, balance }) {
         <Input
           label="Address to send"
           initialValue={addressTo}
-          onChange={(e) => setAddressTo(e)}
-          setAmount={(e) => setAmount(e)}
+          onChange={handleAddressTo}
+          setAmount={setAmount}
           showModal={true}
         />
         <InputAmount
           label="Amount to send"
           initialValue={amount}
-          onChange={(e) => setAmount(e)}
+          onChange={setAmount}
         />
         {fee && !error ? <div className={style.fee}>Fee: {fee}</div> : null}
         <Input
           label="Your Private Key"
           initialValue={privateKey}
-          onChange={(e) => setPrivateKey(e)}
+          onChange={handlePrivateKey}
           showModal={true}
         />
         <button

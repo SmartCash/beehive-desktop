@@ -4,6 +4,7 @@ import Header from "./components/header/Header";
 import Input from "./components/input/Input";
 import SendForm from "./components/sendForm/SendForm";
 import { getBalance } from "./lib/sapi";
+import { isAddress } from "./lib/smart";
 import useDebounce from "./util/useDebounce";
 
 function App() {
@@ -13,12 +14,14 @@ function App() {
   const addressDebounced = useDebounce(address, 500);
 
   useEffect(() => {
-    if (addressDebounced && address) {
-      handleSetAddress(address);
+    if (addressDebounced) {
+      isAddress(addressDebounced)
+        .then((data) => handleSetAddress(data))
+        .catch((error) => error);
     } else {
       setValidAddres(false);
     }
-  }, [address, addressDebounced]);
+  }, [addressDebounced]);
 
   const handleSetAddress = (address) => {
     getBalance(address)
