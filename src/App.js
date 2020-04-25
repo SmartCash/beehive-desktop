@@ -12,23 +12,23 @@ import barcode from "./assets/images/barcode.svg";
 function App() {
   const { isShowing, toggle } = useModal(false);
   const [address, setAddress] = useState();
-  const [validAddress, setValidAddres] = useState();
   const [balance, setBalance] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { register, errors, setError, setValue } = useForm({
+  const {
+    register,
+    errors,
+    setError,
+    setValue,
+    formState,
+    triggerValidation,
+  } = useForm({
     mode: "onChange",
   });
 
-  const handleSetAddress = (address) => {
-    setLoading(true);
-    setAddress(address);
+  const getBalanceFromSAPI = (address) => {
+    setBalance("Loading Balance");
     getBalance(address)
-      .then((res) => {
-        setBalance(res.balance);
-        setValidAddres(true);
-      })
-      .catch((error) => setValidAddres(false))
-      .finally(() => setLoading(false));
+      .then((res) => setBalance(res.balance))
+      .catch((error) => setBalance("Error loading balance"));
   };
 
   return (
@@ -44,14 +44,23 @@ function App() {
                 type="text"
                 name="address"
                 autoComplete="off"
-                onInput={(e) => {
-                  isAddress(e.target.value)
-                    .then((data) => handleSetAddress(data))
-                    .catch((error) => {
-                      setError("address", "invalid", "Invalid address");
-                    });
-                }}
-                ref={register({ required: true })}
+                ref={register({
+                  required: true,
+                  validate: async (value) => {
+                    let isValid = false;
+                    await isAddress(value)
+                      .then((data) => {
+                        setAddress(data);
+                        getBalanceFromSAPI(data);
+                        isValid = true;
+                      })
+                      .catch((error) =>
+                        setError("address", "invalid", "Invalid Address")
+                      );
+                    return isValid;
+                  },
+                })}
+                onInput={() => triggerValidation("addressTo")}
               />
             </label>
             <button type="button" className="modalButton" onClick={toggle}>
@@ -60,17 +69,17 @@ function App() {
             <Modal
               isShowing={isShowing}
               hide={toggle}
-              setValue={(key, e) => setValue("address", e)}
+              callback={(obj) =>
+                obj.address && setValue("address", obj.address, true)
+              }
             />
             {errors.address && (
               <span className="error-message">{errors.address.message}</span>
             )}
           </div>
-          {loading && <span>Loading</span>}
         </div>
       </div>
-
-      {validAddress ? (
+      {formState.isValid ? (
         <div>
           <div className="container">
             <div className={style.btnWrapper}>

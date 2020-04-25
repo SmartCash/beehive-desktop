@@ -3,17 +3,17 @@ import ReactDOM from "react-dom";
 import QrReader from "react-qr-reader";
 import style from "./Modal.module.css";
 
-const Modal = ({ isShowing, hide, setValue }) => {
+const Modal = ({ isShowing, hide, callback }) => {
   const handleScan = (data) => {
     if (data) {
       hide();
-      setValue("addressTo", getQrCode(data));
 
-      const amountFromQrCode = getAmountFromQrCode(data);
+      const obj = {
+        address: getQrCode(data),
+        amount: getAmountFromQrCode(data),
+      };
 
-      if (amountFromQrCode) {
-        setValue("amount", amountFromQrCode);
-      }
+      callback(obj);
     }
   };
 

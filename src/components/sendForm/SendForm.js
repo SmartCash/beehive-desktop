@@ -18,8 +18,9 @@ function Send({ address, balance }) {
     errors,
     setError,
     setValue,
-    clearError,
     formState,
+    triggerValidation,
+    getValues,
   } = useForm({ mode: "onChange" });
 
   const onSubmit = (data) => {
@@ -30,27 +31,17 @@ function Send({ address, balance }) {
       data?.privateKey
     )
       .then((data) => setTxId(data?.txid))
-      .catch((error) => setError(error.message))
+      .catch((error) => setError(error[0]?.message))
       .finally(() => setLoading(false));
   };
 
-  const handleChange = (e) => {
-    if (e?.target?.value > balance) {
-      return setError("amount", "invalid", "Exceeds the balance");
-    }
-    if (e?.target?.value < 0.001) {
-      return setError(
-        "amount",
-        "invalid",
-        "The minimum amount to send is 0.001"
-      );
-    }
-    getFee(Number(e?.target?.value), address)
-      .then((data) => setFee(data))
-      .catch((error) => {
-        setError(console.log(error?.error[0]?.message));
-        setFee();
-      });
+  const getFeeFromSAPI = (amount) => {
+    getFee(Number(amount), address).then((fee) => {
+      setFee(fee);
+      if (fee && Number(getValues("amount")) + fee > balance) {
+        setError("amount", "invalid", "Requested amount exceeds balance");
+      }
+    });
   };
 
   if (txid) {
@@ -82,14 +73,21 @@ function Send({ address, balance }) {
             <input
               type="text"
               name="addressTo"
-              ref={register({ required: true })}
-              onInput={(e) => {
-                isAddress(e.target.value)
-                  .then((data) => clearError("addressTo"))
-                  .catch((error) => {
-                    setError("addressTo", "invalid", "Invalid address");
-                  });
-              }}
+              ref={register({
+                required: true,
+                validate: async (value) => {
+                  let isValid = false;
+                  await isAddress(value)
+                    .then((data) => {
+                      isValid = true;
+                    })
+                    .catch((error) => {
+                      setError("addressTo", "invalid", "Invalid address");
+                    });
+                  return isValid;
+                },
+              })}
+              onInput={() => triggerValidation("addressTo")}
             />
           </label>
           <button type="button" className="modalButton" onClick={toggle}>
@@ -98,7 +96,10 @@ function Send({ address, balance }) {
           <Modal
             isShowing={isShowing}
             hide={toggle}
-            setValue={(key, value) => setValue(key, value)}
+            callback={(obj) => {
+              obj.address && setValue("addressTo", obj.address, true);
+              obj.amount && setValue("amount", obj.amount, true);
+            }}
           />
           {errors.addressTo && (
             <span className="error-message">{errors.addressTo.message}</span>
@@ -110,30 +111,71 @@ function Send({ address, balance }) {
             <input
               type="text"
               name="amount"
-              ref={register({ required: true })}
-              onInput={handleChange}
+              ref={register({
+                required: true,
+                validate: (value) => {
+                  if (value > balance) {
+                    setError("amount", "invalid", "Exceeds balance");
+                    return false;
+                  }
+                  if (value < 0.001) {
+                    setError(
+                      "amount",
+                      "invalid",
+                      "The minimum amount to send is 0.001"
+                    );
+                    return false;
+                  }
+                  if (
+                    !value.match(
+                      /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:((\.)\d{0,8})+)?$/
+                    )
+                  ) {
+                    setError(
+                      "amount",
+                      "invalid",
+                      "Invalid format. e.g. 0,000.00000000"
+                    );
+                    return false;
+                  }
+                },
+              })}
+              onInput={async (e) => {
+                const amount = e?.target?.value;
+                await triggerValidation("amount").then(
+                  (data) => data && getFeeFromSAPI(amount)
+                );
+              }}
             />
           </label>
           {errors.amount && (
             <span className="error-message">{errors.amount.message}</span>
           )}
         </div>
-        {fee && <div className={style.fee}>Fee: {fee}</div>}
+        {fee && (
+          <div className={style.fee}>
+            <p>Fee: {fee}</p>
+            <p>Amount with fee: {Number(getValues("amount")) + fee}</p>
+          </div>
+        )}
         <div className="formControl">
           <label>
             Your Private Key
             <input
               type="text"
               name="privateKey"
-              ref={register({ required: true })}
-              onChange={(e) => {
-                clearError("privateKey");
-                isPK(e.target.value)
-                  .then((data) => null)
-                  .catch((error) => {
-                    setError("privateKey", "invalid", "Invalid Private Key");
-                  });
-              }}
+              ref={register({
+                required: true,
+                validate: async (value) => {
+                  let isValid = false;
+                  await isPK(value)
+                    .then((data) => (isValid = true))
+                    .catch((error) => {
+                      setError("privateKey", "invalid", "Invalid Private Key");
+                    });
+                  return isValid;
+                },
+              })}
             />
           </label>
           {errors.privateKey && (
