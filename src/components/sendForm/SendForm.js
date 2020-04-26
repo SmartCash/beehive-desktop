@@ -12,6 +12,7 @@ function Send({ address, balance }) {
   const [txid, setTxId] = useState();
   const [fee, setFee] = useState();
   const [loading, setLoading] = useState(false);
+  const [type, setType] = useState();
   const {
     register,
     handleSubmit,
@@ -90,17 +91,16 @@ function Send({ address, balance }) {
               onInput={() => triggerValidation("addressTo")}
             />
           </label>
-          <button type="button" className="modalButton" onClick={toggle}>
+          <button
+            type="button"
+            className="modalButton"
+            onClick={() => {
+              toggle();
+              setType("address");
+            }}
+          >
             <img className="barCode" src={barcode} alt="Barcode" />
           </button>
-          <Modal
-            isShowing={isShowing}
-            hide={toggle}
-            callback={(obj) => {
-              obj.address && setValue("addressTo", obj.address, true);
-              obj.amount && setValue("amount", obj.amount, true);
-            }}
-          />
           {errors.addressTo && (
             <span className="error-message">{errors.addressTo.message}</span>
           )}
@@ -178,6 +178,16 @@ function Send({ address, balance }) {
               })}
             />
           </label>
+          <button
+            type="button"
+            className="modalButton"
+            onClick={() => {
+              toggle();
+              setType("privateKey");
+            }}
+          >
+            <img className="barCode" src={barcode} alt="Barcode" />
+          </button>
           {errors.privateKey && (
             <span className="error-message">{errors.privateKey.message}</span>
           )}
@@ -186,6 +196,19 @@ function Send({ address, balance }) {
           Send
         </button>
       </form>
+      <Modal
+        isShowing={isShowing}
+        hide={toggle}
+        callback={(obj) => {
+          if (type === "address") {
+            obj.address && setValue("addressTo", obj.address, true);
+            obj.amount && setValue("amount", obj.amount, true);
+          }
+          if (type === "privateKey") {
+            obj.address && setValue("privateKey", obj.address, true);
+          }
+        }}
+      />
     </>
   );
 }
