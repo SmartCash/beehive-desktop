@@ -56,6 +56,8 @@ function Send({ address, balance }) {
         >
           {txid}
           <small>(click to view details)</small>
+          <br />
+          <small>Press f5 to refresh the page</small>
         </a>
       </div>
     );
