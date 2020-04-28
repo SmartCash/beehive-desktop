@@ -1,5 +1,11 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Install Dependencies
+sudo apt install git npm<br />
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -<br />
+sudo apt install nodejs<br />
+git clone https://github.com/SmartCash/smarthub_local.git<br />
+
 ## Available Scripts
 
 In the project directory, you can run:
