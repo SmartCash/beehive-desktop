@@ -183,15 +183,13 @@ export async function sendTransaction(hex) {
 }
 
 function calculateFee(listUnspent) {
-  let MIN_FEE = 0.002;
+  let MIN_FEE = 0.001;
 
   if (_.isUndefined(listUnspent)) return MIN_FEE;
 
   let countUnspent = listUnspent.length;
 
-  let newFee = ((countUnspent * 148 + 2 * 34 + 10 + 9) / 1024) * MIN_FEE;
-
-  newFee = (0.00003 + (countUnspent * 148 + 2 * 34 + 10 + 9) / 1024) * MIN_FEE;
+  let newFee = (0.001 * (0.00003 * (countUnspent * 148 + 2 * 34 + 10 + 9) / 1024));
 
   if (newFee > MIN_FEE) MIN_FEE = newFee;
 
