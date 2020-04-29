@@ -189,7 +189,7 @@ function calculateFee(listUnspent) {
 
   let countUnspent = listUnspent.length;
 
-  let newFee = (0.001 * (countUnspent * 148 + 2 * 34 + 10 + 9) / 1024));
+  let newFee = (0.001 * (countUnspent * 148 + 2 * 34 + 10 + 9) / 1024);
 
   if (newFee > MIN_FEE) MIN_FEE = newFee;
 
