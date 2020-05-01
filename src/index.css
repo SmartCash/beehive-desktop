@@ -67,7 +67,7 @@ body {
 }
 
 .formControl input[type="text"] {
-  flex: 0 0 100%;
+  flex: 0 0 95%;
   border-radius: 2px;
   font-size: 18px;
   height: 45px;
@@ -112,6 +112,7 @@ body {
   align-self: flex-end;
   justify-content: center;
   align-items: center;
+  padding: 0;
 }
 
 .formControl .barCode {

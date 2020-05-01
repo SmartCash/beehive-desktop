@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import style from "./App.module.css";
 import Header from "./components/header/Header";
 import SendForm from "./components/sendForm/SendForm";
-import { getBalance } from "./lib/sapi";
-import { isAddress } from "./lib/smart";
+import { getBalance, getAddress } from "./lib/sapi";
+import { isAddress, isPK } from "./lib/smart";
 import { useForm } from "react-hook-form";
 import useModal from "./util/useModal";
 import Modal from "./components/modal/Modal";
@@ -12,6 +12,7 @@ import barcode from "./assets/images/barcode.svg";
 function App() {
   const { isShowing, toggle } = useModal(false);
   const [address, setAddress] = useState();
+  const [privateKey, setPrivateKey] = useState();
   const [balance, setBalance] = useState(false);
   const {
     register,
@@ -31,6 +32,34 @@ function App() {
       .catch((error) => setBalance("Error loading balance"));
   };
 
+  const AddressPKValidation = async (value) => {
+    let isValid = false;
+
+    await isAddress(value)
+      .then(data => {
+        setAddress(data);
+        getBalanceFromSAPI(data);
+        isValid = true;
+      })
+      .catch(data => data);
+
+    await isPK(value)
+      .then(() => {
+        const address = getAddress(value);
+        setAddress(address);
+        setPrivateKey(value);
+        getBalanceFromSAPI(address);
+        isValid = true;
+      })
+      .catch(data => data);
+
+    if (!isValid) {
+      setError("address", "invalid", "Invalid Address");
+    }
+
+    return isValid;
+  }
+
   return (
     <div className={style.root}>
       <Header />
@@ -39,26 +68,14 @@ function App() {
         <div className="cardWrapper">
           <div className="formControl">
             <label>
-              Your Address
+              Your Address or Private Key
               <input
                 type="text"
                 name="address"
                 autoComplete="off"
                 ref={register({
                   required: true,
-                  validate: async (value) => {
-                    let isValid = false;
-                    await isAddress(value)
-                      .then((data) => {
-                        setAddress(data);
-                        getBalanceFromSAPI(data);
-                        isValid = true;
-                      })
-                      .catch((error) =>
-                        setError("address", "invalid", "Invalid Address")
-                      );
-                    return isValid;
-                  },
+                  validate: AddressPKValidation,
                 })}
                 onInput={() => triggerValidation("addressTo")}
               />
@@ -97,7 +114,7 @@ function App() {
 
           <div className="container">
             <div className="cardWrapper">
-              <SendForm address={address} balance={balance} />
+              <SendForm address={address} balance={balance} privateKey={privateKey}/>
             </div>
           </div>
         </div>
