@@ -4,19 +4,20 @@ export const Container = styled.div`
   width: 100%;
   min-height: 100%;
   display: flex;
-  padding: 25px;
+  padding: 15px;
 `;
 
 export const FormWrapper = styled.div`
   background: #fff;
-  padding: 25px;
+  padding: 15px;
   border-radius: 10px;
   max-width: 680px;
   width: 100%;
+  height: fit-content;
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
-  margin: 0 auto;
+  margin: auto;
 
   .logo {
     height: 90px;
@@ -54,7 +55,7 @@ export const FormControl = styled.div`
     width: 100%;
     color: #333;
     line-height: 1.2;
-    font-size: 18px;
+    font-size: 100%;
     display: block;
     width: 100%;
     background: 0 0;
