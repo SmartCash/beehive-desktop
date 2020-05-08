@@ -21,7 +21,7 @@ function ExportPrivateKeys() {
     method: 'POST'
   }, {manual: true});
 
-  const {register, handleSubmit, control} = useForm({
+  const {register, handleSubmit, control, errors} = useForm({
     defaultValues: {
       "username":"",
       "password":"",
@@ -71,17 +71,17 @@ function ExportPrivateKeys() {
               <FromGroup onSubmit={handleSubmit(onSubmit)} autoComplete="off">
                 <FormControl>
                   <label htmlFor="username">Username</label>
-                  <input type="text" name="username" ref={register}/>
+                  <input type="text" name="username" ref={register({required: "Required"})}/>
                 </FormControl>
 
                 <FormControl>
                   <label htmlFor="password">Password</label>
-                  <input type="password" name="password" ref={register}/>
+                  <input type="password" name="password" ref={register({required: "Required"})}/>
                 </FormControl>
 
                 <FormControl>
                   <label htmlFor="email">Email</label>
-                  <input type="text" name="email" ref={register}/>
+                  <input type="text" name="email" ref={register({required: "Required"})}/>
                 </FormControl>
 
                 <FormControl>
