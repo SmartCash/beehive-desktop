@@ -127,7 +127,7 @@ function Send() {
       {!formState.isValid ? (
         <>
           <div className="container">
-            <button className={`btn ${style.newAddress}`} onClick={() => generatePDF([createNewWalletKeyPair()], 'SmartCash_Address')}>Generate new address and private key</button>
+            <button className={`btn ${style.newAddress}`} onClick={() => generatePDF([createNewWalletKeyPair()], 'SmartCash_Address')}>Generate paper wallet</button>
           </div>
           <div className="container">
             <div className={style.orSpan}>
