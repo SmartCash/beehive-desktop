@@ -116,7 +116,7 @@ function ExportPrivateKeys() {
               <>
                 <ExportMessage>You can export your private key just once! Save it to a pdf file</ExportMessage>
                 <div className="buttonsWrapper">
-                  <button className="btn" onClick={() => generatePDF(data?.data, 'SmartCash_PrivateKey')}>Save Private Keys to PDF</button>
+                  <button className="btn" onClick={() => generatePDF(data?.data, 'SmartCash_PrivateKey')}>Save Private Key</button>
                   <button className="btn" onClick={() => generatePDF([createNewWalletKeyPair()], 'SmartCash_Address')}>Generate new address</button>
                 </div>
               </>
