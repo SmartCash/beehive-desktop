@@ -71,16 +71,17 @@ function ExportPrivateKeys() {
 
         <ExportMessage>
           <p><strong>Attention:</strong></p>
-          <ul>
-            <li>Export Private Key will be available until May 30, 2020;</li>
-            <li>This export process can be done just once;</li>
-            <li>You MUST create a new address and transfer your funds from this wallet to:</li>
+              <ul>
+            <li>The database for this wallet will be shutting down and will be replaced with the decentralized SmartHub.;</li>
+            <li>Please remove funds before May 30, 2020, when this wallet will be deactivated;</li>
+            <li>Download one of these wallets, create a new receive address, and withdraw to it:</li>
             <ul>
-              <li>Mobile use (<a target="_blank"  href="https://play.google.com/store/apps/details?id=com.ellipal.wallet">Ellipal</a>, <a target="_blank"  href="https://play.google.com/store/apps/details?id=com.coinomi.wallet">Coinomi</a>, <a target="_blank"  href="https://play.google.com/store/apps/details?id=io.atomicwallet">Atomic Wallet</a>, <a target="_blank"  href="https://play.google.com/store/apps/details?id=co.edgesecure.app">Edge Wallet</a>,<a target="_blank"  href="https://play.google.com/store/apps/details?id=cloud.peer2.pungo_wallet">Pungo Wallet</a>)</li>
-              <li>Desktop use (<a target="_blank"  href="https://smartcash.cc/wallets/">Electrum Wallet, Node Wallet</a>)</li>
+              <li>Mobile use (<a href="https://play.google.com/store/apps/details?id=com.ellipal.wallet">Ellipal</a>, <a href="https://play.google.com/store/apps/details?id=com.coinomi.wallet">Coinomi</a>, <a href="https://play.google.com/store/apps/details?id=io.atomicwallet">Atomic Wallet</a>, <a href="https://play.google.com/store/apps/details?id=co.edgesecure.app">Edge Wallet</a>,<a href="https://play.google.com/store/apps/details?id=cloud.peer2.pungo_wallet">Pungo Wallet</a>)</li>
+              <li>Desktop use (<a href="https://smartcash.cc/wallets/">Electrum Wallet, Node Wallet</a>)</li>
             </ul>
-            <li>DO NOT REUSE or Import these private keys;</li>
-            <li>Transfer your funds RIGHT NOW!</li>
+           <li>Or you can export private keys into another wallet and send to a new address.</li>  
+            <li>This export process can only be done once;</li>
+            <li>DO NOT leave funds in these private keys.;</li>
           </ul>
 
         </ExportMessage>
