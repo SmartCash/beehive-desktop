@@ -71,3 +71,9 @@
   height: 1px;
   background-color: #ccc;
 }
+
+.newAddress {
+  margin: 20px auto 0;
+  text-align: center;
+  display: block;
+}

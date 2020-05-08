@@ -115,10 +115,17 @@ export const WalletCard = styled.div`
 
 export const ErrorMessage = styled.div`
   width: 100%;
-    margin-top: 10px;
-    padding: 20px;
-    border: 1px solid #ff0000;
-    border-radius: 10px;
-    color: #ff0000;
+  margin-top: 10px;
+  padding: 20px;
+  border: 1px solid #ff0000;
+  border-radius: 10px;
+  color: #ff0000;
 `;
 
+export const ExportMessage = styled.small`
+  font-size: 12px;
+  margin-top: 20px;
+  text-align: center;
+  display: block;
+  width: 100%;
+`;

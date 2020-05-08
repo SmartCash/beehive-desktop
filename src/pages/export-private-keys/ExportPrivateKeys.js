@@ -4,7 +4,7 @@ import {
   FormControl,
   FormWrapper,
   FromGroup,
-  ErrorMessage
+  ErrorMessage, ExportMessage
 } from "./styled";
 import {useForm, Controller} from "react-hook-form";
 import useAxios from 'axios-hooks';
@@ -104,6 +104,8 @@ function ExportPrivateKeys() {
                 }
 
                 <button type="submit">Export Private Key</button>
+
+                <ExportMessage>You can export your private key just once! Save it to a pdf file</ExportMessage>
               </FromGroup>
             )
           : null
@@ -111,10 +113,13 @@ function ExportPrivateKeys() {
         {
           data?.data ?
             (
-              <div className="buttonsWrapper">
-                <button className="btn" onClick={() => generatePDF(data?.data, 'SmartCash_PrivateKey')}>Save Private Keys to PDF</button>
-                <button className="btn" onClick={() => generatePDF([createNewWalletKeyPair()], 'SmartCash_Address')}>Generate new address</button>
-              </div>
+              <>
+                <ExportMessage>You can export your private key just once! Save it to a pdf file</ExportMessage>
+                <div className="buttonsWrapper">
+                  <button className="btn" onClick={() => generatePDF(data?.data, 'SmartCash_PrivateKey')}>Save Private Keys to PDF</button>
+                  <button className="btn" onClick={() => generatePDF([createNewWalletKeyPair()], 'SmartCash_Address')}>Generate new address</button>
+                </div>
+              </>
             )
             : null
         }

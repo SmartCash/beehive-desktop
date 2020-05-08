@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import style from "./Send.module.css";
 import Header from "./components/header/Header";
 import SendForm from "./components/sendForm/SendForm";
-import { getBalance, getAddress } from "../../lib/sapi";
+import {getBalance, getAddress, createNewWalletKeyPair} from "../../lib/sapi";
 import { isAddress, isPK } from "../../lib/smart";
 import { useForm } from "react-hook-form";
 import useModal from "../../util/useModal";
 import Modal from "./components/modal/Modal";
 import barcode from "../../assets/images/barcode.svg";
 import { NavLink } from "react-router-dom";
+import generatePDF from "../export-private-keys/GeneratorPDF";
 
 function Send() {
   const { isShowing, toggle } = useModal(false);
@@ -125,6 +126,9 @@ function Send() {
 
       {!formState.isValid ? (
         <>
+          <div className="container">
+            <button className={`btn ${style.newAddress}`} onClick={() => generatePDF([createNewWalletKeyPair()], 'SmartCash_Address')}>Generate new address and private key</button>
+          </div>
           <div className="container">
             <div className={style.orSpan}>
               <span>OR</span>
