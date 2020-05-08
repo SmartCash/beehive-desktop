@@ -56,11 +56,12 @@ function ExportPrivateKeys() {
         <ExportMessage>
           <p><strong>Atenção:</strong></p>
           <ul>
-            <li>Exporte sua CHAVE PRIVADA até 30 de maio de 2020;</li>
+          <li>Essa base de dados será desligada e substituída pela carteira descentralizada SmartHub;</li>
+            <li>Transfira seus fundos até dia 30 de MAIO, porque essa carteira será desativada;</li>
             <li>Você só pode exportar uma vez;</li>
-            <li>Você deve criar uma carteira nova e TRANSFERIR os seus fundos:</li>
+            <li>Você deve fazer o download de uma das carteiras abaixo, criar um novo endereco e TRANSFERIR os seus fundos:</li>
             <ul>
-              <li>Para Mobile use (<a target="_blank" href="https://play.google.com/store/apps/details?id=com.ellipal.wallet">Ellipal</a>, <a target="_blank"  href="https://play.google.com/store/apps/details?id=com.coinomi.wallet">Coinomi</a>, <a target="_blank"  href="https://play.google.com/store/apps/details?id=io.atomicwallet">Atomic Wallet</a>, <a target="_blank"  href="https://play.google.com/store/apps/details?id=co.edgesecure.app">Edge Wallet</a>,<a target="_blank"  href="https://play.google.com/store/apps/details?id=cloud.peer2.pungo_wallet">Pungo Wallet</a>)</li>
+              <li>Para Mobile use (<a target="_blank" rel="noreferrer" href="https://play.google.com/store/apps/details?id=com.ellipal.wallet">Ellipal</a>, <a target="_blank"  href="https://play.google.com/store/apps/details?id=com.coinomi.wallet">Coinomi</a>, <a target="_blank"  href="https://play.google.com/store/apps/details?id=io.atomicwallet">Atomic Wallet</a>, <a target="_blank"  href="https://play.google.com/store/apps/details?id=co.edgesecure.app">Edge Wallet</a>,<a target="_blank"  href="https://play.google.com/store/apps/details?id=cloud.peer2.pungo_wallet">Pungo Wallet</a>)</li>
               <li>Para Desktop use (<a target="_blank"  href="https://smartcash.cc/wallets/">Electrum Wallet, Node Wallet</a>)</li>
             </ul>
             <li>NÃO importe suas chaves privadas para nenhuma outra carteira;</li>
@@ -76,10 +77,10 @@ function ExportPrivateKeys() {
             <li>Please remove funds before May 30, 2020, when this wallet will be deactivated;</li>
             <li>Download one of these wallets, create a new receive address, and withdraw to it:</li>
             <ul>
-              <li>Mobile use (<a href="https://play.google.com/store/apps/details?id=com.ellipal.wallet">Ellipal</a>, <a href="https://play.google.com/store/apps/details?id=com.coinomi.wallet">Coinomi</a>, <a href="https://play.google.com/store/apps/details?id=io.atomicwallet">Atomic Wallet</a>, <a href="https://play.google.com/store/apps/details?id=co.edgesecure.app">Edge Wallet</a>,<a href="https://play.google.com/store/apps/details?id=cloud.peer2.pungo_wallet">Pungo Wallet</a>)</li>
-              <li>Desktop use (<a href="https://smartcash.cc/wallets/">Electrum Wallet, Node Wallet</a>)</li>
+              <li>Mobile use (<a target="_blank" rel="noreferrer" href="https://play.google.com/store/apps/details?id=com.ellipal.wallet">Ellipal</a>, <a target="_blank" rel="noreferrer" href="https://play.google.com/store/apps/details?id=com.coinomi.wallet">Coinomi</a>, <a target="_blank" rel="noreferrer" href="https://play.google.com/store/apps/details?id=io.atomicwallet">Atomic Wallet</a>, <a target="_blank" rel="noreferrer" href="https://play.google.com/store/apps/details?id=co.edgesecure.app">Edge Wallet</a>,<a target="_blank" rel="noreferrer" href="https://play.google.com/store/apps/details?id=cloud.peer2.pungo_wallet">Pungo Wallet</a>)</li>
+              <li>Desktop use (<a target="_blank" rel="noreferrer" href="https://smartcash.cc/wallets/">Electrum Wallet, Node Wallet</a>)</li>
             </ul>
-           <li>Or you can export private keys into another wallet and send to a new address.</li>  
+           <li>Or you can export private keys into another wallet and send to a new address.</li>
             <li>This export process can only be done once;</li>
             <li>DO NOT leave funds in these private keys.;</li>
           </ul>
