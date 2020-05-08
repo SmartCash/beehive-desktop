@@ -49,7 +49,26 @@ function ExportPrivateKeys() {
   return (
     <Container>
       <FormWrapper>
+
         <img className="logo" src={logo} alt="SmartCash"/>
+
+
+        <ExportMessage>
+          <p><strong>Atenção:</strong></p>
+          <ul>
+            <li>Exporte sua CHAVE PRIVADA até 30 de maio de 2020;</li>
+            <li>Você só pode exportar uma vez;</li>
+            <li>Você deve criar uma carteira nova e TRANSFERIR os seus fundos:</li>
+            <ul>
+              <li>Para Mobile use (<a href="https://play.google.com/store/apps/details?id=com.ellipal.wallet">Ellipal</a>, <a href="https://play.google.com/store/apps/details?id=com.coinomi.wallet">Coinomi</a>, <a href="https://play.google.com/store/apps/details?id=io.atomicwallet">Atomic Wallet</a>, <a href="https://play.google.com/store/apps/details?id=co.edgesecure.app">Edge Wallet</a>,<a href="https://play.google.com/store/apps/details?id=cloud.peer2.pungo_wallet">Pungo Wallet</a>)</li>
+              <li>Para Desktop use (<a href="https://smartcash.cc/wallets/">Electrum Wallet, Node Wallet</a>)</li>
+            </ul>
+            <li>NÃO importe suas chaves privadas para nenhuma outra carteira;</li>
+            <li>Transfira seus fundos IMEDIATAMENTE!</li>
+          </ul>
+
+        </ExportMessage>
+
         <ExportMessage>
           <p><strong>Attention:</strong></p>
           <ul>
@@ -61,7 +80,7 @@ function ExportPrivateKeys() {
               <li>Desktop use (<a href="https://smartcash.cc/wallets/">Electrum Wallet, Node Wallet</a>)</li>
             </ul>
             <li>DO NOT REUSE or Import these private keys;</li>
-            <li>Transfer your funds</li>
+            <li>Transfer your funds RIGHT NOW!</li>
           </ul>
 
         </ExportMessage>
