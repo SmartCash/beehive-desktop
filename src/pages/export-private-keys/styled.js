@@ -85,7 +85,40 @@ export const FromGroup = styled.form`
     font-weight: 700;
     border: 0;
     margin-top: 25px;
+    cursor: pointer;
   }
 `;
 
+export const WalletCard = styled.div`
+  padding: 20px;
+  color: #555;
+
+  & ~ & {
+    margin-top: 15px;
+    border-top: 1px solid #e6e6e6;
+  }
+
+  p {
+    font-size: 12px;
+    margin: 0;
+    word-break: break-all;
+
+    & ~ p {
+      margin-top: 10px;
+    }
+  }
+
+  strong {
+    display: block;
+  }
+`;
+
+export const ErrorMessage = styled.div`
+  width: 100%;
+    margin-top: 10px;
+    padding: 20px;
+    border: 1px solid #ff0000;
+    border-radius: 10px;
+    color: #ff0000;
+`;
 

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { createAndSendRawTransaction, getFee } from "../../lib/sapi";
-import { isAddress, isPK } from "../../lib/smart";
+import { createAndSendRawTransaction, getFee } from "../../../../lib/sapi";
+import { isAddress, isPK } from "../../../../lib/smart";
 import style from "./SendForm.module.css";
 import { useForm } from "react-hook-form";
-import useModal from "../../util/useModal";
+import useModal from "../../../../util/useModal";
 import Modal from "../modal/Modal";
-import barcode from "../../assets/images/barcode.svg";
+import barcode from "../../../../assets/images/barcode.svg";
 
-function Send({ address, balance, privateKey }) {
+function Send({ address, balance, privateKey, withdraw }) {
   const { isShowing, toggle } = useModal(false);
   const [txid, setTxId] = useState();
   const [fee, setFee] = useState();
@@ -22,7 +22,9 @@ function Send({ address, balance, privateKey }) {
     formState,
     triggerValidation,
     getValues,
-  } = useForm({ mode: "onChange" });
+  } = useForm({ mode: "onChange", defaultValues: {
+      amount: withdraw ? Number(balance - 0.002).toFixed(4) : null
+    } });
 
   const onSubmit = (data) => {
     setLoading(true);

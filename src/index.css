@@ -35,9 +35,10 @@ body {
 .container {
   width: 100%;
   max-width: 600px;
-  padding-left: 25px;
-  padding-right: 25px;
+  padding-left: 15px;
+  padding-right: 15px;
   margin: 0 auto;
+  display: flex;
 }
 
 .cardWrapper {
@@ -45,11 +46,10 @@ body {
   flex-wrap: wrap;
   width: 100%;
   flex: 0 0 100%;
-  border-radius: 4px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
   transition: 0.3s;
   background-color: #fff;
-  padding: 25px;
+  padding: 15px;
 }
 
 .formGroup {
@@ -58,17 +58,20 @@ body {
 
 .formControl {
   margin-bottom: 25px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #ececec;
   display: flex;
   flex-wrap: wrap;
   flex: 0 0 100%;
 }
 
 .formControl label {
-  text-transform: uppercase;
-  color: #333;
+  width: 100%;
+  font-size: 16px;
+  color: #555;
+  line-height: 1.5;
   font-weight: 600;
-  font-size: 10px;
+
+
   flex: 0 0 90%;
 }
 
@@ -94,13 +97,13 @@ body {
   display: flex;
   justify-content: center;
   padding: 20px;
-  text-transform: uppercase;
   font-weight: 700;
   border: 0;
   margin: 0 auto;
   background: #fec712db;
   width: 100%;
-  border-radius: 2px;
+  border-radius: 10px;
+  font-size: 16px;
 }
 
 .formGroup [type="submit"]:disabled {
@@ -126,4 +129,29 @@ body {
   height: 20px;
   object-fit: cover;
   opacity: 0.8;
+}
+
+.btn {
+  border: 1px solid #e6e6e6;
+  border-radius: 2px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.btn:focus,
+.btn:hover {
+  background: #f2f2f2;
+}
+
+.buttonsWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.buttonsWrapper .btn {
+  margin: 5px;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
 }

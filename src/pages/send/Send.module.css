@@ -1,0 +1,73 @@
+.root {
+  display: flex;
+  flex-direction: column;
+}
+
+.btnWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 25px 0;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.btnWrapper p {
+  margin: 0;
+}
+
+.btn {
+  height: 40px;
+  background-color: transparent;
+  border: 1px solid #d9d9d9;
+  padding: 0 10px;
+  font-size: 10px;
+  text-decoration: none;
+  color: #333;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2px;
+  align-self: center;
+}
+
+.btnExport {
+  width: 100%;
+  padding: 20px;
+  background-color: #333;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 700;
+  border: 0;
+  margin: 0 0 25px;
+  text-decoration: none;
+  text-align: center;
+}
+
+.orSpan {
+  margin: 45px auto;
+  position: relative;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.orSpan span {
+  background: #f7f7f7;
+  padding: 0 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  z-index: 1;
+}
+.orSpan:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background-color: #ccc;
+}
