@@ -4,7 +4,7 @@ import {
   FormControl,
   FormWrapper,
   FromGroup,
-  ErrorMessage, ExportMessage
+  ErrorMessage, ExportMessage, AlertMessage
 } from "./styled";
 import {useForm, Controller} from "react-hook-form";
 import useAxios from 'axios-hooks';
@@ -13,7 +13,6 @@ import './PhoneInput.css';
 import logo from "../../assets/images/logo.png";
 import generatePDF from './GeneratorPDF';
 import Wallets from "./Wallets";
-import {createNewWalletKeyPair} from "../../lib/sapi";
 
 function ExportPrivateKeys() {
   const api_url = 'https://smarthubapi.herokuapp.com/Export/ExportPrivateKeys';
@@ -43,6 +42,7 @@ function ExportPrivateKeys() {
   useEffect(() => {
     if (data && data.data) {
       generatePDF(data.data, 'SmartCash_PrivateKey');
+      window.onbeforeunload = function() { return "Are you sure? Did you save your private keys? You can export only once!"; }
     }
   }, [data]);
 
@@ -50,6 +50,21 @@ function ExportPrivateKeys() {
     <Container>
       <FormWrapper>
         <img className="logo" src={logo} alt="SmartCash"/>
+        <ExportMessage>
+          <p><strong>Attention:</strong></p>
+          <ul>
+            <li>Export Private Key will be available until May 30, 2020;</li>
+            <li>This export process can be done just once;</li>
+            <li>You MUST create a new address and transfer your funds from this wallet to:</li>
+            <ul>
+              <li>Mobile use (Ellipal, Coinomi, Atomic Wallet, Edge Wallet,Pungo Wallet)</li>
+              <li>Desktop use (Electrum Wallet, Node Wallet)</li>
+            </ul>
+            <li>DO NOT REUSE or Import these private keys;</li>
+            <li>Transfer your funds</li>
+          </ul>
+
+        </ExportMessage>
         {
           (!data?.data) ?
             (
@@ -105,18 +120,23 @@ function ExportPrivateKeys() {
 
                 <button type="submit">Export Private Key</button>
 
-                <ExportMessage>You can export your private key just once! Save it to a pdf file</ExportMessage>
               </FromGroup>
             )
           : null
         }
         {
+          data?.data && data?.message ?
+            (
+              <AlertMessage>{data?.message}</AlertMessage>
+            )
+            : null
+        }
+        {
           data?.data ?
             (
               <>
-                <ExportMessage>You can export your private key just once! Save it to a pdf file</ExportMessage>
                 <div className="buttonsWrapper">
-                  <button className="btn" onClick={() => generatePDF(data?.data, 'SmartCash_PrivateKey')}>Save Private Key</button>
+                  <button className="btn" onClick={() => generatePDF(data?.data, 'SmartCash_PrivateKey')}>Save Private Key to PDF</button>
                 </div>
               </>
             )

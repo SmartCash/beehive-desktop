@@ -122,10 +122,32 @@ export const ErrorMessage = styled.div`
   color: #ff0000;
 `;
 
-export const ExportMessage = styled.small`
-  font-size: 12px;
+export const ExportMessage = styled.div`
+  font-size: 14px;
   margin-top: 20px;
-  text-align: center;
+  margin-bottom: 40px;
   display: block;
-  width: 100%;
+  border: 1px dashed #fec811;
+  padding: 10px 20px;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 570px;
+
+  p {
+    margin: 5px 0;
+  }
+`;
+
+export const AlertMessage = styled.p`
+      font-size: 16px;
+    text-align: center;
+    border: 1px dashed #fec811;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 0 auto 30px;
+    display: block;
+    width: 100%;
+    max-width: 570px;
+    background: #fff9e6;
 `;

@@ -1,4 +1,4 @@
-import React, {useState, useMemo, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {WalletCard} from "./styled";
 import SendForm from "../send/components/sendForm/SendForm";
 import {getBalance} from "../../lib/sapi";
