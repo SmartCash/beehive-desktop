@@ -1,21 +1,17 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import App from "./App";
-import Login from "./pages/Login";
-import ExportPrivateKey from "./pages/ExportPrivateKey";
+import Send from "./pages/send/Send";
+import ExportPrivateKeys from "./pages/export-private-keys/ExportPrivateKeys";
 
 function AppRoute() {
   return (
     <Router>
       <Switch>
         <Route exact path="/">
-          <App />
-        </Route>
-        <Route exact path="/login">
-          <Login />
+          <Send />
         </Route>
         <Route exact path="/export-private-key">
-          <ExportPrivateKey />
+          <ExportPrivateKeys />
         </Route>
       </Switch>
     </Router>
