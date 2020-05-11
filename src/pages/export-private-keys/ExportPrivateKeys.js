@@ -66,7 +66,9 @@ function ExportPrivateKeys() {
             </ul>
             <li>NÃO importe suas chaves privadas para nenhuma outra carteira;</li>
             <li>Transfira seus fundos IMEDIATAMENTE!</li>
-            <li>As conta serão bloqueadas até 30 de maio depoios de 3 tentativas de acesso.</li>
+            <li>As conta serão bloqueadas até 30 de maio depois de 3 tentativas de acesso.</li>
+            <li>Erros de 2FA serão somente resolvidos depois do dia 30.</li>
+            <li>Reembolsos serão realizados automaticamente por SMS e ou email. Não use contas falsas ou não será reembolsado em caso de erro.</li>
           </ul>
 
         </ExportMessage>
@@ -85,6 +87,8 @@ function ExportPrivateKeys() {
             <li>This export process can only be done once;</li>
             <li>DO NOT leave funds in these private keys.;</li>
             <li>Accounts are locked after failed attempts and you will need to wait until May 30th, to unlock</li>
+            <li>People that lost 2FA device and are facing 2FA errors must wait until May 30th</li>
+            <li>Reimbursements will be automatically paid via SMS and Email, so don't fake it or you will not be reimbursed.</li>
           </ul>
 
         </ExportMessage>
