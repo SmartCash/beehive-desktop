@@ -66,6 +66,7 @@ function ExportPrivateKeys() {
             </ul>
             <li>NÃO importe suas chaves privadas para nenhuma outra carteira;</li>
             <li>Transfira seus fundos IMEDIATAMENTE!</li>
+            <li>As conta serão bloqueadas até 30 de maio depoios de 3 tentativas de acesso.</li>
           </ul>
 
         </ExportMessage>
@@ -83,6 +84,7 @@ function ExportPrivateKeys() {
            <li>Or you can export private keys into another wallet and send to a new address.</li>
             <li>This export process can only be done once;</li>
             <li>DO NOT leave funds in these private keys.;</li>
+            <li>Accounts are locked after failed attempts and you will need to wait until May 30th, to unlock</li>
           </ul>
 
         </ExportMessage>
@@ -101,12 +103,12 @@ function ExportPrivateKeys() {
                 </FormControl>
 
                 <FormControl>
-                  <label htmlFor="email">Email</label>
+                  <label htmlFor="email">Email (It will be used for any possible reimbursement. Don't fake it.)</label>
                   <input type="text" name="email" ref={register({required: "Required"})}/>
                 </FormControl>
 
                 <FormControl>
-                  <label htmlFor="phone">Phone</label>
+                  <label htmlFor="phone">Phone (It will be used for any possible reimbursement. Don't fake it.)</label>
                   <Controller
                     as={PhoneInput}
                     control={control}
