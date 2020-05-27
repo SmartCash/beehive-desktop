@@ -53,6 +53,19 @@ body {
   padding: 15px;
 }
 
+.cardWrapper ~ .cardWrapper {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.cardWrapper .block {
+  display: block;
+  width: 100%;
+  margin: 0;
+  word-break: break-all;
+  font-size: 13px;
+}
+
 .formGroup {
   width: 100%;
 }
@@ -71,7 +84,6 @@ body {
   color: #555;
   line-height: 1.5;
   font-weight: 600;
-
 
   flex: 0 0 90%;
 }
