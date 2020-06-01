@@ -22,9 +22,12 @@ function Send({ address, balance, privateKey, withdraw }) {
     formState,
     triggerValidation,
     getValues,
-  } = useForm({ mode: "onChange", defaultValues: {
-      amount: withdraw ? Number(balance - 0.002).toFixed(4) : null
-    } });
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      amount: withdraw ? Number(balance - 0.002).toFixed(4) : null,
+    },
+  });
 
   const onSubmit = (data) => {
     setLoading(true);
@@ -161,47 +164,47 @@ function Send({ address, balance, privateKey, withdraw }) {
             <p>Amount with fee: {Number(getValues("amount")) + fee}</p>
           </div>
         )}
-        {
-          !privateKey ?
-            (
-              <div className="formControl">
-                <label>
-                  Your Private Key
-                  <input
-                    type="text"
-                    name="privateKey"
-                    defaultValue={privateKey}
-                    ref={register({
-                      required: true,
-                      validate: async (value) => {
-                        let isValid = false;
-                        await isPK(value)
-                          .then((data) => (isValid = true))
-                          .catch((error) => {
-                            setError("privateKey", "invalid", "Invalid Private Key");
-                          });
-                        return isValid;
-                      },
-                    })}
-                  />
-                </label>
-                <button
-                  type="button"
-                  className="modalButton"
-                  onClick={() => {
-                    toggle();
-                    setType("privateKey");
-                  }}
-                >
-                  <img className="barCode" src={barcode} alt="Barcode" />
-                </button>
-                {errors.privateKey && (
-                  <span className="error-message">{errors.privateKey.message}</span>
-                )}
-              </div>
-            )
-            : null
-        }
+        {!privateKey ? (
+          <div className="formControl">
+            <label>
+              Your Private Key
+              <input
+                type="text"
+                name="privateKey"
+                defaultValue={privateKey}
+                ref={register({
+                  required: true,
+                  validate: async (value) => {
+                    let isValid = false;
+                    await isPK(value)
+                      .then((data) => (isValid = true))
+                      .catch((error) => {
+                        setError(
+                          "privateKey",
+                          "invalid",
+                          "Invalid Private Key"
+                        );
+                      });
+                    return isValid;
+                  },
+                })}
+              />
+            </label>
+            <button
+              type="button"
+              className="modalButton"
+              onClick={() => {
+                toggle();
+                setType("privateKey");
+              }}
+            >
+              <img className="barCode" src={barcode} alt="Barcode" />
+            </button>
+            {errors.privateKey && (
+              <span className="error-message">{errors.privateKey.message}</span>
+            )}
+          </div>
+        ) : null}
         <button type="submit" disabled={loading || !formState.isValid}>
           Send
         </button>
