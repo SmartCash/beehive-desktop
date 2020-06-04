@@ -8,15 +8,16 @@ import { useForm } from "react-hook-form";
 import useModal from "../../util/useModal";
 import Modal from "./components/modal/Modal";
 import barcode from "../../assets/images/barcode.svg";
-import { NavLink } from "react-router-dom";
 import generatePDF from "../export-private-keys/GeneratorPDF";
 import TransactionsHistory from "./components/transactions-history/TransactionHistory";
+import Receive from "./components/receive/Receive";
 
 function Send() {
   const { isShowing, toggle } = useModal(false);
   const [address, setAddress] = useState();
   const [privateKey, setPrivateKey] = useState();
   const [balance, setBalance] = useState(false);
+  const [showReceive, setShowReceive] = useState(false);
   const [showTransactions, setShowTransactions] = useState(false);
   const {
     register,
@@ -108,12 +109,24 @@ function Send() {
               <p>Your Balance: {balance}</p>
               <button
                 className={style.btn}
+                onClick={(e) => setShowReceive(!showReceive)}
+              >
+                Receive
+              </button>
+              <button
+                className={style.btn}
                 onClick={(e) => setShowTransactions(!showTransactions)}
               >
-                Show Last Transactions
+                Transactions
               </button>
             </div>
           </div>
+
+          <Receive
+            address={address}
+            isShowing={showReceive}
+            hide={() => setShowReceive(false)}
+          />
 
           <TransactionsHistory
             address={address}
