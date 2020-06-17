@@ -108,12 +108,12 @@ function Send() {
           <div className="container">
             <div className={style.btnWrapper}>
               <p>Your Balance: {balance}</p>
-              <button
+              {/* <button
                 className={style.btn}
                 onClick={(e) => setShowReceive(!showReceive)}
               >
                 Receive
-              </button>
+              </button> */}
               <button
                 className={style.btn}
                 onClick={(e) => setShowTransactions(!showTransactions)}
