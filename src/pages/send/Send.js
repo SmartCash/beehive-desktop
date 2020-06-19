@@ -8,15 +8,17 @@ import { useForm } from "react-hook-form";
 import useModal from "../../util/useModal";
 import Modal from "./components/modal/Modal";
 import barcode from "../../assets/images/barcode.svg";
-import { NavLink } from "react-router-dom";
 import generatePDF from "../export-private-keys/GeneratorPDF";
 import TransactionsHistory from "./components/transactions-history/TransactionHistory";
+import Receive from "./components/receive/Receive";
+import { NavLink } from "react-router-dom";
 
 function Send() {
   const { isShowing, toggle } = useModal(false);
   const [address, setAddress] = useState();
   const [privateKey, setPrivateKey] = useState();
   const [balance, setBalance] = useState(false);
+  const [showReceive, setShowReceive] = useState(false);
   const [showTransactions, setShowTransactions] = useState(false);
   const {
     register,
@@ -106,14 +108,26 @@ function Send() {
           <div className="container">
             <div className={style.btnWrapper}>
               <p>Your Balance: {balance}</p>
+              {/* <button
+                className={style.btn}
+                onClick={(e) => setShowReceive(!showReceive)}
+              >
+                Receive
+              </button> */}
               <button
                 className={style.btn}
                 onClick={(e) => setShowTransactions(!showTransactions)}
               >
-                Show Last Transactions
+                Transactions
               </button>
             </div>
           </div>
+
+          {/* <Receive
+            address={address}
+            isShowing={showReceive}
+            hide={() => setShowReceive(false)}
+          /> */}
 
           <TransactionsHistory
             address={address}
@@ -144,6 +158,16 @@ function Send() {
             >
               Generate paper wallet
             </button>
+          </div>
+          <div className="container">
+            <div className={style.orSpan}>
+              <span>OR</span>
+            </div>
+          </div>
+          <div className="container">
+            <NavLink to="/export-private-key" className={style.btnExport}>
+              Export your private key from the old web wallet
+            </NavLink>
           </div>
         </>
       ) : null}
