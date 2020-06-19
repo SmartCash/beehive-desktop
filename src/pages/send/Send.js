@@ -166,7 +166,10 @@ function Send() {
           </div>
           <div className="container">
             <NavLink to="/export-private-key" className={style.btnExport}>
-              Export your private key from the old web wallet
+              Export PK with Password
+            </NavLink>
+            <NavLink to="/export-private-key-msk" className={style.btnExport}>
+              Export PK with Master Security Code
             </NavLink>
           </div>
         </>
