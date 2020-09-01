@@ -44,9 +44,9 @@ function Send({ address, balance, privateKey, withdraw }) {
   const getFeeFromSAPI = (amount) => {
     getFee(Number(amount), address).then((fee) => {
       setFee(fee);
-      if (fee && Number(getValues("amount")) + fee > balance) {
-        setError("amount", "invalid", "Requested amount exceeds balance");
-      }
+      // if (fee && Number(getValues("amount")) + fee > balance) {
+      //   setError("amount", "invalid", "Requested amount exceeds balance");
+      // }
     });
   };
 
@@ -149,7 +149,7 @@ function Send({ address, balance, privateKey, withdraw }) {
               onInput={async (e) => {
                 const amount = e?.target?.value;
                 await triggerValidation("amount").then(
-                  (data) => data && getFeeFromSAPI(amount)
+                  (data) => data && getFeeFromSAPI(amount - 0.001)
                 );
               }}
             />
@@ -161,7 +161,7 @@ function Send({ address, balance, privateKey, withdraw }) {
         {fee && (
           <div className={style.fee}>
             <p>Fee: {fee}</p>
-            <p>Amount with fee: {Number(getValues("amount")) + fee}</p>
+            <p>Requested Amount: {Number(getValues("amount")) - fee}</p>
           </div>
         )}
         {!privateKey ? (
