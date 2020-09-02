@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createAndSendRawTransaction, getFee } from "../../../../lib/sapi";
 import { isAddress, isPK } from "../../../../lib/smart";
 import style from "./SendForm.module.css";
@@ -6,13 +6,17 @@ import { useForm } from "react-hook-form";
 import useModal from "../../../../util/useModal";
 import Modal from "../modal/Modal";
 import barcode from "../../../../assets/images/barcode.svg";
+import useDebounce from "../../../../util/useDebounce";
 
 function Send({ address, balance, privateKey, withdraw }) {
   const { isShowing, toggle } = useModal(false);
+  const [amount, setAmount] = useState();
   const [txid, setTxId] = useState();
   const [fee, setFee] = useState();
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState();
+  const debouncedAmount = useDebounce(amount, 500);
+
   const {
     register,
     handleSubmit,
@@ -28,6 +32,12 @@ function Send({ address, balance, privateKey, withdraw }) {
       amount: withdraw ? Number(balance - 0.002).toFixed(4) : null,
     },
   });
+
+  useEffect(() => {
+    if (debouncedAmount) {
+      getFeeFromSAPI(debouncedAmount - 0.001)
+    };
+  }, [debouncedAmount])
 
   const onSubmit = (data) => {
     setLoading(true);
@@ -147,9 +157,9 @@ function Send({ address, balance, privateKey, withdraw }) {
                 },
               })}
               onInput={async (e) => {
-                const amount = e?.target?.value;
+                const amountValue = e?.target?.value;
                 await triggerValidation("amount").then(
-                  (data) => data && getFeeFromSAPI(amount - 0.001)
+                  (data) => data && setAmount(amountValue)
                 );
               }}
             />
