@@ -10,8 +10,7 @@ const TransactionsHistory = ({ isShowing, hide, address }) => {
     async function _getTransactionHistory() {
       await getTransactionHistory(address)
         .then((data) => {
-          data = JSON.parse(data);
-          setHistory(data?.txs);
+          setHistory(data);
         })
         .catch((error) => console.error(error));
     }
@@ -45,14 +44,16 @@ const TransactionsHistory = ({ isShowing, hide, address }) => {
               <div className={style["modal-body"]}>
                 Showing last 5 transactions.
                 <a
-                  href={`https://insight.smartcash.cc/address/${address}`}
+                  href={`https://sapi-explorer.herokuapp.com/#/address/${address}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   See all
                 </a>
-                {history?.map((tx, index) => {
+                {
+                    history?.map((tx, index) => {
                   return (
+
                     <div className={style.cardWrapper} key={index}>
                       <strong>Type</strong>
                       <p>{tx.direction}</p>
