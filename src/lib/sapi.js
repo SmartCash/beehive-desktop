@@ -145,8 +145,8 @@ export async function getTransactionHistory(_address) {
             method: 'POST',
             uri: `${getSapiUrl()}/v1/address/transactions/${_address}`,
             body: {
-                "pageNumber": 1,
-                "pageSize": 5
+                pageNumber: 1,
+                pageSize: 5,
             },
             json: true, // Automatically stringifies the body to JSON
         };
