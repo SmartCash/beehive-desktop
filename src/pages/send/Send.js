@@ -159,19 +159,7 @@ function Send() {
               Generate paper wallet
             </button>
           </div>
-          <div className="container">
-            <div className={style.orSpan}>
-              <span>OR</span>
-            </div>
-          </div>
-          <div className="container">
-            <NavLink to="/export-private-key" className={style.btnExport}>
-              Export PK with Password
-            </NavLink>
-            <NavLink to="/export-private-key-msk" className={style.btnExport}>
-              Export PK with Master Security Code
-            </NavLink>
-          </div>
+          
         </>
       ) : null}
     </div>
