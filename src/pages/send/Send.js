@@ -96,7 +96,7 @@ function Send() {
                 <div>
                     <div className="container">
                         <div className={style.btnWrapper}>
-                            <p>Your Balance: {Number(balance).toFixed(4)}</p>
+                            <p>Your Balance: {Number(balance).toFixed(8)}</p>
                             {/* <button
                 className={style.btn}
                 onClick={(e) => setShowReceive(!showReceive)}

@@ -20,7 +20,7 @@ function Send({ address, balance, privateKey, withdraw }) {
     const { register, handleSubmit, errors, setError, setValue, formState, triggerValidation, getValues } = useForm({
         mode: 'onChange',
         defaultValues: {
-            amount: withdraw ? Number(balance - 0.002).toFixed(4) : null,
+            amount: withdraw ? Number(balance - 0.002).toFixed(8) : null,
         },
     });
 
@@ -122,7 +122,7 @@ function Send({ address, balance, privateKey, withdraw }) {
                                 },
                             })}
                             onInput={async (e) => {
-                                const amountValue = e?.target?.value;
+                                const amountValue = e?.target?.value.replace(',', '');
                                 await triggerValidation('amount').then((data) => data && setAmount(amountValue));
                             }}
                         />
@@ -132,7 +132,7 @@ function Send({ address, balance, privateKey, withdraw }) {
                 {fee && (
                     <div className={style.fee}>
                         <p>Fee: {fee}</p>
-                        <p>Requested Amount: {Number(getValues('amount')) - fee}</p>
+                        <p>Requested Amount: {Number(Number(getValues('amount').replace(',', '')) - fee).toFixed(8)}</p>
                     </div>
                 )}
                 {!privateKey ? (

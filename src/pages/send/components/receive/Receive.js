@@ -18,7 +18,7 @@ const Receive = ({ isShowing, hide, address }) => {
   const calcAmountConverted = useCallback(() => {
     let currentValue = Number(amount);
     currentValue = currentValue / (rate || 1.0);
-    return currentValue.toFixed(4);
+    return currentValue.toFixed(8);
   }, [amount, rate]);
 
   const handleSelectedFiat = async (e) => {
