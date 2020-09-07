@@ -15,7 +15,8 @@ function Send({ address, balance, privateKey, withdraw }) {
     const [fee, setFee] = useState();
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState();
-    const debouncedAmount = useDebounce(amount, 500);
+    const debouncedAmount = useDebounce(amount, 1000);
+    const [sendAllFunds, setSendAllFunds] = useState(false);
 
     const { register, handleSubmit, errors, setError, setValue, formState, triggerValidation, getValues } = useForm({
         mode: 'onChange',
@@ -26,7 +27,7 @@ function Send({ address, balance, privateKey, withdraw }) {
 
     useEffect(() => {
         if (debouncedAmount) {
-            getFeeFromSAPI(debouncedAmount - 0.001);
+            getFeeFromSAPI(debouncedAmount);
         }
     }, [debouncedAmount]);
 
@@ -46,6 +47,15 @@ function Send({ address, balance, privateKey, withdraw }) {
             // }
         });
     };
+
+    const handleSendAllFunds = async (sendAllFunds) => {
+        if (sendAllFunds) {
+            const amount = Number(getValues('amount')) - 0.001;
+            setValue('amount', amount, true);
+            await triggerValidation('amount').then((data) => data && setAmount(amount));
+        }
+        setSendAllFunds(false);
+    }
 
     if (txid) {
         return (
@@ -107,7 +117,9 @@ function Send({ address, balance, privateKey, withdraw }) {
                             ref={register({
                                 required: true,
                                 validate: (value) => {
-                                    if (value > balance) {
+                                    setSendAllFunds(false);
+                                    if (value >= balance) {
+                                        setSendAllFunds(true);
                                         setError('amount', 'invalid', 'Exceeds balance');
                                         return false;
                                     }
@@ -129,10 +141,19 @@ function Send({ address, balance, privateKey, withdraw }) {
                     </label>
                     {errors.amount && <span className="error-message">{errors.amount.message}</span>}
                 </div>
+                {
+                    sendAllFunds && (
+                        <div className={style.sendFundsMessage}>
+                            <p>Send all your funds?</p>
+                            <button onClick={() => handleSendAllFunds(true)}>Yes</button>
+                            <button onClick={() => handleSendAllFunds(false)}>No</button>
+                        </div>
+                    )
+                }
                 {fee && (
                     <div className={style.fee}>
                         <p>Fee: {fee}</p>
-                        <p>Requested Amount: {Number(Number(getValues('amount').replace(',', '')) - fee).toFixed(8)}</p>
+                        <p className={style.requestedAmount}>Requested Amount: {Number(Number(getValues('amount').replace(',', '')) + fee).toFixed(8)}</p>
                     </div>
                 )}
                 {!privateKey ? (

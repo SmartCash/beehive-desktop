@@ -32,3 +32,23 @@
   border: 1px solid rgba(254, 199, 39, 0.5);
   border-radius: 4px;
 }
+
+.requestedAmount {
+    font-weight: 600;
+    color: #333;
+    background: #eee;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.sendFundsMessage {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0 0 30px;
+    line-height: normal;
+}
+
+.sendFundsMessage button {
+    margin-left: 10px;
+}
