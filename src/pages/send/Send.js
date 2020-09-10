@@ -10,8 +10,6 @@ import Modal from './components/modal/Modal';
 import barcode from '../../assets/images/barcode.svg';
 import generatePDF from '../export-private-keys/GeneratorPDF';
 import TransactionsHistory from './components/transactions-history/TransactionHistory';
-import Receive from './components/receive/Receive';
-import { NavLink } from 'react-router-dom';
 
 function Send() {
     const { isShowing, toggle } = useModal(false);

@@ -8,9 +8,8 @@ import {
   ExportMessage,
   AlertMessage,
 } from "./styled";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import useAxios from "axios-hooks";
-import PhoneInput from "react-phone-number-input";
 import "./PhoneInput.css";
 import logo from "../../assets/images/logo.png";
 import generatePDF from "./GeneratorPDF";
