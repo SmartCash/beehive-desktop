@@ -42,13 +42,12 @@
     "styled-components": "~5.1.0"
   },
   "scripts": {
-    "start-react": "react-scripts start",
-    "build-react": "react-scripts build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test-react": "react-scripts test --env=jsdom",
     "eject-react": "react-scripts eject",
-    "build-electron": "electron-builder",
-    "build": "yarn build-react && yarn build-electron",
-    "start": "concurrently \"cross-env BROWSER=none yarn start-react\" \"wait-on http://localhost:3000 && electron .\""
+    "build-electron": "yarn build && electron-builder",
+    "start-electron": "concurrently \"cross-env BROWSER=none yarn start-react\" \"wait-on http://localhost:3000 && electron .\""
   },
   "eslintConfig": {
     "extends": "react-app"
