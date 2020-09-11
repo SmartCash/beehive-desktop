@@ -118,7 +118,7 @@ function Send({ address, balance, privateKey, withdraw }) {
                                 required: true,
                                 validate: (value) => {
                                     setSendAllFunds(false);
-                                    if (value == balance) {
+                                    if (String(value) === String(balance)) {
                                         setSendAllFunds(true);
                                         return false;
                                     }
@@ -137,7 +137,7 @@ function Send({ address, balance, privateKey, withdraw }) {
                                 },
                             })}
                             onInput={async (e) => {
-                                const amountValue = e?.target?.value.replace(',', '').toFixed(8);
+                                const amountValue = e?.target?.value.replace(',', '');
                                 await triggerValidation('amount').then((data) => data && setAmount(amountValue));
                             }}
                         />

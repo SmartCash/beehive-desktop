@@ -83,6 +83,7 @@ function ExportPrivateKeys() {
                 ,{" "}
                 <a
                   target="_blank"
+                  rel="noopener noreferrer"
                   href="https://play.google.com/store/apps/details?id=com.coinomi.wallet"
                 >
                   Coinomi
@@ -90,6 +91,7 @@ function ExportPrivateKeys() {
                 ,{" "}
                 <a
                   target="_blank"
+                  rel="noopener noreferrer"
                   href="https://play.google.com/store/apps/details?id=io.atomicwallet"
                 >
                   Atomic Wallet
@@ -97,6 +99,7 @@ function ExportPrivateKeys() {
                 ,{" "}
                 <a
                   target="_blank"
+                  rel="noopener noreferrer"
                   href="https://play.google.com/store/apps/details?id=co.edgesecure.app"
                 >
                   Edge Wallet
@@ -104,6 +107,7 @@ function ExportPrivateKeys() {
                 ,
                 <a
                   target="_blank"
+                  rel="noopener noreferrer"
                   href="https://play.google.com/store/apps/details?id=cloud.peer2.pungo_wallet"
                 >
                   Pungo Wallet
@@ -159,7 +163,7 @@ function ExportPrivateKeys() {
                 ,{" "}
                 <a
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   href="https://play.google.com/store/apps/details?id=com.coinomi.wallet"
                 >
                   Coinomi
@@ -167,7 +171,7 @@ function ExportPrivateKeys() {
                 ,{" "}
                 <a
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   href="https://play.google.com/store/apps/details?id=io.atomicwallet"
                 >
                   Atomic Wallet
@@ -175,7 +179,7 @@ function ExportPrivateKeys() {
                 ,{" "}
                 <a
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   href="https://play.google.com/store/apps/details?id=co.edgesecure.app"
                 >
                   Edge Wallet
@@ -183,7 +187,7 @@ function ExportPrivateKeys() {
                 ,
                 <a
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   href="https://play.google.com/store/apps/details?id=cloud.peer2.pungo_wallet"
                 >
                   Pungo Wallet

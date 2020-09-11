@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import Send from "./pages/send/Send";
 import ExportPrivateKeys from "./pages/export-private-keys/ExportPrivateKeys";
 import ExportPrivateKeysWithMSK from "./pages/export-private-keys-msk/ExportPrivateKeysWithMSK";
