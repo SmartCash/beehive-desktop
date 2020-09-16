@@ -37,13 +37,13 @@ function Send({ address, balance, privateKey, withdraw }) {
     const { control, register, handleSubmit, errors, setError, setValue, formState, triggerValidation, getValues } = useForm({
         mode: 'onChange',
         defaultValues: {
-            amount: withdraw ? Number(balance - 0.002).toFixed(8) : null,
+            amount: withdraw ? Number(balance - 0.002) : null,
         },
     });
 
     useEffect(() => {
         if (debouncedAmount) {
-            getFeeFromSAPI(debouncedAmount);
+            getFeeFromSAPI(debouncedAmount.toFixed(8));
         }
     }, [debouncedAmount]);
 
