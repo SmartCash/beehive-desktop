@@ -10,14 +10,12 @@ import Modal from './components/modal/Modal';
 import barcode from '../../assets/images/barcode.svg';
 import generatePDF from '../export-private-keys/GeneratorPDF';
 import TransactionsHistory from './components/transactions-history/TransactionHistory';
-import Receive from './components/receive/Receive';
-import { NavLink } from 'react-router-dom';
 
 function Send() {
     const { isShowing, toggle } = useModal(false);
     const [address, setAddress] = useState();
     const [privateKey, setPrivateKey] = useState();
-    const [balance, setBalance] = useState(false);
+    const [balance, setBalance] = useState('');
     const [showReceive, setShowReceive] = useState(false);
     const [showTransactions, setShowTransactions] = useState(false);
     const { register, errors, setError, setValue, formState, triggerValidation } = useForm({
@@ -92,11 +90,11 @@ function Send() {
                 </div>
             </div>
 
-            {formState.isValid ? (
+
                 <div>
                     <div className="container">
                         <div className={style.btnWrapper}>
-                            <p>Your Balance: {balance}</p>
+                            <p>Your Balance: {Number(balance).toFixed(8)}</p>
                             {/* <button
                 className={style.btn}
                 onClick={(e) => setShowReceive(!showReceive)}
@@ -115,15 +113,20 @@ function Send() {
             hide={() => setShowReceive(false)}
           /> */}
 
-                    <TransactionsHistory address={address} isShowing={showTransactions} hide={() => setShowTransactions(false)} />
+                    { address && <TransactionsHistory address={address} isShowing={showTransactions} hide={() => setShowTransactions(false)} />}
 
-                    <div className="container">
-                        <div className="cardWrapper">
-                            <SendForm address={address} balance={balance} privateKey={privateKey} />
-                        </div>
-                    </div>
+                    {
+                        !isNaN(balance) && (
+                            <div className="container">
+                                <div className="cardWrapper">
+                                    <SendForm address={address} balance={balance} privateKey={privateKey} />
+                                </div>
+                            </div>
+                        )
+                    }
                 </div>
-            ) : null}
+            )
+
 
             {!formState.isValid ? (
                 <>

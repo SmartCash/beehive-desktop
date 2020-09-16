@@ -1,24 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createAndSendRawTransaction, getFee } from '../../../../lib/sapi';
 import { isAddress, isPK } from '../../../../lib/smart';
 import style from './SendForm.module.css';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import useModal from '../../../../util/useModal';
 import Modal from '../modal/Modal';
 import barcode from '../../../../assets/images/barcode.svg';
+import useDebounce from '../../../../util/useDebounce';
+import MaskedInput from 'react-text-mask';
+import createNumberMask from 'text-mask-addons/dist/createNumberMask'
+import { subtractFloats, sumtractFloats } from '../../../../lib/math';
+
+const defaultMaskOptions = {
+    prefix: '',
+    suffix: '',
+    includeThousandsSeparator: true,
+    thousandsSeparatorSymbol: '',
+    allowDecimal: true,
+    decimalSymbol: '.',
+    decimalLimit: 8, // how many digits allowed after the decimal
+    integerLimit: 30, // limit length of integer numbers
+    allowNegative: false,
+    allowLeadingZeroes: false,
+}
+const currencyMask = createNumberMask(defaultMaskOptions)
+
 
 function Send({ address, balance, privateKey, withdraw }) {
     const { isShowing, toggle } = useModal(false);
+    const [amount, setAmount] = useState();
     const [txid, setTxId] = useState();
     const [fee, setFee] = useState();
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState();
-    const { register, handleSubmit, errors, setError, setValue, formState, triggerValidation, getValues } = useForm({
+    const debouncedAmount = useDebounce(amount, 1000);
+
+    const { control, register, handleSubmit, errors, setError, setValue, formState, triggerValidation, getValues } = useForm({
         mode: 'onChange',
         defaultValues: {
-            amount: withdraw ? Number(balance - 0.002).toFixed(4) : null,
+            amount: withdraw ? Number(balance - 0.002) : null,
         },
     });
+
+    useEffect(() => {
+        if (debouncedAmount) {
+            getFeeFromSAPI(debouncedAmount);
+        }
+    }, [debouncedAmount]);
 
     const onSubmit = (data) => {
         setLoading(true);
@@ -31,21 +59,27 @@ function Send({ address, balance, privateKey, withdraw }) {
     const getFeeFromSAPI = (amount) => {
         getFee(Number(amount), address).then((fee) => {
             setFee(fee);
-            if (fee && Number(getValues('amount')) + fee > balance) {
-                setError('amount', 'invalid', 'Requested amount exceeds balance');
-            }
+            // if (fee && Number(getValues("amount")) + fee > balance) {
+            //   setError("amount", "invalid", "Requested amount exceeds balance");
+            // }
         });
     };
+
+    const handleSendAllFunds = async () => {
+        const amount = subtractFloats(balance, 0.001).toFixed(8);
+        setValue('amount', amount, true);
+        setAmount(amount);
+    }
 
     if (txid) {
         return (
             <div className={style.amountWasSent}>
                 <p>Amount has been sent</p>
-                <a href={`https://sapi-explorer.herokuapp.com/#/tx/${txid}`} target="_blank" rel="noopener noreferrer">
+                <a href={`https://insight.smartcash.cc/tx/${txid}`} target="_blank" rel="noopener noreferrer">
                     {txid}
                     <small>(click to view details)</small>
                 </a>
-                <button onClick={() => window.location.reload()}>Refresh Page</button>
+                <button type="button" onClick={() => window.location.reload()}>Refresh Page</button>
             </div>
         );
     }
@@ -91,13 +125,16 @@ function Send({ address, balance, privateKey, withdraw }) {
                 <div className="formControl">
                     <label>
                         Amount to send
-                        <input
+                        <Controller
+                            as={MaskedInput}
+                            mask={currencyMask}
                             type="text"
                             name="amount"
-                            ref={register({
+                            control={control}
+                            rules={{
                                 required: true,
                                 validate: (value) => {
-                                    if (value > balance) {
+                                    if (value >= balance) {
                                         setError('amount', 'invalid', 'Exceeds balance');
                                         return false;
                                     }
@@ -105,24 +142,19 @@ function Send({ address, balance, privateKey, withdraw }) {
                                         setError('amount', 'invalid', 'The minimum amount to send is 0.001');
                                         return false;
                                     }
-                                    if (!value.match(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:((\.)\d{0,8})+)?$/)) {
-                                        setError('amount', 'invalid', 'Invalid format. e.g. 0,000.00000000');
-                                        return false;
-                                    }
+                                    setAmount(value);
                                 },
-                            })}
-                            onInput={async (e) => {
-                                const amount = e?.target?.value;
-                                await triggerValidation('amount').then((data) => data && getFeeFromSAPI(amount));
                             }}
-                        />
+                        ></Controller>
                     </label>
+                    { balance > 0.001 && <button type="button" className="sendAllFunds" onClick={() => handleSendAllFunds()}>Send All</button> }
                     {errors.amount && <span className="error-message">{errors.amount.message}</span>}
                 </div>
-                {fee && (
+
+                {fee && !errors.amount && (
                     <div className={style.fee}>
                         <p>Fee: {fee}</p>
-                        <p>Amount with fee: {Number(getValues('amount')) + fee}</p>
+                        <p className={style.requestedAmount}>Requested Amount: {sumtractFloats(getValues('amount'), 0.001)}</p>
                     </div>
                 )}
                 {!privateKey ? (

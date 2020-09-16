@@ -84,8 +84,20 @@ body {
   color: #555;
   line-height: 1.5;
   font-weight: 600;
-
   flex: 0 0 90%;
+  position: relative;
+}
+
+.formControl .sendAllFunds {
+    flex: 1;
+    background: none;
+    border: 1px solid #ccc;
+    font-size: 10px;
+    line-height: normal;
+    height: 32px;
+    margin-top: auto;
+    margin-bottom: 9px;
+    border-radius: 3px;
 }
 
 .formControl input[type="text"] {
