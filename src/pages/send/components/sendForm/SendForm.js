@@ -79,7 +79,7 @@ function Send({ address, balance, privateKey, withdraw }) {
                     {txid}
                     <small>(click to view details)</small>
                 </a>
-                <button onClick={() => window.location.reload()}>Refresh Page</button>
+                <button type="button" onClick={() => window.location.reload()}>Refresh Page</button>
             </div>
         );
     }
@@ -147,7 +147,7 @@ function Send({ address, balance, privateKey, withdraw }) {
                             }}
                         ></Controller>
                     </label>
-                    { balance > 0.001 && <button className="sendAllFunds" onClick={() => handleSendAllFunds()}>Send All</button> }
+                    { balance > 0.001 && <button type="button" className="sendAllFunds" onClick={() => handleSendAllFunds()}>Send All</button> }
                     {errors.amount && <span className="error-message">{errors.amount.message}</span>}
                 </div>
 
