@@ -9,6 +9,7 @@ import barcode from '../../../../assets/images/barcode.svg';
 import useDebounce from '../../../../util/useDebounce';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask'
+import { subtractFloats } from '../../../../lib/math';
 
 const defaultMaskOptions = {
     prefix: '',
@@ -65,7 +66,7 @@ function Send({ address, balance, privateKey, withdraw }) {
     };
 
     const handleSendAllFunds = async () => {
-        const amount = balance - 0.001;
+        const amount = subtractFloats(balance, 0.001).toFixed(8);
         setValue('amount', amount, true);
         setAmount(amount);
     }
