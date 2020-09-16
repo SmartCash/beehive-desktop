@@ -2,11 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { createAndSendRawTransaction, getFee } from '../../../../lib/sapi';
 import { isAddress, isPK } from '../../../../lib/smart';
 import style from './SendForm.module.css';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import useModal from '../../../../util/useModal';
 import Modal from '../modal/Modal';
 import barcode from '../../../../assets/images/barcode.svg';
 import useDebounce from '../../../../util/useDebounce';
+import MaskedInput from 'react-text-mask';
+import createNumberMask from 'text-mask-addons/dist/createNumberMask'
+
+const defaultMaskOptions = {
+    prefix: '',
+    suffix: '',
+    includeThousandsSeparator: true,
+    thousandsSeparatorSymbol: '',
+    allowDecimal: true,
+    decimalSymbol: '.',
+    decimalLimit: 8, // how many digits allowed after the decimal
+    integerLimit: 30, // limit length of integer numbers
+    allowNegative: false,
+    allowLeadingZeroes: false,
+}
+const currencyMask = createNumberMask(defaultMaskOptions)
+
 
 function Send({ address, balance, privateKey, withdraw }) {
     const { isShowing, toggle } = useModal(false);
@@ -16,9 +33,8 @@ function Send({ address, balance, privateKey, withdraw }) {
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState();
     const debouncedAmount = useDebounce(amount, 1000);
-    const [sendAllFunds, setSendAllFunds] = useState(false);
 
-    const { register, handleSubmit, errors, setError, setValue, formState, triggerValidation, getValues } = useForm({
+    const { control, register, handleSubmit, errors, setError, setValue, formState, triggerValidation, getValues } = useForm({
         mode: 'onChange',
         defaultValues: {
             amount: withdraw ? Number(balance - 0.002).toFixed(8) : null,
@@ -48,13 +64,10 @@ function Send({ address, balance, privateKey, withdraw }) {
         });
     };
 
-    const handleSendAllFunds = async (sendAllFunds) => {
-        if (sendAllFunds) {
-            const amount = Number(getValues('amount')) - 0.001;
-            setValue('amount', amount, true);
-            await triggerValidation('amount').then((data) => data && setAmount(amount));
-        }
-        setSendAllFunds(false);
+    const handleSendAllFunds = async () => {
+        const amount = balance - 0.001;
+        setValue('amount', amount, true);
+        setAmount(amount);
     }
 
     if (txid) {
@@ -111,17 +124,15 @@ function Send({ address, balance, privateKey, withdraw }) {
                 <div className="formControl">
                     <label>
                         Amount to send
-                        <input
+                        <Controller
+                            as={MaskedInput}
+                            mask={currencyMask}
                             type="text"
                             name="amount"
-                            ref={register({
+                            control={control}
+                            rules={{
                                 required: true,
                                 validate: (value) => {
-                                    setSendAllFunds(false);
-                                    if (String(value) === String(balance)) {
-                                        setSendAllFunds(true);
-                                        return false;
-                                    }
                                     if (value >= balance) {
                                         setError('amount', 'invalid', 'Exceeds balance');
                                         return false;
@@ -130,33 +141,19 @@ function Send({ address, balance, privateKey, withdraw }) {
                                         setError('amount', 'invalid', 'The minimum amount to send is 0.001');
                                         return false;
                                     }
-                                    if (!value.match(/^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:((\.)\d{0,8})+)?$/)) {
-                                        setError('amount', 'invalid', 'Invalid format. e.g. 0,000.00000000');
-                                        return false;
-                                    }
+                                    setAmount(value);
                                 },
-                            })}
-                            onInput={async (e) => {
-                                const amountValue = e?.target?.value.replace(',', '');
-                                await triggerValidation('amount').then((data) => data && setAmount(amountValue));
                             }}
-                        />
+                        ></Controller>
                     </label>
+                    { balance > 0.001 && <button className="sendAllFunds" onClick={() => handleSendAllFunds()}>Send All</button> }
                     {errors.amount && <span className="error-message">{errors.amount.message}</span>}
                 </div>
-                {
-                    sendAllFunds && (
-                        <div className={style.sendFundsMessage}>
-                            <p>Send all your funds?</p>
-                            <button onClick={() => handleSendAllFunds(true)}>Yes</button>
-                            <button onClick={() => handleSendAllFunds(false)}>No</button>
-                        </div>
-                    )
-                }
-                {fee && (
+
+                {fee && !errors.amount && (
                     <div className={style.fee}>
                         <p>Fee: {fee}</p>
-                        <p className={style.requestedAmount}>Requested Amount: {Number(Number(getValues('amount').replace(',', '')) + fee).toFixed(8)}</p>
+                        <p className={style.requestedAmount}>Requested Amount: {Number(Number(getValues('amount')) + fee)}</p>
                     </div>
                 )}
                 {!privateKey ? (

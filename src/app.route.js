@@ -3,9 +3,12 @@ import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import Send from "./pages/send/Send";
 import ExportPrivateKeys from "./pages/export-private-keys/ExportPrivateKeys";
 import ExportPrivateKeysWithMSK from "./pages/export-private-keys-msk/ExportPrivateKeysWithMSK";
+import HttpsRedirect from "./components/RedirectToHttps";
+
 
 function AppRoute() {
   return (
+      <HttpsRedirect>
     <Router>
       <Switch>
         <Route exact path="/">
@@ -19,6 +22,7 @@ function AppRoute() {
         </Route>
       </Switch>
     </Router>
+    </HttpsRedirect>
   );
 }
 
