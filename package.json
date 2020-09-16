@@ -34,18 +34,18 @@
     "react-phone-number-input": "~3.0.22",
     "react-qr-reader": "~2.2.1",
     "react-router-dom": "~5.1.2",
-    "react-scripts": "^3.4.3",
-    "react-text-mask": "^5.4.3",
+    "react-scripts": "~3.4.3",
+    "react-text-mask": "~5.4.3",
     "request": "~2.88.0",
     "request-promise": "~4.2.5",
     "smartcashjs-lib": "~3.3.6",
     "string-format": "~2.0.0",
     "styled-components": "~5.1.0",
-    "text-mask-addons": "^3.8.0"
+    "text-mask-addons": "~3.8.0"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build -- --profile",
     "test-react": "react-scripts test --env=jsdom",
     "eject-react": "react-scripts eject",
     "build-electron": "npm run build && electron-builder",
