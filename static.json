@@ -1,3 +1,4 @@
 {
+    "root": "public_html/",
     "https_only": true
 }
