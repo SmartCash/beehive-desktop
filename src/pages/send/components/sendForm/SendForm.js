@@ -9,7 +9,7 @@ import barcode from '../../../../assets/images/barcode.svg';
 import useDebounce from '../../../../util/useDebounce';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask'
-import { subtractFloats } from '../../../../lib/math';
+import { subtractFloats, sumtractFloats } from '../../../../lib/math';
 
 const defaultMaskOptions = {
     prefix: '',
@@ -44,7 +44,7 @@ function Send({ address, balance, privateKey, withdraw }) {
 
     useEffect(() => {
         if (debouncedAmount) {
-            getFeeFromSAPI(debouncedAmount.toFixed(8));
+            getFeeFromSAPI(debouncedAmount);
         }
     }, [debouncedAmount]);
 
@@ -154,7 +154,7 @@ function Send({ address, balance, privateKey, withdraw }) {
                 {fee && !errors.amount && (
                     <div className={style.fee}>
                         <p>Fee: {fee}</p>
-                        <p className={style.requestedAmount}>Requested Amount: {Number(Number(getValues('amount')) + fee)}</p>
+                        <p className={style.requestedAmount}>Requested Amount: {sumtractFloats(getValues('amount'), 0.001)}</p>
                     </div>
                 )}
                 {!privateKey ? (
