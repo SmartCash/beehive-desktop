@@ -1,29 +1,20 @@
-import React from "react";
-import { HashRouter as Router, Switch, Route } from "react-router-dom";
-import Send from "./pages/send/Send";
-import ExportPrivateKeys from "./pages/export-private-keys/ExportPrivateKeys";
-import ExportPrivateKeysWithMSK from "./pages/export-private-keys-msk/ExportPrivateKeysWithMSK";
-import HttpsRedirect from "./components/RedirectToHttps";
-
+import React from 'react';
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import HttpsRedirect from './components/RedirectToHttps';
+import Send from './pages/send/Send';
 
 function AppRoute() {
-  return (
-      <HttpsRedirect>
-    <Router>
-      <Switch>
-        <Route exact path="/">
-          <Send />
-        </Route>
-        <Route exact path="/export-private-key">
-          <ExportPrivateKeys />
-        </Route>
-        <Route exact path="/export-private-key-msk">
-          <ExportPrivateKeysWithMSK />
-        </Route>
-      </Switch>
-    </Router>
-    </HttpsRedirect>
-  );
+    return (
+        <HttpsRedirect>
+            <Router>
+                <Switch>
+                    <Route exact path="/">
+                        <Send />
+                    </Route>
+                </Switch>
+            </Router>
+        </HttpsRedirect>
+    );
 }
 
 export default AppRoute;

@@ -1,5 +1,4 @@
 const random = require('random');
-
 const request = require('request-promise');
 
 let sapis = ['https://sapi2.smartcash.org', 'https://sapi.smartcash.cc'];

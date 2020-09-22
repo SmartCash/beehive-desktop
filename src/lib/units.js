@@ -2,12 +2,12 @@
 
 const Big = require('big.js');
 let units = {
-    'BTC': new Big(1),
-    'mBTC': new Big(0.001),
-    'μBTC': new Big(0.000001),
-    'bit': new Big(0.000001),
-    'Satoshi': new Big(0.00000001),
-    'sat': new Big(0.00000001)
+    BTC: new Big(1),
+    mBTC: new Big(0.001),
+    μBTC: new Big(0.000001),
+    bit: new Big(0.000001),
+    Satoshi: new Big(0.00000001),
+    sat: new Big(0.00000001),
 };
 
 function convert(from, fromUnit, toUnit, representation) {

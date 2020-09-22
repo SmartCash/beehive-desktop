@@ -1,0 +1,6 @@
+{
+    "hooks": {
+        "pre-commit": "npx pretty-quick --staged",
+        "pre-push": "npm run build"
+    }
+}

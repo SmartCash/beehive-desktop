@@ -93,6 +93,26 @@ export async function getBalance(_address) {
     }
 }
 
+export async function getTxId(_txId) {
+    try {
+        return await request.get(`${getSapiUrl()}/v1/transaction/check/${_txId}`, {
+            json: true,
+        });
+    } catch (err) {
+        throw err;
+    }
+}
+
+export async function getRewards(_address) {
+    try {
+        return await request.get(`${getSapiUrl()}/v1/smartrewards/check/${_address}`, {
+            json: true,
+        });
+    } catch (err) {
+        throw err;
+    }
+}
+
 export async function getUnspentWithAmount(_address, _amount) {
     let utxos = {};
 

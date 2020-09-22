@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import MaskedInput from 'react-text-mask';
+import createNumberMask from 'text-mask-addons/dist/createNumberMask';
+import barcode from '../../../../assets/images/barcode.svg';
+import { subtractFloats, sumtractFloats } from '../../../../lib/math';
 import { createAndSendRawTransaction, getFee } from '../../../../lib/sapi';
 import { isAddress, isPK } from '../../../../lib/smart';
-import style from './SendForm.module.css';
-import { Controller, useForm } from 'react-hook-form';
+import useDebounce from '../../../../util/useDebounce';
 import useModal from '../../../../util/useModal';
 import Modal from '../modal/Modal';
-import barcode from '../../../../assets/images/barcode.svg';
-import useDebounce from '../../../../util/useDebounce';
-import MaskedInput from 'react-text-mask';
-import createNumberMask from 'text-mask-addons/dist/createNumberMask'
-import { subtractFloats, sumtractFloats } from '../../../../lib/math';
+import style from './SendForm.module.css';
 
 const defaultMaskOptions = {
     prefix: '',
@@ -22,9 +22,8 @@ const defaultMaskOptions = {
     integerLimit: 30, // limit length of integer numbers
     allowNegative: false,
     allowLeadingZeroes: false,
-}
-const currencyMask = createNumberMask(defaultMaskOptions)
-
+};
+const currencyMask = createNumberMask(defaultMaskOptions);
 
 function Send({ address, balance, privateKey, withdraw }) {
     const { isShowing, toggle } = useModal(false);
@@ -35,7 +34,7 @@ function Send({ address, balance, privateKey, withdraw }) {
     const [type, setType] = useState();
     const debouncedAmount = useDebounce(amount, 1000);
 
-    const { control, register, handleSubmit, errors, setError, setValue, formState, triggerValidation, getValues } = useForm({
+    const { control, register, handleSubmit, errors, setError, setValue, formState, trigger, getValues } = useForm({
         mode: 'onChange',
         defaultValues: {
             amount: withdraw ? Number(balance - 0.002) : null,
@@ -59,9 +58,6 @@ function Send({ address, balance, privateKey, withdraw }) {
     const getFeeFromSAPI = (amount) => {
         getFee(Number(amount), address).then((fee) => {
             setFee(fee);
-            // if (fee && Number(getValues("amount")) + fee > balance) {
-            //   setError("amount", "invalid", "Requested amount exceeds balance");
-            // }
         });
     };
 
@@ -69,7 +65,7 @@ function Send({ address, balance, privateKey, withdraw }) {
         const amount = subtractFloats(balance, 0.001).toFixed(8);
         setValue('amount', amount, true);
         setAmount(amount);
-    }
+    };
 
     if (txid) {
         return (
@@ -79,7 +75,9 @@ function Send({ address, balance, privateKey, withdraw }) {
                     {txid}
                     <small>(click to view details)</small>
                 </a>
-                <button type="button" onClick={() => window.location.reload()}>Refresh Page</button>
+                <button type="button" onClick={() => window.location.reload()}>
+                    Refresh Page
+                </button>
             </div>
         );
     }
@@ -102,12 +100,12 @@ function Send({ address, balance, privateKey, withdraw }) {
                                             isValid = true;
                                         })
                                         .catch((error) => {
-                                            setError('addressTo', 'invalid', 'Invalid address');
+                                            setError('addressTo', { shouldFocus: false });
                                         });
                                     return isValid;
                                 },
                             })}
-                            onInput={() => triggerValidation('addressTo')}
+                            onInput={() => trigger('addressTo')}
                         />
                     </label>
                     <button
@@ -120,7 +118,7 @@ function Send({ address, balance, privateKey, withdraw }) {
                     >
                         <img className="barCode" src={barcode} alt="Barcode" />
                     </button>
-                    {errors.addressTo && <span className="error-message">{errors.addressTo.message}</span>}
+                    {errors.addressTo && <span className="error-message">Invalid address</span>}
                 </div>
                 <div className="formControl">
                     <label>
@@ -135,20 +133,28 @@ function Send({ address, balance, privateKey, withdraw }) {
                                 required: true,
                                 validate: (value) => {
                                     if (value >= balance) {
-                                        setError('amount', 'invalid', 'Exceeds balance');
+                                        setError('amount', { message: 'Exceeds balance', shouldFocus: false });
                                         return false;
                                     }
                                     if (value < 0.001) {
-                                        setError('amount', 'invalid', 'The minimum amount to send is 0.001');
+                                        setError('amount', {
+                                            message: 'The minimum amount to send is 0.001',
+                                            shouldFocus: false,
+                                        });
                                         return false;
                                     }
                                     setAmount(value);
                                 },
                             }}
+                            onInput={() => trigger('amount')}
                         ></Controller>
                     </label>
-                    { balance > 0.001 && <button type="button" className="sendAllFunds" onClick={() => handleSendAllFunds()}>Send All</button> }
-                    {errors.amount && <span className="error-message">{errors.amount.message}</span>}
+                    {balance > 0.003 && (
+                        <button type="button" className="sendAllFunds" onClick={() => handleSendAllFunds()}>
+                            Send All
+                        </button>
+                    )}
+                    {errors?.amount && <span className="error-message">{errors?.amount?.message}</span>}
                 </div>
 
                 {fee && !errors.amount && (
@@ -172,7 +178,7 @@ function Send({ address, balance, privateKey, withdraw }) {
                                         await isPK(value)
                                             .then((data) => (isValid = true))
                                             .catch((error) => {
-                                                setError('privateKey', 'invalid', 'Invalid Private Key');
+                                                setError('privateKey', { message: 'Invalid Private Key', shouldFocus: false });
                                             });
                                         return isValid;
                                     },
@@ -189,7 +195,7 @@ function Send({ address, balance, privateKey, withdraw }) {
                         >
                             <img className="barCode" src={barcode} alt="Barcode" />
                         </button>
-                        {errors.privateKey && <span className="error-message">{errors.privateKey.message}</span>}
+                        {errors?.privateKey && <span className="error-message">{errors?.privateKey?.message}</span>}
                     </div>
                 ) : null}
                 <button type="submit" disabled={loading || !formState.isValid}>
