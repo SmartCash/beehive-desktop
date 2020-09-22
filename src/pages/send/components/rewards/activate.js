@@ -2,18 +2,19 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import barcode from '../../../../assets/images/barcode.svg';
 import { subtractFloats } from '../../../../lib/math';
-import { createAndSendRawTransaction, getRewards, getTxId, getUnspent } from '../../../../lib/sapi';
+import { createAndSendRawTransaction, getBalance, getRewards, getTxId, getUnspent } from '../../../../lib/sapi';
 import { isPK } from '../../../../lib/smart';
 import useModal from '../../../../util/useModal';
 import Modal from '../modal/Modal';
 
-function RewardsActivate({ address, privateKey, balance, rewards: _rewards }) {
+function RewardsActivate({ address, privateKey, balance: _balance, rewards: _rewards }) {
     let timer;
     const { isShowing, toggle } = useModal(false);
     const [loading, setLoading] = useState(false);
     const [activating, setActivating] = useState(false);
     const [type, setType] = useState();
     const [rewards, setRewards] = useState(_rewards);
+    const [balance, setBalance] = useState(_balance);
 
     const { register, handleSubmit, errors, setError, setValue, formState } = useForm({
         mode: 'onChange',
@@ -32,7 +33,10 @@ function RewardsActivate({ address, privateKey, balance, rewards: _rewards }) {
     const SendTransaction = (_data) => {
         setLoading(true);
         const amount = subtractFloats(balance, 0.001).toFixed(8);
-        return createAndSendRawTransaction(address, amount, String(privateKey || _data?.privateKey));
+        return createAndSendRawTransaction(address, amount, String(privateKey || _data?.privateKey)).then(async (data) => {
+            await getBalance(address).then((res) => setBalance(res.balance));
+            return data;
+        });
     };
 
     const checkTxId = async (_txid) => {
