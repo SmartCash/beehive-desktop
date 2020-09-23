@@ -3,3 +3,7 @@
 .wrapper p {
     width: 100%;
 }
+.wrapperActivating {
+    text-align: center;
+    width: 100%;
+}

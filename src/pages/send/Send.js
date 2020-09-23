@@ -19,7 +19,7 @@ function Send() {
     const [balance, setBalance] = useState();
     const [history, setHistory] = useState();
     const [rewards, setRewards] = useState();
-    const { register, errors, setError, setValue, formState, trigger } = useForm({
+    const { register, errors, setError, setValue, formState } = useForm({
         mode: 'onChange',
     });
 

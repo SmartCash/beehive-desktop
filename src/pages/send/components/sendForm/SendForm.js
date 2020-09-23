@@ -34,7 +34,7 @@ function Send({ address, balance, privateKey, withdraw }) {
     const [type, setType] = useState();
     const debouncedAmount = useDebounce(amount, 1000);
 
-    const { control, register, handleSubmit, errors, setError, setValue, formState, trigger, getValues } = useForm({
+    const { control, register, handleSubmit, errors, setError, setValue, formState, triggerValidation, getValues } = useForm({
         mode: 'onChange',
         defaultValues: {
             amount: withdraw ? Number(balance - 0.002) : null,
@@ -105,7 +105,7 @@ function Send({ address, balance, privateKey, withdraw }) {
                                     return isValid;
                                 },
                             })}
-                            onInput={() => trigger('addressTo')}
+                            onInput={() => triggerValidation('addressTo')}
                         />
                     </label>
                     <button
@@ -146,7 +146,7 @@ function Send({ address, balance, privateKey, withdraw }) {
                                     setAmount(value);
                                 },
                             }}
-                            onInput={() => trigger('amount')}
+                            onInput={() => triggerValidation('amount')}
                         ></Controller>
                     </label>
                     {balance > 0.003 && (
