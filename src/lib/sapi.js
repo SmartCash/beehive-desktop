@@ -14,7 +14,7 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString) 
 
     let totalUnspent = _.sumBy(sapiUnspent.utxos, 'amount');
 
-    let fee = calculateFee(sapiUnspent.utxos);
+    let fee = await calculateFee(sapiUnspent.utxos);
 
     let change = totalUnspent - amount - fee;
 
@@ -195,7 +195,7 @@ export async function sendTransaction(hex) {
     }
 }
 
-function calculateFee(listUnspent) {
+export async function calculateFee(listUnspent) {
     let MIN_FEE = 0.001;
 
     if (_.isUndefined(listUnspent)) return MIN_FEE;

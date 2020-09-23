@@ -9,7 +9,7 @@ const TransactionsHistory = ({ address, history }) => {
     return (
         <div>
             Showing last 5 transactions.
-            <a href={`https://sapi-explorer.herokuapp.com/#/address/${address}`} target="_blank" rel="noopener noreferrer">
+            <a href={`https://explorer.smartcash.org/#/address/${address}`} target="_blank" rel="noopener noreferrer">
                 See all
             </a>
             {!history && <p>Loading</p>}

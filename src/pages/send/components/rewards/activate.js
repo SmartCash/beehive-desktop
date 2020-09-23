@@ -1,62 +1,64 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import barcode from '../../../../assets/images/barcode.svg';
-import { subtractFloats } from '../../../../lib/math';
-import { createAndSendRawTransaction, getBalance, getRewards, getTxId, getUnspent } from '../../../../lib/sapi';
+import { sumFloats, subtractFloats } from '../../../../lib/math';
+import { createAndSendRawTransaction, calculateFee, getTxId, getUnspent } from '../../../../lib/sapi';
 import { isPK } from '../../../../lib/smart';
 import useModal from '../../../../util/useModal';
 import Modal from '../modal/Modal';
 import style from './activate.module.css';
 
-function RewardsActivate({ address, privateKey, balance: _balance, rewards: _rewards }) {
-    let timer;
+function RewardsActivate({ address, privateKey: _privateKey, rewards: _rewards }) {
     const { isShowing, toggle } = useModal(false);
     const [loading, setLoading] = useState(false);
     const [activating, setActivating] = useState(false);
     const [type, setType] = useState();
     const [rewards, setRewards] = useState(_rewards);
-    const [balance, setBalance] = useState(_balance);
+    const [privateKey, setPrivateKey] = useState(_privateKey);
+    const [isActive, setIsActive] = useState(false);
 
     const { register, handleSubmit, errors, setError, setValue, formState } = useForm({
         mode: 'onChange',
     });
 
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
     const onSubmit = async (data) => {
-        const unspents = await getUnspent(address);
-        if (unspents.utxos.length === 1) {
-            await SendTransaction(data).then((data) => checkTxId(data?.txid));
-        } else if (unspents.utxos.length > 1) {
-            await SendTransaction(data);
-            await SendTransaction(data).then((data) => checkTxId(data?.txid));
-        }
-    };
-
-    const SendTransaction = (_data) => {
-        setLoading(true);
-        const amount = Number(subtractFloats(balance, 0.001).toFixed(8));
-        return createAndSendRawTransaction(address, amount, String(privateKey || _data?.privateKey)).then(async (data) => {
-            await getBalance(address).then((res) => setBalance(res.balance));
-            return data;
-        });
-    };
-
-    const checkTxId = async (_txid) => {
         setActivating(true);
-        const txid = await getTxId(_txid);
-        if (txid.confirmations >= 1) {
-            clearTimeout(timer);
-            getRewards(address).then((_data) => {
-                setRewards(_data);
-                if (_data.activated === 1) {
-                    setActivating(false);
-                }
-            });
-            return;
+
+        if (data.privateKey) {
+            setPrivateKey(data.privateKey);
         }
-        timer = setTimeout(() => checkTxId(_txid), 55000);
+
+        let _unspents, _amount, _balance, transactionId;
+
+        const activeRewards = async () => {
+            _unspents = await getUnspent(address);
+            _amount = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8));
+            _balance = subtractFloats(_amount, await calculateFee(_unspents.utxos));
+            transactionId = await SendTransaction(Number(_balance.toFixed(8)));
+        };
+
+        activeRewards();
+        await sleep(60000 * 1.5);
+
+        activeRewards();
+        await sleep(60000 * 1.5);
+
+        let transaction = await getTxId(transactionId.txid);
+        let isActivated = transaction.vin.length === 1 && transaction.vout.length === 1;
+
+        if (isActivated === true) {
+            setIsActive(true);
+            setActivating(false);
+        }
     };
 
-    if (rewards && rewards.activated === 0 && activating) {
+    const SendTransaction = (amount) => {
+        return createAndSendRawTransaction(address, amount, privateKey);
+    };
+
+    if (isActive === false && activating) {
         return (
             <div className={style.wrapperActivating}>
                 <img
@@ -72,16 +74,21 @@ function RewardsActivate({ address, privateKey, balance: _balance, rewards: _rew
 
     return (
         <>
-            {rewards && rewards.activated === 1 && (
+            {isActive && (
                 <div className="wrapper">
-                    <p>Activated: {rewards.activated ? 'Yes' : 'No'}</p>
-                    <p>Eligible to Rewards: {rewards.eligible ? 'Yes' : 'No'}</p>
-                    <p>Balance Eligible: {String(rewards.balance_eligible)}</p>
+                    <p>Your Smart Rewards is active.</p>
                 </div>
             )}
-            {rewards && rewards.activated === 0 && (
+            {rewards && rewards.activated === 1 && isActive === false && (
                 <div className="wrapper">
-                    <p>Your wallet is not eligible to Rewards, put your Private Key to activate.</p>
+                    <div className="wrapper">
+                        <p>Activated: {rewards.activated ? 'Yes' : 'No'}</p>
+                    </div>
+                </div>
+            )}
+            {rewards && rewards.activated === 0 && isActive === false && (
+                <div className="wrapper">
+                    <p>Click in the button below to activate Smart Rewards.</p>
                     <form onSubmit={handleSubmit(onSubmit)} className="formGroup" autoComplete="off">
                         {!privateKey ? (
                             <div className="formControl">

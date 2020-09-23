@@ -3,10 +3,9 @@ import { Controller, useForm } from 'react-hook-form';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import barcode from '../../../../assets/images/barcode.svg';
-import { subtractFloats, sumtractFloats } from '../../../../lib/math';
-import { createAndSendRawTransaction, getFee } from '../../../../lib/sapi';
+import { subtractFloats, sumtractFloats, sumFloats } from '../../../../lib/math';
+import { createAndSendRawTransaction, calculateFee, getUnspent } from '../../../../lib/sapi';
 import { isAddress, isPK } from '../../../../lib/smart';
-import useDebounce from '../../../../util/useDebounce';
 import useModal from '../../../../util/useModal';
 import Modal from '../modal/Modal';
 import style from './SendForm.module.css';
@@ -29,23 +28,26 @@ function Send({ address, balance, privateKey, withdraw }) {
     const { isShowing, toggle } = useModal(false);
     const [amount, setAmount] = useState();
     const [txid, setTxId] = useState();
-    const [fee, setFee] = useState();
+    const [fee, setFee] = useState(0);
+    const [_unspents, setUnspents] = useState();
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState();
-    const debouncedAmount = useDebounce(amount, 1000);
 
     const { control, register, handleSubmit, errors, setError, setValue, formState, triggerValidation, getValues } = useForm({
         mode: 'onChange',
-        defaultValues: {
-            amount: withdraw ? Number(balance - 0.002) : null,
-        },
     });
 
     useEffect(() => {
-        if (debouncedAmount) {
-            getFeeFromSAPI(debouncedAmount);
+        if (address) {
+            getUnspent(address).then((res) => {
+                setUnspents(res);
+                calculateFee(res.utxos).then((res) => {
+                    console.log(res);
+                    setFee(res);
+                });
+            });
         }
-    }, [debouncedAmount]);
+    }, [address]);
 
     const onSubmit = (data) => {
         setLoading(true);
@@ -55,16 +57,11 @@ function Send({ address, balance, privateKey, withdraw }) {
             .finally(() => setLoading(false));
     };
 
-    const getFeeFromSAPI = (amount) => {
-        getFee(Number(amount), address).then((fee) => {
-            setFee(fee);
-        });
-    };
-
     const handleSendAllFunds = async () => {
-        const amount = subtractFloats(balance, 0.001).toFixed(8);
-        setValue('amount', amount, true);
-        setAmount(amount);
+        const _amount = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8));
+        const _balance = subtractFloats(_amount, fee);
+        setValue('amount', _balance, true);
+        setAmount(_balance);
     };
 
     if (txid) {
@@ -157,12 +154,13 @@ function Send({ address, balance, privateKey, withdraw }) {
                     {errors?.amount && <span className="error-message">{errors?.amount?.message}</span>}
                 </div>
 
-                {fee && !errors.amount && (
+                {fee > 0 && (
                     <div className={style.fee}>
                         <p>Fee: {fee}</p>
-                        <p className={style.requestedAmount}>Requested Amount: {sumtractFloats(getValues('amount'), 0.001)}</p>
+                        {/* <p className={style.requestedAmount}>Requested Amount: {sumtractFloats(getValues('amount'), fee)}</p> */}
                     </div>
                 )}
+
                 {!privateKey ? (
                     <div className="formControl">
                         <label>
