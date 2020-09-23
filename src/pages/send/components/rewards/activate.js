@@ -8,13 +8,12 @@ import useModal from '../../../../util/useModal';
 import Modal from '../modal/Modal';
 import style from './activate.module.css';
 
-function RewardsActivate({ address, privateKey: _privateKey, rewards: _rewards }) {
+function RewardsActivate({ address, privateKey, rewards: _rewards }) {
     const { isShowing, toggle } = useModal(false);
     const [loading, setLoading] = useState(false);
     const [activating, setActivating] = useState(false);
     const [type, setType] = useState();
     const [rewards, setRewards] = useState(_rewards);
-    const [privateKey, setPrivateKey] = useState(_privateKey);
     const [isActive, setIsActive] = useState(false);
 
     const { register, handleSubmit, errors, setError, setValue, formState } = useForm({
@@ -26,17 +25,13 @@ function RewardsActivate({ address, privateKey: _privateKey, rewards: _rewards }
     const onSubmit = async (data) => {
         setActivating(true);
 
-        if (data.privateKey) {
-            setPrivateKey(data.privateKey);
-        }
-
         let _unspents, _amount, _balance, transactionId;
 
         const activeRewards = async () => {
             _unspents = await getUnspent(address);
             _amount = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8));
             _balance = subtractFloats(_amount, await calculateFee(_unspents.utxos));
-            transactionId = await SendTransaction(Number(_balance.toFixed(8)));
+            transactionId = await SendTransaction(Number(_balance.toFixed(8)), data.privateKey);
         };
 
         activeRewards();
@@ -54,8 +49,8 @@ function RewardsActivate({ address, privateKey: _privateKey, rewards: _rewards }
         }
     };
 
-    const SendTransaction = (amount) => {
-        return createAndSendRawTransaction(address, amount, privateKey);
+    const SendTransaction = (amount, _privateKey) => {
+        return createAndSendRawTransaction(address, amount, privateKey || _privateKey);
     };
 
     if (isActive === false && activating) {
