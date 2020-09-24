@@ -28,6 +28,11 @@ let sapis = [
     `http://195.201.22.117:8080`,
     `http://195.201.22.101:8080`,
 ];
+
+if (window.location.protocol === 'https:') {
+    sapis = sapis[`https://sapi.smartcash.cc`];
+}
+
 /*
 request.get('https://sapi.smartcash.ccsmartnodes/list').then((list) => {
     list = JSON.parse(list);
