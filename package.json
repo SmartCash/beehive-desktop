@@ -28,6 +28,7 @@
         "random": "~2.1.1",
         "random-js": "~2.1.0",
         "react": "~16.13.1",
+        "react-countdown": "^2.2.1",
         "react-dom": "~16.13.1",
         "react-hook-form": "~5.5.3",
         "react-input-mask": "~2.0.4",

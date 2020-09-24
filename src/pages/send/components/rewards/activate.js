@@ -7,6 +7,7 @@ import { isPK } from '../../../../lib/smart';
 import useModal from '../../../../util/useModal';
 import Modal from '../modal/Modal';
 import style from './activate.module.css';
+import Countdown from 'react-countdown';
 
 function RewardsActivate({ address, privateKey, rewards: _rewards }) {
     const { isShowing, toggle } = useModal(false);
@@ -61,6 +62,9 @@ function RewardsActivate({ address, privateKey, rewards: _rewards }) {
                     width="25px"
                     height="25px"
                 />
+                <p>
+                    <Countdown date={Date.now() + 300000} />
+                </p>
                 <p>Activating your Rewards.</p>
                 <p>This can take a while, do not reload this page.</p>
             </div>
