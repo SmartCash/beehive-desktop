@@ -1,5 +1,4 @@
 const random = require('random');
-const request = require('request-promise');
 
 let sapis = [
     `http://64.44.52.40:8080`,
@@ -29,8 +28,12 @@ let sapis = [
     `http://195.201.22.101:8080`,
 ];
 
-if (window.location.protocol === 'https:') {
-    sapis = sapis[`https://sapi.smartcash.cc`];
+let sapiAddress = `https://sapi.smartcash.cc`;
+
+if (window.location.protocol === 'http:') {
+    sapiAddress = sapis[random.int(0, sapis.length - 1)];
 }
 
-module.exports = () => sapis[random.int(0, sapis.length - 1)];
+console.log(sapiAddress);
+
+module.exports = () => sapiAddress;
