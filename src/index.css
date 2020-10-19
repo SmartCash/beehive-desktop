@@ -1,182 +1,249 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
 html {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 *,
-*:before,
-*:after {
-  box-sizing: inherit;
-  outline: 0;
+*:after,
+*:before {
+    box-sizing: inherit;
 }
 
 html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
+body,
 #root {
-  height: inherit;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    --primary: #f2ba2a;
+    --black: #141315;
+    --headerHeight: 100px;
+    --sidebarWidth: 415px;
+    --borderRadius: 8px;
+    --spacer: 25px;
+    --spacer-lg: 50px;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-size: 16px;
-  line-height: 1.6;
-  background: #f7f7f7;
-  color: #333;
+    background: var(--black);
+    font-family: 'Roboto', sans-serif;
+    overflow: hidden;
 }
 
-.container {
-  width: 100%;
-  max-width: 600px;
-  padding-left: 15px;
-  padding-right: 15px;
-  margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
+.header {
+    width: 100%;
+    height: var(--headerHeight);
+    border-bottom: 1px solid #252426;
+    display: flex;
+    align-items: center;
+    padding: 25px;
 }
 
-.cardWrapper {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  flex: 0 0 100%;
-  border-radius: 10px;
-  transition: 0.3s;
-  background-color: #fff;
-  padding: 15px;
+.header .logo {
+    width: 235px;
 }
 
-.cardWrapper ~ .cardWrapper {
-  margin-top: 15px;
-  margin-bottom: 15px;
+.header .nav {
+    margin-left: 180px;
 }
 
-.cardWrapper .block {
-  display: block;
-  width: 100%;
-  margin: 0;
-  word-break: break-all;
-  font-size: 13px;
+.header .nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
 }
 
-.formGroup {
-  width: 100%;
+.header .nav li ~ li {
+    margin-left: 75px;
 }
 
-.formControl {
-  margin-bottom: 25px;
-  border-bottom: 1px solid #ececec;
-  display: flex;
-  flex-wrap: wrap;
-  flex: 0 0 100%;
+.header .nav a {
+    color: var(--primary);
+    font-weight: 400;
+    text-transform: uppercase;
+    text-decoration: none;
 }
 
-.formControl label {
-  width: 100%;
-  font-size: 16px;
-  color: #555;
-  line-height: 1.5;
-  font-weight: 600;
-  flex: 0 0 90%;
-  position: relative;
+.header .nav a.active {
+    position: relative;
 }
 
-.formControl .sendAllFunds {
-    flex: 1;
-    background: none;
-    border: 1px solid #ccc;
-    font-size: 10px;
+.header .nav a.active:after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--primary);
+    position: absolute;
+    left: 0;
+    bottom: -40px;
+}
+
+.main {
+    width: 100%;
+    height: calc(100% - var(--headerHeight));
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.sidebar {
+    width: var(--sidebarWidth);
+}
+
+.wallets-balance {
+    width: 100%;
+    height: 140px;
+    background: #0c0c0d;
+    padding: 25px;
+}
+
+.wallets-balance .amount {
+    font-size: 23px;
+    font-weight: 700;
+    color: var(--primary);
+    padding: 0;
+    margin: 25px 0 0;
+}
+
+.wallets-balance .fiat {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    padding: 0;
+    margin: 0;
+}
+
+.wallets-list {
+    width: 100%;
+    height: calc(100% - 140px);
+    background: rgba(12, 12, 13, 0.4);
+}
+
+.wallets-list-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 25px 25px 0;
+}
+
+.wallets-list-header button {
+    margin-left: auto;
+}
+
+.title {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #999;
+    font-family: 'Roboto';
+}
+
+.wallet {
+    padding: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.wallet ~ .wallet {
+    border-top: 1px solid rgba(153, 153, 153, 0.1);
+}
+.wallet .symbol {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #999999;
+    color: #999999;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 100%;
+}
+.wallet .content {
+    padding: 0 0 0 15px;
+    width: calc(100% - 50px);
+}
+.wallet .amount {
+    padding: 0;
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #999;
+}
+.wallet .address {
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #999999;
+}
+.wallet ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.wallet li {
+    font-size: 8px;
     line-height: normal;
-    height: 32px;
-    margin-top: auto;
-    margin-bottom: 9px;
-    border-radius: 3px;
+    text-transform: uppercase;
+    color: #999999;
+    border: 1px solid #999;
+    border-radius: 20px;
+    height: 14px;
+    display: inline;
+    padding: 1px 5px;
 }
 
-.formControl input[type="text"] {
-  flex: 0 0 95%;
-  border-radius: 2px;
-  font-size: 18px;
-  height: 45px;
-  border: 0;
-  outline: 0;
-  display: flex;
-  width: 100%;
+
+/* FormControl */
+.form-control {
+    width: 100%;
+    padding: var(--spacer);
+    display: flex;
+    flex-wrap: wrap;
+}
+.form-control label {
+    font-size: 13px;
+    color: #999;
+    width: 100%;
+}
+.form-control input,
+.form-control select {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    margin: 8px 0 0;
+    background: none;
+    text-transform: uppercase;
+}
+.form-control input::placeholder {
+    color: #464444;
 }
 
-.formControl .error-message {
-  font-size: 11px;
-  color: #dd1111;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-.formGroup button[type="submit"] {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  font-weight: 700;
-  border: 0;
-  margin: 0 auto;
-  background: #fec712db;
-  width: 100%;
-  border-radius: 10px;
-  font-size: 16px;
-}
-
-.formGroup [type="submit"]:disabled {
-  opacity: 0.5;
-}
-
-.formControl .modalButton {
-  height: 45px;
-  border: 0;
-  border-radius: 0;
-  margin: 0;
-  background-color: transparent;
-  flex: 0 0 10%;
-  display: flex;
-  align-self: flex-end;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-}
-
-.formControl .barCode {
-  width: 20px;
-  height: 20px;
-  object-fit: cover;
-  opacity: 0.8;
-}
-
+/* BTN */
 .btn {
-  border: 1px solid #e6e6e6;
-  border-radius: 2px;
-  padding: 10px;
-  cursor: pointer;
+    outline: 0;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: none;
+    cursor: pointer;
 }
 
-.btn:focus,
-.btn:hover {
-  background: #f2f2f2;
-}
-
-.buttonsWrapper {
-  display: flex;
-  justify-content: center;
-}
-
-.buttonsWrapper .btn {
-  margin: 5px;
-}
-
-button:not(:disabled) {
-  cursor: pointer;
+/*  */
+.page {
+    flex: 1;
+    padding: var(--spacer-lg);
+    overflow: hidden;
+    height: 100%;
 }

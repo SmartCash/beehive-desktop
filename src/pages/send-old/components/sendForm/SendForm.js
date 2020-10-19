@@ -3,12 +3,12 @@ import { createAndSendRawTransaction, getFee } from '../../../../lib/sapi';
 import { isAddress, isPK } from '../../../../lib/smart';
 import style from './SendForm.module.css';
 import { Controller, useForm } from 'react-hook-form';
-import useModal from '../../../../util/useModal';
+import useModal from '../../../../hooks/useModal';
 import Modal from '../modal/Modal';
 import barcode from '../../../../assets/images/barcode.svg';
-import useDebounce from '../../../../util/useDebounce';
+import useDebounce from '../../../../hooks/useDebounce';
 import MaskedInput from 'react-text-mask';
-import createNumberMask from 'text-mask-addons/dist/createNumberMask'
+import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import { subtractFloats, sumtractFloats } from '../../../../lib/math';
 
 const defaultMaskOptions = {
@@ -22,9 +22,8 @@ const defaultMaskOptions = {
     integerLimit: 30, // limit length of integer numbers
     allowNegative: false,
     allowLeadingZeroes: false,
-}
-const currencyMask = createNumberMask(defaultMaskOptions)
-
+};
+const currencyMask = createNumberMask(defaultMaskOptions);
 
 function Send({ address, balance, privateKey, withdraw }) {
     const { isShowing, toggle } = useModal(false);
@@ -69,7 +68,7 @@ function Send({ address, balance, privateKey, withdraw }) {
         const amount = subtractFloats(balance, 0.001).toFixed(8);
         setValue('amount', amount, true);
         setAmount(amount);
-    }
+    };
 
     if (txid) {
         return (
@@ -79,7 +78,9 @@ function Send({ address, balance, privateKey, withdraw }) {
                     {txid}
                     <small>(click to view details)</small>
                 </a>
-                <button type="button" onClick={() => window.location.reload()}>Refresh Page</button>
+                <button type="button" onClick={() => window.location.reload()}>
+                    Refresh Page
+                </button>
             </div>
         );
     }
@@ -147,7 +148,11 @@ function Send({ address, balance, privateKey, withdraw }) {
                             }}
                         ></Controller>
                     </label>
-                    { balance > 0.001 && <button type="button" className="sendAllFunds" onClick={() => handleSendAllFunds()}>Send All</button> }
+                    {balance > 0.001 && (
+                        <button type="button" className="sendAllFunds" onClick={() => handleSendAllFunds()}>
+                            Send All
+                        </button>
+                    )}
                     {errors.amount && <span className="error-message">{errors.amount.message}</span>}
                 </div>
 
