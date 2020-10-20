@@ -1,0 +1,26 @@
+.page-transactions {}
+
+.page-transactions .transaction {
+    padding: var(--spacer);
+    background: #0c0c0d;
+    color: #999;
+}
+
+.page-transactions .transaction .label {
+    margin: 0 0 8px;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.page-transactions .transaction .value {
+    margin: 0 0 0;
+    padding: 0;
+}
+.page-transactions .transaction .value + .label {
+    margin-top: var(--spacer);
+}
+
+.page-transactions .transaction ~ .transaction {
+    margin-top: var(--spacer);
+}

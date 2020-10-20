@@ -1,0 +1,26 @@
+.page-receive .qrcode {
+    width: 240px;
+    height: 240px;
+    padding: var(--spacer);
+    border-radius: var(--borderRadius);
+    background: #ffffff;
+    margin: 0 auto var(--spacer-lg);
+}
+.page-receive .form-group {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #999;
+    border-radius: var(--borderRadius);
+    margin-top: var(--spacer-lg);
+}
+.page-receive .address {
+    border-bottom: 1px solid #999;
+}
+.page-receive .fiat {
+    width: 200px;
+}
+.page-receive .amount {
+    flex: 1;
+    align-items: center;
+    border-left: 1px solid #999;
+}

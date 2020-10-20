@@ -1,0 +1,90 @@
+.page-send .privateKey {
+    background: #0C0C0D;
+    border-radius: var(--borderRadius);
+    padding: var(--spacer);
+    display: flex;
+    flex-wrap: wrap;
+}
+.page-send .privateKey .label {
+    font-size: 13px;
+    color: #999;
+}
+.page-send .privateKey input {
+    background-color: transparent;
+    border: 0;
+    font-size: 18px;
+    color: #999;
+}
+.page-send .form-group {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #999;
+    border-radius: var(--borderRadius);
+    margin-top: var(--spacer-lg);
+}
+.page-send .address {
+    border-bottom: 1px solid #999;
+}
+.page-send .fiat {
+    width: 200px;
+}
+.page-send .amount {
+    flex: 1;
+    align-items: center;
+    border-left: 1px solid #999;
+}
+.page-send .amount button {
+    border: 1px solid #999;
+    background: none;
+    color: #999;
+    border-radius: var(--borderRadius);
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: .5s;
+}
+.page-send .amount button:hover,
+.page-send .amount button:focus {
+    background: #999;
+    color: #0c0c0d;
+    outline: 0;
+    border: 0;
+}
+.page-send .amount button ~ button {
+    margin-left: 7px;
+}
+.page-send .transactionInfo {
+    margin-top: var(--spacer);
+    display: flex;
+    flex-wrap: wrap;
+}
+.page-send .transactionInfo > div {
+    padding-left: var(--spacer);
+    padding-right: var(--spacer);
+}
+.page-send .transactionInfo .label {
+    font-size: 13px;
+    color: #999;
+    margin: 0 0 10px;
+}
+.page-send .transactionInfo .value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+.page-send button[type="submit"] {
+    border: 0;
+    outline: 0;
+    margin: var(--spacer) 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 56px;
+    width: 170px;
+    background: var(--primary);
+    border-radius: var(--borderRadius);
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
