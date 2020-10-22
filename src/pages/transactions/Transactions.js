@@ -6,17 +6,17 @@ import './Transactions.css';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 function Transactions() {
-    const { walletSelected } = useContext(WalletContext);
+    const { walletCurrent } = useContext(WalletContext);
     const [history, setHistory] = useState([]);
 
     useEffect(() => {
         async function _getTransactionHistory() {
-            await getTransactionHistory(walletSelected.address)
+            await getTransactionHistory(walletCurrent.address)
                 .then((data) => setHistory(data))
                 .catch((error) => console.error(error));
         }
         _getTransactionHistory();
-    }, []);
+    }, [walletCurrent]);
 
     return (
         <Page className='page-transactions'>

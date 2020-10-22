@@ -19,8 +19,13 @@
 .page-receive .fiat {
     width: 200px;
 }
-.page-receive .amount {
+.page-receive .amount,
+.page-receive .amountInSmart {
     flex: 1;
     align-items: center;
     border-left: 1px solid #999;
+}
+
+.page-receive .amountInSmart input {
+    font-size: 16px;
 }

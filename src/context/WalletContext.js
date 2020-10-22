@@ -1,41 +1,43 @@
 import React, { createContext, useReducer } from 'react';
 
-const initialState = {};
+const initialState = {
+    wallets: [],
+    walletCurrent: {}
+};
 
 const userReducer = (state, action) => {
-    
+    switch (action.type) {
+        case 'add': {
+            const _wallets = [...state.wallets, action.payload];
+            return { ...state, wallets: _wallets };
+        }
+        case 'setWalletCurrent': {
+            return { ...state, walletCurrent: action.payload };
+        }
+        default: {
+            return state;
+        }
+    }
 }
 
 export const WalletContext = createContext({});
 
 export const WalletProvider = ({ children }) => {
-
     const [state, dispatch] = useReducer(userReducer, initialState);
 
-    const wallets = [
-        {
-            label: 'Wallet 1',
-            address: 'SXuLDkBBs2H6FA6jkHSfoEW9gQmX7wRpvx',
-            balance: 10
-        },
-        {
-            label: 'Wallet 2',
-            address: 'SQrMADJm6uF9bJhoZjFZ3mjGfv2FgBVvWg',
+    const addWallet = (wallet) => {
+        const _wallet = {
+            ...wallet,
             balance: 0
         }
-    ];
-    const walletSelected = wallets[0];
-
-    const addWallet = () => {
-        wallets.push({
-            address: 'SQrMADJm6uF9bJhoZjFZ3mjGfv2FgBVvWg',
-            balance: 0
-        })
+        if (state.wallets.length === 0) {
+            dispatch({ type: 'setWalletCurrent', payload: _wallet});
+        }
+        dispatch({ type: 'add', payload: _wallet});
     }
 
     const providerValue = {
-        wallets,
-        walletSelected,
+        ...state,
         addWallet
     };
 

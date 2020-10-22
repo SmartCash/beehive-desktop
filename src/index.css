@@ -229,6 +229,9 @@ body {
 .form-control input::placeholder {
     color: #464444;
 }
+.form-control input:read-only {
+    cursor: unset;
+}
 
 /* BTN */
 .btn {

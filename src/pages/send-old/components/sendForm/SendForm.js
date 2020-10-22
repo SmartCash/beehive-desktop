@@ -42,7 +42,6 @@ function Send({ address, balance, privateKey, withdraw }) {
             getUnspent(address).then((res) => {
                 setUnspents(res);
                 calculateFee(res.utxos).then((res) => {
-                    console.log(res);
                     setFee(res);
                 });
             });

@@ -4,12 +4,12 @@ import './Send.css';
 import { WalletContext } from '../../context/WalletContext';
 
 function Send() {
-    const { walletSelected } = useContext(WalletContext);
+    const { walletCurrent } = useContext(WalletContext);
     return (
         <Page className='page-send'>
             <div className='form-control privateKey'>
-                <label htmlFor="privateKey">Private Key from {walletSelected.address}</label>
-                <input id="privateKey" placeholder="Insert Private Key here"/>
+                <label htmlFor="privateKey">Private Key from {walletCurrent.address}</label>
+                <input id="privateKey" placeholder="Insert Private Key here" defaultValue={walletCurrent.privateKey} />
             </div>
             <div className='form-group'>
                 <div className='form-control address'>
