@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Wallet from './Wallet';
 import { WalletContext } from '../context/WalletContext';
 import { ReactComponent as IconAdd } from '../assets/images/add.svg';
@@ -9,6 +9,15 @@ import WalletModal from './WalletModal';
 function Wallets() {
     const { wallets } = useContext(WalletContext);
     const { isShowing, toggle } = useModal();
+    const [disableCloseButton, setDisableCloseButton] = useState(false);
+
+    useEffect(() => {
+        if (wallets.length === 0) {
+            setDisableCloseButton(true);
+            toggle();
+        }
+    }, []);
+
     return (
         <div className="wallets-list">
             <div className="wallets-list-header">
@@ -22,7 +31,7 @@ function Wallets() {
                 wallets.map(wallet => <Wallet wallet={wallet} key={wallet.address}/>)
             }
             </Scrollbars>
-            <WalletModal isShowing={isShowing} hide={toggle}></WalletModal>
+            <WalletModal isShowing={isShowing} hide={toggle} disableCloseButton={disableCloseButton}></WalletModal>
         </div>
     );
 }
