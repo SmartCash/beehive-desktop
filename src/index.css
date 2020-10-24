@@ -224,7 +224,6 @@ body {
     color: #fff;
     margin: 8px 0 0;
     background: none;
-    text-transform: uppercase;
 }
 .form-control input::placeholder {
     color: #464444;

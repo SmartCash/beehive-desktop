@@ -14,7 +14,7 @@ const defaultMaskOptions = {
     prefix: '',
     suffix: '',
     includeThousandsSeparator: true,
-    thousandsSeparatorSymbol: '',
+    thousandsSeparatorSymbol: ',',
     allowDecimal: true,
     decimalSymbol: '.',
     decimalLimit: 8, // how many digits allowed after the decimal

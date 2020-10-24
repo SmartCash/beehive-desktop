@@ -1,8 +1,10 @@
-import React, { createContext, useReducer } from 'react';
+import React, { createContext, useEffect, useReducer } from 'react';
+import { getSupportedCurrencies  } from '../lib/smart';
 
 const initialState = {
     wallets: [],
-    walletCurrent: {}
+    walletCurrent: {},
+    fiatList: []
 };
 
 const userReducer = (state, action) => {
@@ -14,13 +16,16 @@ const userReducer = (state, action) => {
         case 'setWalletCurrent': {
             return { ...state, walletCurrent: action.payload };
         }
+        case 'setFiatList': {
+            return { ...state, fiatList: action.payload };
+        }
         default: {
             return state;
         }
     }
 }
 
-export const WalletContext = createContext({});
+export const WalletContext = createContext(initialState);
 
 export const WalletProvider = ({ children }) => {
     const [state, dispatch] = useReducer(userReducer, initialState);
@@ -35,6 +40,17 @@ export const WalletProvider = ({ children }) => {
         }
         dispatch({ type: 'add', payload: _wallet});
     }
+
+    const loadFiats = async () => {
+        dispatch({ type: 'setFiatList', payload: await getSupportedCurrencies() });
+    }
+
+    useEffect(() => {
+        if (state.fiatList.length === 0) {
+            loadFiats();
+        }
+    }, []);
+
 
     const providerValue = {
         ...state,

@@ -21,13 +21,13 @@ const WalletModal = ({ isShowing, hide, disableCloseButton }) => {
             .then(() => {
                 const _wallet = {
                     privateKey,
-                    address: getAddress(privateKey)
-                }
+                    address: getAddress(privateKey),
+                };
                 addWallet(_wallet);
                 hide();
             })
             .catch(() => setIsPKInvalid(true));
-    }
+    };
 
     return (
         isShowing &&
@@ -70,7 +70,10 @@ const WalletModal = ({ isShowing, hide, disableCloseButton }) => {
                                 </div>
                                 <div className={style['import-address']}>
                                     <h2>Import from Private Key</h2>
-                                    <input onInput={(event) => setPrivateKey(event.target.value)} />
+                                    <input
+                                        onInput={(event) => setPrivateKey(event.target.value)}
+                                        placeholder="Insert your private key here"
+                                    />
                                     {isPKInvalid && <p>Invalid Private Key</p>}
                                     <button onClick={handleImportPrivateKey}>Import</button>
                                 </div>

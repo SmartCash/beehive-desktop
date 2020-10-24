@@ -1,19 +1,14 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import Page from '../../components/Page';
 import './Receive.css';
 import QRious from 'qrious';
 import { WalletContext } from '../../context/WalletContext';
-import { getSupportedCurrencies, getCurrenciePrice } from '../../lib/smart';
+import { getCurrenciePrice } from '../../lib/smart';
 
 function Receive() {
-    const { walletCurrent } = useContext(WalletContext);
+    const { walletCurrent, fiatList } = useContext(WalletContext);
     const [amount, setAmount] = useState(0);
-    const [supportedCurrencies, setSupportedCurrencies] = useState();
     const [rate, setRate] = useState();
-
-    useEffect(() => {
-        getSupportedCurrencies().then((data) => setSupportedCurrencies(data));
-    }, []);
 
     const qrAddress = new QRious({
         background: '#ffffff',
@@ -50,7 +45,7 @@ function Receive() {
                     <label htmlFor="fiat">Fiat</label>
                     <select id="fiat" onInput={handleSelectedFiat}>
                         <option value="smart">Smart</option>
-                        {supportedCurrencies?.map((currencie) => (
+                        {fiatList?.map((currencie) => (
                             <option key={currencie} value={currencie}>
                                 {currencie}
                             </option>

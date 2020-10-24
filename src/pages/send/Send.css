@@ -44,10 +44,9 @@
 }
 .page-send .amount button:hover,
 .page-send .amount button:focus {
-    background: #999;
-    color: #0c0c0d;
+    border: 1px solid var(--primary);
+    color: var(--primary);
     outline: 0;
-    border: 0;
 }
 .page-send .amount button ~ button {
     margin-left: 7px;
@@ -87,4 +86,11 @@
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
+}
+.page-send .invalidAddress {
+    width: 100%;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    color: var(--primary);
 }
