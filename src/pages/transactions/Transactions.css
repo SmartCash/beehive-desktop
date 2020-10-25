@@ -34,3 +34,7 @@
 .page-transactions .transaction ~ .transaction {
     margin-top: var(--spacer);
 }
+
+.page-transactions .error {
+    color: var(--primary)
+}
