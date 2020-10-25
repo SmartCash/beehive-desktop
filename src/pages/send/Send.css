@@ -91,10 +91,22 @@
     font-weight: 700;
     cursor: pointer;
 }
+.page-send button[type="submit"]:disabled {
+    background: #999;
+    color: #0C0C0D;
+    opacity: .5;
+}
 .page-send .invalidAddress {
     width: 100%;
     font-size: 12px;
     margin: 0;
     padding: 0;
     color: var(--primary);
+}
+.page-send .hasBeenSent {
+    background: #45b90a;
+    padding: var(--spacer);
+    border-radius: var(--borderRadius);
+    color: #fff;
+    margin-bottom: var(--spacer-lg);
 }

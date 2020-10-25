@@ -7,7 +7,6 @@ import MaskedInput from 'react-text-mask';
 function SendComponent() {
     const {
         walletCurrent,
-        fiatList,
         amountToSend,
         setAmountToSend,
         amountToSendError,
@@ -17,17 +16,29 @@ function SendComponent() {
         netFee,
         totalInSmart,
         submitSendAmount,
-        handleSelectedFiat,
-        selectedFiat,
         isSmartFiat,
         calcSendFounds,
+        getPrivateKey,
+        canSend
     } = useContext(SendContext);
 
     return (
         <Page className="page-send">
+            {/* <div className="hasBeenSent">
+                <p>Amount has been sent</p>
+                <a href={`https://insight.smartcash.cc/tx/${txid}`} target="_blank" rel="noopener noreferrer">
+                    {txid}
+                    <small>(click to view details)</small>
+                </a>
+            </div> */}
             <div className="form-control privateKey">
                 <label htmlFor="privateKey">Private Key from {walletCurrent}</label>
-                <input id="privateKey" placeholder="Insert Private Key here" />
+                <input
+                    id="privateKey"
+                    placeholder="Insert Private Key here"
+                    value={getPrivateKey()}
+                    readOnly={true}
+                />
             </div>
             <div className="form-group">
                 <div className="form-control address">
@@ -40,7 +51,7 @@ function SendComponent() {
                     />
                     {addressToSendError && <p className="invalidAddress">Invalid address</p>}
                 </div>
-                <div className="form-control fiat">
+                {/* <div className="form-control fiat">
                     <label htmlFor="fiat">Fiat</label>
                     <select id="fiat" onInput={handleSelectedFiat}>
                         <option value="smart">smart</option>
@@ -50,7 +61,7 @@ function SendComponent() {
                             </option>
                         ))}
                     </select>
-                </div>
+                </div> */}
                 <div className="form-control amount">
                     <label htmlFor="amount">Amount to send</label>
                     <MaskedInput
@@ -58,7 +69,7 @@ function SendComponent() {
                         id="amount"
                         value={amountToSend}
                         onInput={(event) => setAmountToSend(event.target.value)}
-                        autoComplete='off'
+                        autoComplete="off"
                     />
                     {amountToSendError && <p className="amountToSendError">{amountToSendError}</p>}
                 </div>
@@ -68,7 +79,7 @@ function SendComponent() {
                         <button type="button" onClick={() => calcSendFounds(0.25)}>
                             1/4
                         </button>
-                        <button type="button" onClick={() => calcSendFounds(0.50)}>
+                        <button type="button" onClick={() => calcSendFounds(0.5)}>
                             Half
                         </button>
                         <button type="button" onClick={() => calcSendFounds(1)}>
@@ -95,7 +106,7 @@ function SendComponent() {
                     </div>
                 </div>
             )}
-            <button type="submit" onClick={() => submitSendAmount()}>
+            <button type="submit" onClick={() => submitSendAmount()} disabled={!canSend()}>
                 Send
             </button>
         </Page>
