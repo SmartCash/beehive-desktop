@@ -151,8 +151,9 @@ body {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
-    opacity: .3;
+    opacity: .5;
     transition: .5s;
+    cursor: pointer;
 }
 .wallet.wallet-current,
 .wallet:hover,

@@ -27,13 +27,17 @@ function Wallets() {
             <div className="wallets-list-header">
                 <h2 className="title">My Wallets</h2>
                 <button onClick={toggle} className="btn">
-                    <IconAdd/>
+                    <IconAdd />
                 </button>
             </div>
             <Scrollbars>
-            {
-                wallets.map(wallet => <Wallet wallet={wallet} key={wallet.address} isCurrent={isCurrent(wallet)} />)
-            }
+                {wallets.map((wallet) => (
+                    <Wallet
+                        wallet={wallet}
+                        key={wallet.address}
+                        isCurrent={isCurrent(wallet)}
+                    />
+                ))}
             </Scrollbars>
             <WalletModal isShowing={isShowing} hide={toggle} disableCloseButton={disableCloseButton}></WalletModal>
         </div>

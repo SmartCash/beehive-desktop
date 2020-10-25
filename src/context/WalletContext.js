@@ -10,6 +10,16 @@ const initialState = {
     walletsBalance: 0,
 };
 
+const _getBalance = async (address) => {
+    const _unspents = await getUnspent(address);
+    if (_unspents && _unspents.utxos) {
+        const _amount = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8));
+        const _balance = subtractFloats(_amount, await calculateFee(_unspents.utxos));
+        return Number(_balance.toFixed(8));
+    }
+    return 0;
+}
+
 const userReducer = (state, action) => {
     switch (action.type) {
         case 'addWallet': {
@@ -39,11 +49,16 @@ export const WalletContext = createContext(initialState);
 export const WalletProvider = ({ children }) => {
     const [state, dispatch] = useReducer(userReducer, initialState);
 
-    function addWallet(wallet) {
+    async function addWallet(wallet) {
+        wallet.balance = await _getBalance(wallet.address) || 0;
         if (state.wallets.length === 0) {
             dispatch({ type: 'setWalletCurrent', payload: wallet.address });
         }
         dispatch({ type: 'addWallet', payload: wallet });
+    }
+
+    function setWalletCurrent(wallet) {
+        dispatch({ type: 'setWalletCurrent', payload: wallet.address });
     }
 
     async function loadFiats() {
@@ -51,14 +66,8 @@ export const WalletProvider = ({ children }) => {
     }
 
     function getWalletsBalance() {
-        const _wallets = state.wallets.map((wallet) => {
-            const _getBalance = async () => {
-                const _unspents = await getUnspent(wallet.address);
-                const _amount = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8));
-                const _balance = subtractFloats(_amount, await calculateFee(_unspents.utxos));
-                wallet.balance = Number(_balance.toFixed(8));
-            }
-            _getBalance();
+        const _wallets = state.wallets.map(async (wallet) => {
+            wallet.balance = await _getBalance(wallet.address);
             return wallet;
         });
         dispatch({ type: 'updateWallets', payload: _wallets });
@@ -85,7 +94,8 @@ export const WalletProvider = ({ children }) => {
     const providerValue = {
         ...state,
         addWallet,
-        getWalletsBalance
+        getWalletsBalance,
+        setWalletCurrent
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;
