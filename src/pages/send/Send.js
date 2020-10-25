@@ -56,21 +56,22 @@ function SendComponent() {
                     <MaskedInput
                         mask={currencyMask}
                         id="amount"
-                        defaultValue={amountToSend}
+                        value={amountToSend}
                         onInput={(event) => setAmountToSend(event.target.value)}
+                        autoComplete='off'
                     />
                     {amountToSendError && <p className="amountToSendError">{amountToSendError}</p>}
                 </div>
                 {isSmartFiat() && (
                     <div className="form-control amount">
                         <label>Quantity to send</label>
-                        <button type="button" onClick={() => calcSendFounds(25)}>
+                        <button type="button" onClick={() => calcSendFounds(0.25)}>
                             1/4
                         </button>
-                        <button type="button" onClick={() => calcSendFounds(50)}>
+                        <button type="button" onClick={() => calcSendFounds(0.50)}>
                             Half
                         </button>
-                        <button type="button" onClick={() => calcSendFounds(100)}>
+                        <button type="button" onClick={() => calcSendFounds(1)}>
                             All
                         </button>
                     </div>

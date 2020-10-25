@@ -1,6 +1,8 @@
 import React, { createContext, useCallback, useContext, useReducer } from 'react';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import { WalletContext } from '../../context/WalletContext';
+import { subtractFloats, sumFloats } from '../../lib/math';
+import { calculateFee, getUnspent } from '../../lib/sapi';
 import { isAddress } from '../../lib/smart';
 
 const sendReducer = (state, action) => {
@@ -91,11 +93,12 @@ export const SendProvider = ({ children }) => {
         return state.selectedFiat === 'smart';
     }
 
-    function calcSendFounds(percentage) {
-        const _wallet = wallets.find(wallet => wallet.address === walletCurrent);
-        const { balance } = _wallet;
-
-        // dispatch({ type: 'setAmountToSend', payload: value});
+    async function calcSendFounds(percentage) {
+        const _unspents = await getUnspent(walletCurrent);
+        const _amount = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8) * percentage);
+        const fee = await calculateFee(_unspents.utxos);
+        const _balanceToSend = subtractFloats(_amount, fee);
+        dispatch({ type: 'setAmountToSend', payload: _balanceToSend});
     }
 
     const providerValue = {

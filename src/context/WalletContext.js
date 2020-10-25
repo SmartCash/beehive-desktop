@@ -13,8 +13,7 @@ const initialState = {
 const _getBalance = async (address) => {
     const _unspents = await getUnspent(address);
     if (_unspents && _unspents.utxos) {
-        const _amount = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8));
-        const _balance = subtractFloats(_amount, await calculateFee(_unspents.utxos));
+        const _balance = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8));
         return Number(_balance.toFixed(8));
     }
     return 0;
