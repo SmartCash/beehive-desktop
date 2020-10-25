@@ -28,7 +28,7 @@ function Receive() {
         foreground: 'black',
         level: 'L',
         size: '190',
-        value: `smartcash:${walletCurrent?.address}?amount=${calcAmountConverted()}`,
+        value: `smartcash:${walletCurrent}?amount=${calcAmountConverted()}`,
     });
 
     return (
@@ -39,7 +39,7 @@ function Receive() {
             <div className="form-group">
                 <div className="form-control address">
                     <label htmlFor="addressTo">Send funds to address</label>
-                    <input id="addressTo" defaultValue={walletCurrent?.address} readOnly={true} />
+                    <input id="addressTo" value={walletCurrent} readOnly={true} />
                 </div>
                 <div className="form-control fiat">
                     <label htmlFor="fiat">Fiat</label>
