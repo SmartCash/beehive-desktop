@@ -2,10 +2,10 @@ import React from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import HttpsRedirect from './components/RedirectToHttps';
 import { WalletProvider } from './context/WalletContext';
-import Page from './components/Page';
 import Send from './pages/send/Send';
 import Receive from './pages/receive/Receive';
 import Transactions from './pages/transactions/Transactions';
+import Dashboard from './pages/dashboard/dashboard';
 
 function App() {
     return (
@@ -14,7 +14,7 @@ function App() {
                 <Router>
                     <Switch>
                         <Route exact path="/">
-                            <Page />
+                            <Dashboard />
                         </Route>
                         <Route exact path="/send">
                             <Send/>

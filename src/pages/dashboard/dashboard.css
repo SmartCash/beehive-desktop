@@ -1,0 +1,20 @@
+.page-dashboard table {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: var(--borderRadius);
+    border-spacing: 0;
+    overflow: hidden;
+    color: #ccc;
+}
+
+.page-dashboard table thead {
+
+}
+
+.page-dashboard table tbody tr ~ tr td {
+    border-top: 1px solid #ccc;
+}
+
+.page-dashboard table tbody tr td {
+    padding: 10px;
+}
