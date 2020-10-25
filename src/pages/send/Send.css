@@ -28,7 +28,8 @@
 .page-send .fiat {
     width: 200px;
 }
-.page-send .amount {
+.page-send .amount,
+.page-send .amountInSmart {
     flex: 1;
     align-items: center;
     border-left: 1px solid #999;
@@ -50,6 +51,9 @@
 }
 .page-send .amount button ~ button {
     margin-left: 7px;
+}
+.page-send .amountToSendError {
+    color: var(--primary);
 }
 .page-send .transactionInfo {
     margin-top: var(--spacer);

@@ -11,7 +11,7 @@ function Transactions() {
 
     useEffect(() => {
         async function _getTransactionHistory() {
-            await getTransactionHistory(walletCurrent.address)
+            await getTransactionHistory(walletCurrent)
                 .then((data) => setHistory(data))
                 .catch((error) => console.error(error));
         }
@@ -31,7 +31,11 @@ function Transactions() {
                             <p className="label">Amount</p>
                             <p className="value">{tx.amount}</p>
                             <p className="label">Transaction Id</p>
-                            <p className="value">{tx.txid}</p>
+                            <p className="value">
+                                <a href={`https://explorer.smartcash.org/#/tx/${tx.txid}`} target="_blank">
+                                    {tx.txid}
+                                </a>
+                            </p>
                         </div>
                     );
                 })}

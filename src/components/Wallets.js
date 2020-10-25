@@ -7,7 +7,7 @@ import useModal from '../hooks/useModal';
 import WalletModal from './WalletModal';
 
 function Wallets() {
-    const { wallets } = useContext(WalletContext);
+    const { wallets, walletCurrent } = useContext(WalletContext);
     const { isShowing, toggle } = useModal();
     const [disableCloseButton, setDisableCloseButton] = useState(false);
 
@@ -17,6 +17,10 @@ function Wallets() {
             toggle();
         }
     }, []);
+
+    function isCurrent(wallet) {
+        return wallet.address === walletCurrent;
+    }
 
     return (
         <div className="wallets-list">
@@ -28,7 +32,7 @@ function Wallets() {
             </div>
             <Scrollbars>
             {
-                wallets.map(wallet => <Wallet wallet={wallet} key={wallet.address}/>)
+                wallets.map(wallet => <Wallet wallet={wallet} key={wallet.address} isCurrent={isCurrent(wallet)} />)
             }
             </Scrollbars>
             <WalletModal isShowing={isShowing} hide={toggle} disableCloseButton={disableCloseButton}></WalletModal>

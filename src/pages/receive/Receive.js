@@ -10,14 +10,6 @@ function Receive() {
     const [amount, setAmount] = useState(0);
     const [rate, setRate] = useState();
 
-    const qrAddress = new QRious({
-        background: '#ffffff',
-        foreground: 'black',
-        level: 'L',
-        size: '190',
-        value: `smartcash:${walletCurrent?.address}?amount=${amount}`,
-    });
-
     const calcAmountConverted = useCallback(() => {
         let currentValue = Number(amount);
         currentValue = currentValue / (rate || 1.0);
@@ -30,6 +22,14 @@ function Receive() {
             await getCurrenciePrice(value).then((res) => setRate(res.smartcash[`${value}`]));
         }
     };
+
+    const qrAddress = new QRious({
+        background: '#ffffff',
+        foreground: 'black',
+        level: 'L',
+        size: '190',
+        value: `smartcash:${walletCurrent?.address}?amount=${calcAmountConverted()}`,
+    });
 
     return (
         <Page className="page-receive">

@@ -151,9 +151,13 @@ body {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
+    opacity: .3;
+    transition: .5s;
 }
-.wallet ~ .wallet {
-    border-top: 1px solid rgba(153, 153, 153, 0.1);
+.wallet.wallet-current,
+.wallet:hover,
+.wallet:focus {
+    opacity: 1;
 }
 .wallet .symbol {
     width: 50px;
@@ -166,6 +170,10 @@ body {
     font-size: 18px;
     font-weight: 700;
     border-radius: 100%;
+}
+.wallet.wallet-current .symbol {
+    background: #999999;
+    color: #333;
 }
 .wallet .content {
     padding: 0 0 0 15px;

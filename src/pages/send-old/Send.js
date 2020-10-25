@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import style from './Send.module.css';
 import Header from './components/header/Header';
 import SendForm from './components/sendForm/SendForm';
-import { getBalance, getAddress, createNewWalletKeyPair } from '../../lib/sapi';
+import { getBalance, getAddress, createNewWalletKeyPair, } from '../../lib/sapi';
 import { isAddress, isPK } from '../../lib/smart';
 import { useForm } from 'react-hook-form';
 import useModal from '../../hooks/useModal';

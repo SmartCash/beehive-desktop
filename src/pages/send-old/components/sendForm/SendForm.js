@@ -145,20 +145,12 @@ function Send({ address, balance, privateKey, withdraw }) {
                             onInput={() => triggerValidation('amount')}
                         ></Controller>
                     </label>
-<<<<<<< HEAD:src/pages/send/components/sendForm/SendForm.js
                     {balance > 0.003 && (
-=======
-                    {balance > 0.001 && (
->>>>>>> feature/redesign:src/pages/send-old/components/sendForm/SendForm.js
                         <button type="button" className="sendAllFunds" onClick={() => handleSendAllFunds()}>
                             Send All
                         </button>
                     )}
-<<<<<<< HEAD:src/pages/send/components/sendForm/SendForm.js
                     {errors?.amount && <span className="error-message">{errors?.amount?.message}</span>}
-=======
-                    {errors.amount && <span className="error-message">{errors.amount.message}</span>}
->>>>>>> feature/redesign:src/pages/send-old/components/sendForm/SendForm.js
                 </div>
 
                 {fee > 0 && (
