@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import Page from '../../components/Page';
 import './Receive.css';
 import QRious from 'qrious';
@@ -8,6 +8,7 @@ import { getCurrenciePrice } from '../../lib/smart';
 function Receive() {
     const { walletCurrent, fiatList } = useContext(WalletContext);
     const [amount, setAmount] = useState(0);
+    const [fiatSelected, setFiatSelected] = useState('smart');
     const [rate, setRate] = useState();
 
     const calcAmountConverted = useCallback(() => {
@@ -19,6 +20,7 @@ function Receive() {
     const handleSelectedFiat = async (e) => {
         const { value } = e.target;
         if (value) {
+            setFiatSelected(value);
             await getCurrenciePrice(value).then((res) => setRate(res.smartcash[`${value}`]));
         }
     };
@@ -30,6 +32,10 @@ function Receive() {
         size: '190',
         value: `smartcash:${walletCurrent}?amount=${calcAmountConverted()}`,
     });
+
+    const isFiatSmart = () => {
+        return fiatSelected === 'smart';
+    };
 
     return (
         <Page className="page-receive">
@@ -53,13 +59,15 @@ function Receive() {
                     </select>
                 </div>
                 <div className="form-control amount">
-                    <label htmlFor="amount">Amount to receive:</label>
+                    <label htmlFor="amount">Amount to receive {!isFiatSmart() && `in (${fiatSelected})`}:</label>
                     <input id="amount" defaultValue={amount} onInput={(event) => setAmount(event.target.value)} />
                 </div>
-                <div className="form-control amountInSmart">
-                    <label htmlFor="receveInSmart">In SMART</label>
-                    <input id="receveInSmart" value={calcAmountConverted()} readOnly={true}/>
-                </div>
+                {!isFiatSmart() && (
+                    <div className="form-control amountInSmart">
+                        <label htmlFor="receveInSmart">Amount to receive in SMART</label>
+                        <input id="receveInSmart" value={calcAmountConverted()} readOnly={true} />
+                    </div>
+                )}
             </div>
         </Page>
     );
