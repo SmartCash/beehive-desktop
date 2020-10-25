@@ -137,6 +137,16 @@ body {
     margin-left: auto;
 }
 
+.wallets-list-header button:hover circle,
+.wallets-list-header button:focus circle {
+    stroke: var(--primary);
+}
+
+.wallets-list-header button:hover path,
+.wallets-list-header button:focus path {
+    fill: var(--primary);
+}
+
 .title {
     margin: 0;
     padding: 0;

@@ -50,6 +50,11 @@ export const WalletProvider = ({ children }) => {
     const [state, dispatch] = useReducer(userReducer, initialState);
 
     async function addWallet(wallet) {
+        const exists = state.wallets.find(_wallet => _wallet.address === wallet.address);
+        if (exists) {
+            return;
+        }
+
         wallet.balance = await _getBalance(wallet.address) || 0;
         if (state.wallets.length === 0) {
             dispatch({ type: 'setWalletCurrent', payload: wallet.address });
@@ -65,37 +70,21 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'setFiatList', payload: await getSupportedCurrencies() });
     }
 
-    function getWalletsBalance() {
-        const _wallets = state.wallets.map(async (wallet) => {
-            wallet.balance = await _getBalance(wallet.address);
-            return wallet;
-        });
-        dispatch({ type: 'updateWallets', payload: _wallets });
-    }
-
-    function updateBalance() {
-        const getBalance = () => {
-            const reducer = (accumulator, currentValue) => accumulator + currentValue;
-            return state.wallets
-                .map(wallet => wallet.balance)
-                .reduce(reducer, 0);
-        }
-        dispatch({ type: 'updateBalance', payload: getBalance() });
+    function updateBalance(balance) {
+        dispatch({ type: 'updateBalance', payload: balance });
     }
 
     useEffect(() => {
         if (state.fiatList.length === 0) {
             loadFiats();
         }
-        getWalletsBalance();
-        updateBalance();
     }, []);
 
     const providerValue = {
         ...state,
         addWallet,
-        getWalletsBalance,
-        setWalletCurrent
+        setWalletCurrent,
+        updateBalance
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;
