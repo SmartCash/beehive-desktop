@@ -24,6 +24,10 @@ exports.sumFloats = (collection) => {
     );
 };
 
+exports.sumFloatsValues = (amount1, amount2) => {
+    return fromSatoshi(toSatoshi(amount1) + toSatoshi(amount2));
+};
+
 exports.subtractFloats = (amount1, amount2) => {
     return fromSatoshi(toSatoshi(amount1) - toSatoshi(amount2));
 };

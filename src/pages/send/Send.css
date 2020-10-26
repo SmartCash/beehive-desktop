@@ -104,9 +104,31 @@
     color: var(--primary);
 }
 .page-send .hasBeenSent {
-    background: #45b90a;
+    background: #d9e974;
     padding: var(--spacer);
     border-radius: var(--borderRadius);
-    color: #fff;
+    color: #333;
     margin-bottom: var(--spacer-lg);
+}
+.page-send .hasBeenSent p {
+    margin: 0;
+    padding: 0;
+    font-size: 23px;
+    font-weight: 500;
+}
+
+.page-send .hasBeenSent a {
+    margin-top: 25px;
+    display: block;
+    color: #333;
+}
+
+.page-send .showPK {
+    border: 1px solid #999;
+    background: none;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #999;
+    border-radius: 4px;
+    cursor: pointer;
 }

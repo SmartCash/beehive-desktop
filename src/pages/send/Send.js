@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import Page from '../../components/Page';
 import './Send.css';
 import { SendContext, SendProvider } from './SendContext';
@@ -19,18 +19,27 @@ function SendComponent() {
         isSmartFiat,
         calcSendFounds,
         getPrivateKey,
-        canSend
+        canSend,
+        TXID,
     } = useContext(SendContext);
+    const [ showPK, setShowPK ] = useState(false);
+
+    if (TXID) {
+        return (
+            <Page className="page-send">
+                <div className="hasBeenSent">
+                    <p>Amount has been sent</p>
+                    <a href={`https://explorer.smartcash.org/#/tx/${TXID}`} target="_blank" rel="noopener noreferrer">
+                        {TXID}
+                        <small>(click to view details)</small>
+                    </a>
+                </div>
+            </Page>
+        );
+    }
 
     return (
         <Page className="page-send">
-            {/* <div className="hasBeenSent">
-                <p>Amount has been sent</p>
-                <a href={`https://insight.smartcash.cc/tx/${txid}`} target="_blank" rel="noopener noreferrer">
-                    {txid}
-                    <small>(click to view details)</small>
-                </a>
-            </div> */}
             <div className="form-control privateKey">
                 <label htmlFor="privateKey">Private Key from {walletCurrent}</label>
                 <input
@@ -38,7 +47,9 @@ function SendComponent() {
                     placeholder="Insert Private Key here"
                     value={getPrivateKey()}
                     readOnly={true}
+                    type={showPK ? 'text' : 'password'}
                 />
+                <button type="button" className="showPK" onClick={() => setShowPK(!showPK)}>Show PK</button>
             </div>
             <div className="form-group">
                 <div className="form-control address">
@@ -47,6 +58,7 @@ function SendComponent() {
                         id="addressTo"
                         placeholder="Insert address here"
                         autoComplete="off"
+                        type="text"
                         onInput={(event) => setAddressToSend(event.target.value)}
                     />
                     {addressToSendError && <p className="invalidAddress">Invalid address</p>}

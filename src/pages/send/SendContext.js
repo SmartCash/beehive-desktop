@@ -1,8 +1,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useReducer } from 'react';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import { WalletContext } from '../../context/WalletContext';
-import { subtractFloats, sumFloats } from '../../lib/math';
-import { calculateFee, createAndSendRawTransaction, getUnspent } from '../../lib/sapi';
+import { subtractFloats, sumFloats, sumFloatsValues } from '../../lib/math';
+import { calculateFee, createAndSendRawTransaction, getUnspent, getFee } from '../../lib/sapi';
 import { isAddress } from '../../lib/smart';
 
 const sendReducer = (state, action) => {
@@ -24,6 +24,15 @@ const sendReducer = (state, action) => {
         }
         case 'setNetFee': {
             return {...state, netFee: action.payload };
+        }
+        case 'setTXIDLoading': {
+            return {...state, TXIDLoading: action.payload };
+        }
+        case 'setTXID': {
+            return {...state, TXID: action.payload };
+        }
+        case 'setTXIDError': {
+            return {...state, TXIDError: action.payload };
         }
         default: {
             return state;
@@ -63,6 +72,8 @@ export const SendProvider = ({ children }) => {
         } else if (value < 0.001) {
             dispatch({type: 'setAmountToSendError', payload: 'The minimum amount to send is 0.001' });
         } else {
+            getFee(Number(value), state.addressToSend)
+            .then(fee => dispatch({ type: 'setNetFee', payload: fee }));
             dispatch({type: 'setAmountToSendError', payload: null });
         }
         dispatch({ type: 'setAmountToSend', payload: value});
@@ -79,10 +90,11 @@ export const SendProvider = ({ children }) => {
     }
 
     function submitSendAmount() {
-        // createAndSendRawTransaction(state.addressToSend, state.amountToSend, getPrivateKey())
-        //     .then((data) => setTxId(data?.txid))
-        //     .catch((error) => setError(error[0]?.message))
-        //     .finally(() => setLoading(false));
+        dispatch({ type: 'setTXIDLoading', payload: true });
+        createAndSendRawTransaction(state.addressToSend, state.amountToSend, getPrivateKey())
+            .then((data) => dispatch({ type: 'setTXID', payload: data?.txid}))
+            .catch((error) => dispatch({ type: 'setTXIDError', payload: error[0]?.message}))
+            .finally(() => dispatch({ type: 'setTXIDLoading', payload: false }));
     }
 
     function handleSelectedFiat (e) {
@@ -110,8 +122,10 @@ export const SendProvider = ({ children }) => {
     }
 
     function canSend() {
-        return false;
+        return (state.amountToSendError === null && state.addressToSendError === false) || state.TXIDLoading;
     }
+
+    const totalInSmart = sumFloatsValues(state.amountToSend, state.netFee);
 
     const providerValue = {
         ...state,
@@ -125,7 +139,8 @@ export const SendProvider = ({ children }) => {
         isSmartFiat,
         calcSendFounds,
         getPrivateKey,
-        canSend
+        canSend,
+        totalInSmart
     };
 
     return <SendContext.Provider value={providerValue}>{children}</SendContext.Provider>;
