@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import style from './WalletModal.module.css';
 import { createNewWalletKeyPair, getAddress } from '../lib/sapi';
@@ -6,8 +6,8 @@ import { isPK } from '../lib/smart';
 import { WalletContext } from '../context/WalletContext';
 import generatePDF from '../lib/GeneratorPDF';
 
-const WalletModal = ({ isShowing, hide, disableCloseButton }) => {
-    const wallet = createNewWalletKeyPair();
+function WalletModal({ isShowing, hide, disableCloseButton }) {
+    const [wallet, setWallet] = useState();
     const { addWallet } = useContext(WalletContext);
     const [privateKey, setPrivateKey] = useState();
     const [isPKInvalid, setIsPKInvalid] = useState(false);
@@ -28,6 +28,12 @@ const WalletModal = ({ isShowing, hide, disableCloseButton }) => {
             })
             .catch(() => setIsPKInvalid(true));
     };
+
+    const insertPrivateKey = (event) => setPrivateKey(event.target.value);
+
+    useEffect(() => {
+        setWallet(createNewWalletKeyPair());
+    }, []);
 
     return (
         isShowing &&
@@ -71,7 +77,7 @@ const WalletModal = ({ isShowing, hide, disableCloseButton }) => {
                                 <div className={style['import-address']}>
                                     <h2>Import from Private Key</h2>
                                     <input
-                                        onInput={(event) => setPrivateKey(event.target.value)}
+                                        onInput={insertPrivateKey}
                                         placeholder="Insert your private key here"
                                     />
                                     {isPKInvalid && <p>Invalid Private Key</p>}
@@ -82,9 +88,13 @@ const WalletModal = ({ isShowing, hide, disableCloseButton }) => {
                     </div>
                 </div>
             </React.Fragment>,
-            document.body
+            document.getElementById('root')
         )
     );
 };
 
-export default WalletModal;
+function areEqual(prev, next) {
+    return prev.isShowing === next.isShowing;
+}
+
+export default React.memo(WalletModal, areEqual);

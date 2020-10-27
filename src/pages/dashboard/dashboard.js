@@ -17,7 +17,7 @@ function DashboardComponent() {
                 {
                     smartRewardsRoi?.map(roi => {
                         return (
-                            <tr>
+                            <tr key={roi.label}>
                                 <td>{roi.label}</td>
                                 <td>{roi.value} %</td>
                             </tr>
