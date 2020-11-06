@@ -6,11 +6,13 @@ import Send from './pages/send/Send';
 import Receive from './pages/receive/Receive';
 import Transactions from './pages/transactions/Transactions';
 import Dashboard from './pages/dashboard/dashboard';
+import MasterKeyModal from './components/MasterKeyModal';
 
 function App() {
     return (
         <HttpsRedirect>
             <WalletProvider>
+                <MasterKeyModal />
                 <Router>
                     <Switch>
                         <Route exact path="/">

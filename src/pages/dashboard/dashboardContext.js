@@ -27,7 +27,7 @@ export const DashboardProvider = ({ children }) => {
                 });
             }
             dispatch({ type: 'setSmartRewardsRoi', payload: smartRewardsRoi });
-        });
+        }).catch((err) => console.error(err));
     }, [])
 
     const providerValue = {

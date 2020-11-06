@@ -2,12 +2,14 @@ import React, { createContext, useEffect, useReducer } from 'react';
 import { getSupportedCurrencies } from '../lib/smart';
 import { getUnspent, calculateFee } from '../lib/sapi';
 import { subtractFloats, sumFloats } from '../lib/math';
+import * as CryptoJS from "crypto-js";
 
 const initialState = {
-    wallets: [],
+    wallets: null,
     walletCurrent: '',
     fiatList: [],
     walletsBalance: 0,
+    masterKey: null,
 };
 
 const _getBalance = async (address) => {
@@ -23,6 +25,8 @@ const userReducer = (state, action) => {
     switch (action.type) {
         case 'addWallet': {
             const _wallets = [...state.wallets, action.payload];
+            const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(_wallets), state.masterKey);
+            localStorage.setItem('SMARTWALLET', encryptedWallet);
             return { ...state, wallets: _wallets };
         }
         case 'setWalletCurrent': {
@@ -36,6 +40,9 @@ const userReducer = (state, action) => {
         }
         case 'updateBalance': {
             return {...state, walletsBalance: action.payload };
+        }
+        case 'saveMasterKey': {
+            return {...state, masterKey: action.payload };
         }
         default: {
             return state;
@@ -53,7 +60,6 @@ export const WalletProvider = ({ children }) => {
         if (exists) {
             return;
         }
-
         wallet.balance = await _getBalance(wallet.address) || 0;
         if (state.wallets.length === 0) {
             dispatch({ type: 'setWalletCurrent', payload: wallet.address });
@@ -73,17 +79,32 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'updateBalance', payload: balance });
     }
 
+    function saveMasterKey(masterKey) {
+        dispatch({ type: 'saveMasterKey', payload: masterKey });
+    }
+
     useEffect(() => {
         if (state.fiatList.length === 0) {
             loadFiats();
         }
-    }, []);
+        if (state.masterKey && !state.wallets) {
+            const encryptedWallet = localStorage.getItem('SMARTWALLET');
+            let wallets = [];
+            if (encryptedWallet) {
+                const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(encryptedWallet, state.masterKey));
+                console.log(decryptedWallet);
+                wallets = decryptedWallet ? JSON.parse(decryptedWallet) : [];
+            }
+            dispatch({ type: 'updateWallets', payload: wallets });
+        }
+    }, [state.masterKey]);
 
     const providerValue = {
         ...state,
         addWallet,
         setWalletCurrent,
-        updateBalance
+        updateBalance,
+        saveMasterKey
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;
