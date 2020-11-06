@@ -43,7 +43,8 @@
     "smartcashjs-lib": "~3.3.6",
     "string-format": "~2.0.0",
     "styled-components": "~5.1.0",
-    "text-mask-addons": "~3.8.0"
+    "text-mask-addons": "~3.8.0",
+    "update-electron-app": "^2.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

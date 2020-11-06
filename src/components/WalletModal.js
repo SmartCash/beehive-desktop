@@ -8,6 +8,7 @@ import generatePDF from '../lib/GeneratorPDF';
 
 function WalletModal({ isShowing, hide, disableCloseButton }) {
     const [wallet, setWallet] = useState();
+    const [createWallet, setCreateWallet] = useState(false);
     const { addWallet } = useContext(WalletContext);
     const [privateKey, setPrivateKey] = useState();
     const [isPKInvalid, setIsPKInvalid] = useState(false);
@@ -29,11 +30,12 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
             .catch(() => setIsPKInvalid(true));
     };
 
-    const insertPrivateKey = (event) => setPrivateKey(event.target.value);
-
-    useEffect(() => {
+    const handleCreateNewOne = () => {
+        setCreateWallet(true);
         setWallet(createNewWalletKeyPair());
-    }, []);
+    }
+
+    const insertPrivateKey = (event) => setPrivateKey(event.target.value);
 
     return (
         isShowing &&
@@ -58,31 +60,41 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
                         </div>
                         <div className={style['modal-body']}>
                             <div className={style['address-content']}>
-                                <div className={style['new-address']}>
-                                    <h2>New address</h2>
-                                    <div>
-                                        <p>
-                                            <strong>Public Key (address):</strong>
-                                        </p>
-                                        <p>{wallet.address}</p>
-                                    </div>
-                                    <div>
-                                        <p>
-                                            <strong>Private Key:</strong>
-                                        </p>
-                                        <p>{wallet.privateKey}</p>
-                                    </div>
-                                    <button onClick={handleAddWallet}>Use this one and save as PDF</button>
-                                </div>
-                                <div className={style['import-address']}>
-                                    <h2>Import from Private Key</h2>
-                                    <input
-                                        onInput={insertPrivateKey}
-                                        placeholder="Insert your private key here"
-                                    />
-                                    {isPKInvalid && <p>Invalid Private Key</p>}
-                                    <button onClick={handleImportPrivateKey}>Import</button>
-                                </div>
+                                {
+                                    !createWallet && (
+                                        <div className={style['import-address']}>
+                                            <h2>Import from Private Key</h2>
+                                            <textarea
+                                                onInput={insertPrivateKey}
+                                                placeholder="Insert your private key here"
+                                                rows={5}
+                                            />
+                                            {isPKInvalid && <p>Invalid Private Key</p>}
+                                            <button onClick={handleImportPrivateKey}>Import</button>
+                                            <button onClick={handleCreateNewOne}>Create new one</button>
+                                        </div>
+                                    )
+                                }
+                                {
+                                    createWallet && (
+                                        <div className={style['new-address']}>
+                                            <h2>New Private Key</h2>
+                                            <div>
+                                                <p>
+                                                    <strong>Public Key (address):</strong>
+                                                </p>
+                                                <p>{wallet.address}</p>
+                                            </div>
+                                            <div>
+                                                <p>
+                                                    <strong>Private Key:</strong>
+                                                </p>
+                                                <p>{wallet.privateKey}</p>
+                                            </div>
+                                            <button onClick={handleAddWallet}>Use this one and save as PDF</button>
+                                        </div>
+                                    )
+                                }
                             </div>
                         </div>
                     </div>
