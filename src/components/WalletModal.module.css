@@ -69,6 +69,10 @@
     word-break: break-all;
 }
 
+.address-content p ~ p {
+    margin-top: 0;
+}
+
 .address-content button {
     background: var(--primary);
     border: 0;
