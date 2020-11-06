@@ -22,6 +22,9 @@ function Header() {
                     <li>
                         <NavLink exact to="/transactions">Transactions</NavLink>
                     </li>
+                    <li>
+                        <NavLink exact to="/rewards">Rewards</NavLink>
+                    </li>
                 </ul>
             </div>
         </div>

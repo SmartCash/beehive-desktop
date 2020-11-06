@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Header from './Header';
 import Wallets from './Wallets';
 import WalletsBalance from './WalletsBalance';
+import PasswordModal from './PasswordModal';
+import { WalletContext } from '../context/WalletContext';
 
 function Page({ children, className }) {
+    const { masterKey } = useContext(WalletContext);
+    if (!masterKey) {
+        return <PasswordModal />;
+    }
     return (
         <React.Fragment>
             <Header />

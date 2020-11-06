@@ -28,6 +28,8 @@
     "random": "~2.1.1",
     "random-js": "~2.1.0",
     "react": "~16.13.1",
+    "react-countdown": "^2.3.1",
+    "react-custom-scrollbars": "~4.2.1",
     "react-dom": "~16.13.1",
     "react-hook-form": "~5.5.3",
     "react-input-mask": "~2.0.4",
@@ -41,8 +43,7 @@
     "smartcashjs-lib": "~3.3.6",
     "string-format": "~2.0.0",
     "styled-components": "~5.1.0",
-    "text-mask-addons": "~3.8.0",
-    "react-custom-scrollbars": "~4.2.1"
+    "text-mask-addons": "~3.8.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -6,13 +6,12 @@ import Send from './pages/send/Send';
 import Receive from './pages/receive/Receive';
 import Transactions from './pages/transactions/Transactions';
 import Dashboard from './pages/dashboard/dashboard';
-import MnemonicModal from './components/MnemonicModal';
+import RewardsActivate from './pages/rewards/activate';
 
 function App() {
     return (
         <HttpsRedirect>
             <WalletProvider>
-                <MnemonicModal />
                 <Router>
                     <Switch>
                         <Route exact path="/">
@@ -26,6 +25,9 @@ function App() {
                         </Route>
                         <Route exact path="/transactions">
                             <Transactions/>
+                        </Route>
+                        <Route exact path="/rewards">
+                            <RewardsActivate />
                         </Route>
                     </Switch>
                 </Router>

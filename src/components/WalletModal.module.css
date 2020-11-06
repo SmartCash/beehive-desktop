@@ -104,3 +104,14 @@
     font-size: 16px;
     font-family: inherit;
 }
+
+.password-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper button {
+    margin: 0 0 0 15px;
+    white-space: nowrap;
+}

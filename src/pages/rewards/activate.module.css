@@ -1,4 +1,6 @@
 .wrapper {
+    text-align: center;
+    color: var(--primary);
 }
 .wrapper p {
     width: 100%;
@@ -6,4 +8,5 @@
 .wrapperActivating {
     text-align: center;
     width: 100%;
+    color: var(--primary);
 }
