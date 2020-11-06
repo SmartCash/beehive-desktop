@@ -36,6 +36,9 @@ const userReducer = (state, action) => {
             return { ...state, fiatList: action.payload };
         }
         case 'updateWallets': {
+            if (action.payload.length > 0) {
+                return { ...state, wallets: action.payload, walletCurrent: action.payload[0].address };
+            }
             return { ...state, wallets: action.payload };
         }
         case 'updateBalance': {
@@ -43,6 +46,9 @@ const userReducer = (state, action) => {
         }
         case 'saveMasterKey': {
             return {...state, masterKey: action.payload };
+        }
+        case 'decryptError': {
+            return {...state, decryptError: action.payload };
         }
         default: {
             return state;
@@ -80,6 +86,19 @@ export const WalletProvider = ({ children }) => {
     }
 
     function saveMasterKey(masterKey) {
+        const encryptedWallet = localStorage.getItem('SMARTWALLET');
+        let wallets = [];
+        let decryptedWallet;
+        if (encryptedWallet) {
+            try {
+                decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(encryptedWallet, masterKey));
+            } catch (e) {
+                return dispatch({ type: 'decryptError', payload: true });
+            }
+            dispatch({ type: 'updateWallets', payload: decryptedWallet ? JSON.parse(decryptedWallet) : [] });
+        } else {
+            dispatch({ type: 'updateWallets', payload: [] });
+        }
         dispatch({ type: 'saveMasterKey', payload: masterKey });
     }
 
@@ -87,17 +106,7 @@ export const WalletProvider = ({ children }) => {
         if (state.fiatList.length === 0) {
             loadFiats();
         }
-        if (state.masterKey && !state.wallets) {
-            const encryptedWallet = localStorage.getItem('SMARTWALLET');
-            let wallets = [];
-            if (encryptedWallet) {
-                const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(encryptedWallet, state.masterKey));
-                console.log(decryptedWallet);
-                wallets = decryptedWallet ? JSON.parse(decryptedWallet) : [];
-            }
-            dispatch({ type: 'updateWallets', payload: wallets });
-        }
-    }, [state.masterKey]);
+    }, []);
 
     const providerValue = {
         ...state,

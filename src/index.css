@@ -183,7 +183,8 @@ body {
     border-radius: 100%;
 }
 .wallet.wallet-current .symbol {
-    background: #999999;
+    background: var(--primary);
+    border: 1px solid var(--primary);
     color: #333;
 }
 .wallet .content {
@@ -267,4 +268,13 @@ body {
     padding: var(--spacer-lg);
     overflow: hidden;
     height: 100%;
+}
+
+
+.alert-error {
+    width: 100%;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 10px;
+    border-radius: 4px;
 }
