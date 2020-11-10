@@ -91,13 +91,13 @@ function RewardsActivate() {
         <Page className="page-rewards">
             {isActive && (
                 <div className={style['wrapper']}>
-                    <p>The rewards is already activated for the address {address}</p>
+                    <p>Rewards are already activated for this address {address}</p>
                 </div>
             )}
             {rewards && rewards.activated === 1 && isActive === false && (
                 <div className={style['wrapper']}>
                     <div className={style['wrapper']}>
-                        <p>The rewards is already activated for the address {address}</p>
+                        <p>Rewards are already activated for this address {address}</p>
                         <p>Balance Eligible: {rewards.balance_eligible}</p>
                         <p>Bonus level: {rewards.bonus_level}</p>
                     </div>
