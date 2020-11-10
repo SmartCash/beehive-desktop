@@ -5,6 +5,11 @@ import { subtractFloats, sumFloats, sumFloatsValues } from '../../lib/math';
 import { calculateFee, createAndSendRawTransaction, getUnspent, getFee } from '../../lib/sapi';
 import { isAddress } from '../../lib/smart';
 
+const initialValue = {
+    amountToSend: 0,
+    selectedFiat: 'smart'
+};
+
 const sendReducer = (state, action) => {
     switch(action.type) {
         case 'setAmountToSend': {
@@ -34,15 +39,13 @@ const sendReducer = (state, action) => {
         case 'setTXIDError': {
             return {...state, TXIDError: action.payload };
         }
+        case 'clearState': {
+            return initialValue
+        }
         default: {
             return state;
         }
     }
-};
-
-const initialValue = {
-    amountToSend: 0,
-    selectedFiat: 'smart'
 };
 
 export const SendContext = createContext(initialValue);
@@ -88,6 +91,10 @@ export const SendProvider = ({ children }) => {
             dispatch({ type: 'setAddressToSendError', payload: true});
         });
     }
+
+    useEffect(() => {
+        dispatch({ type: 'clearState' });
+    }, [walletCurrent])
 
     function submitSendAmount() {
         dispatch({ type: 'setTXIDLoading', payload: true });
