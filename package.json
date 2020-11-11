@@ -24,6 +24,7 @@
     "jspdf": "~1.5.3",
     "lodash": "~4.17.15",
     "moment": "~2.24.0",
+    "node-fetch": "^2.6.1",
     "qrious": "~4.0.2",
     "random": "~2.1.1",
     "random-js": "~2.1.0",
