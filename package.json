@@ -1,6 +1,6 @@
 {
     "name": "wallet",
-    "version": "0.2.0",
+    "version": "2.0.0",
     "private": true,
     "build": {
         "appId": "smarthub",
@@ -44,12 +44,12 @@
         "text-mask-addons": "~3.8.0"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build -- --profile",
-        "test-react": "react-scripts test --env=jsdom",
-        "eject-react": "react-scripts eject",
-        "build-electron": "npm run build && electron-builder",
-        "start-electron": "concurrently \"cross-env BROWSER=none npm run start\" \"wait-on http://localhost:3000 && electron .\""
+        "start": "npm run electron-start",
+        "build": "npm run electron-build",
+        "react-start": "react-scripts start",
+        "react-build": "react-scripts build -- --profile",
+        "electron-build": "npm run react-build && electron-builder",
+        "electron-start": "concurrently -k --success first \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron .\""
     },
     "eslintConfig": {
         "extends": "react-app"
