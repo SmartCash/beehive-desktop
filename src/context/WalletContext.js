@@ -3,6 +3,7 @@ import { getSupportedCurrencies } from '../lib/smart';
 import { getUnspent, calculateFee } from '../lib/sapi';
 import { subtractFloats, sumFloats } from '../lib/math';
 import * as CryptoJS from "crypto-js";
+import generatePDF from '../lib/GeneratorPDF';
 
 const initialState = {
     wallets: null,
@@ -102,6 +103,10 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'saveMasterKey', payload: masterKey });
     }
 
+    function downloadWallets() {
+        generatePDF(state.wallets, 'MyWallets_SmartCash');
+    }
+
     useEffect(() => {
         if (state.fiatList.length === 0) {
             loadFiats();
@@ -113,7 +118,8 @@ export const WalletProvider = ({ children }) => {
         addWallet,
         setWalletCurrent,
         updateBalance,
-        saveMasterKey
+        saveMasterKey,
+        downloadWallets
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;

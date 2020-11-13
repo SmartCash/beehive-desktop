@@ -2,12 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import Wallet from './Wallet';
 import { WalletContext } from '../context/WalletContext';
 import { ReactComponent as IconAdd } from '../assets/images/add.svg';
+import { ReactComponent as IconDownload } from '../assets/images/download.svg';
 import { Scrollbars } from 'react-custom-scrollbars';
 import useModal from '../hooks/useModal';
 import WalletModal from './WalletModal';
 
 function Wallets() {
-    const { wallets, walletCurrent, masterKey } = useContext(WalletContext);
+    const { wallets, walletCurrent, masterKey, downloadWallets } = useContext(WalletContext);
     const { isShowing, toggle } = useModal();
     const [disableCloseButton, setDisableCloseButton] = useState(false);
 
@@ -26,6 +27,9 @@ function Wallets() {
         <div className="wallets-list">
             <div className="wallets-list-header">
                 <h2 className="title">My Wallets</h2>
+                <button onClick={downloadWallets} className="btn">
+                    <IconDownload />
+                </button>
                 <button onClick={toggle} className="btn">
                     <IconAdd />
                 </button>

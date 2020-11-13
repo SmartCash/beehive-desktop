@@ -133,8 +133,9 @@ body {
     padding: 25px 25px 0;
 }
 
-.wallets-list-header button {
+.wallets-list-header h2 + button {
     margin-left: auto;
+    margin-right: 16px;
 }
 
 .wallets-list-header button:hover circle,
