@@ -137,6 +137,7 @@ export const SendProvider = ({ children }) => {
     const providerValue = {
         ...state,
         walletCurrent,
+        walletCurrentBalance: wallets.find(wallet => wallet.address === walletCurrent).balance,
         fiatList,
         currencyMask,
         setAmountToSend,
@@ -145,7 +146,6 @@ export const SendProvider = ({ children }) => {
         handleSelectedFiat,
         isSmartFiat,
         calcSendFounds,
-        getPrivateKey,
         canSend,
         totalInSmart
     };

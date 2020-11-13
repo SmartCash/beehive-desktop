@@ -4,16 +4,16 @@
     padding: var(--spacer);
     display: flex;
     flex-wrap: wrap;
-}
-.page-send .privateKey .label {
-    font-size: 13px;
     color: #999;
 }
-.page-send .privateKey input {
-    background-color: transparent;
-    border: 0;
-    font-size: 18px;
-    color: #999;
+.page-send .privateKey p {
+    display: block;
+    width: 100%;
+    margin: 5px 0;
+}
+.page-send .privateKey p span {
+    color: var(--primary);
+    font-weight: 500;
 }
 .page-send .form-group {
     display: flex;

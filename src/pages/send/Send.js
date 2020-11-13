@@ -6,7 +6,6 @@ import MaskedInput from 'react-text-mask';
 
 function SendComponent() {
     const {
-        walletCurrent,
         amountToSend,
         setAmountToSend,
         amountToSendError,
@@ -18,11 +17,11 @@ function SendComponent() {
         submitSendAmount,
         isSmartFiat,
         calcSendFounds,
-        getPrivateKey,
         canSend,
         TXID,
+        walletCurrent,
+        walletCurrentBalance
     } = useContext(SendContext);
-    const [ showPK, setShowPK ] = useState(false);
 
     if (TXID) {
         return (
@@ -41,15 +40,8 @@ function SendComponent() {
     return (
         <Page className="page-send">
             <div className="form-control privateKey">
-                <label htmlFor="privateKey">Private Key from {walletCurrent}</label>
-                <input
-                    id="privateKey"
-                    placeholder="Insert Private Key here"
-                    value={getPrivateKey()}
-                    readOnly={true}
-                    type={showPK ? 'text' : 'password'}
-                />
-                <button type="button" className="showPK" onClick={() => setShowPK(!showPK)}>Show PK</button>
+                <p>Wallet Selected <span>{walletCurrent}</span></p>
+                <p>Balance: <span>{walletCurrentBalance}</span></p>
             </div>
             <div className="form-group">
                 <div className="form-control address">
