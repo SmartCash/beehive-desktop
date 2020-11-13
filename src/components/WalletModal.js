@@ -37,6 +37,12 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
 
     const insertPrivateKey = (event) => setPrivateKey(event.target.value);
 
+    const handleCloseModal = () => {
+        setCreateWallet(false);
+        setWallet(null);
+        hide();
+    }
+
     return (
         isShowing &&
         ReactDOM.createPortal(
@@ -52,7 +58,7 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
                                     className={style['modal-close-button']}
                                     data-dismiss="modal"
                                     aria-label="Close"
-                                    onClick={hide}
+                                    onClick={handleCloseModal}
                                 >
                                     <span aria-hidden="true">&times;</span>
                                 </button>
