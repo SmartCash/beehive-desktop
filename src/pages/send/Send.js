@@ -40,8 +40,8 @@ function SendComponent() {
     return (
         <Page className="page-send">
             <div className="form-control privateKey">
-                <p>Wallet Selected <span>{walletCurrent}</span></p>
-                <p>Balance: <span>{walletCurrentBalance}</span></p>
+                <p>Sending from <span>{walletCurrent}</span></p>
+                <p>Balance <span>{walletCurrentBalance}</span></p>
             </div>
             <div className="form-group">
                 <div className="form-control address">
@@ -55,17 +55,6 @@ function SendComponent() {
                     />
                     {addressToSendError && <p className="invalidAddress">Invalid address</p>}
                 </div>
-                {/* <div className="form-control fiat">
-                    <label htmlFor="fiat">Fiat</label>
-                    <select id="fiat" onInput={handleSelectedFiat}>
-                        <option value="smart">smart</option>
-                        {fiatList?.map((currencie) => (
-                            <option key={currencie} value={currencie}>
-                                {currencie}
-                            </option>
-                        ))}
-                    </select>
-                </div> */}
                 <div className="form-control amount">
                     <label htmlFor="amount">Amount to send</label>
                     <MaskedInput

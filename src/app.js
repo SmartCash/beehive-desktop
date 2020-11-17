@@ -5,7 +5,6 @@ import { WalletProvider } from './context/WalletContext';
 import Send from './pages/send/Send';
 import Receive from './pages/receive/Receive';
 import Transactions from './pages/transactions/Transactions';
-import Dashboard from './pages/dashboard/dashboard';
 import RewardsActivate from './pages/rewards/activate';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -17,9 +16,6 @@ function App() {
                     <Router>
                         <Switch>
                             <Route exact path="/">
-                                <Dashboard />
-                            </Route>
-                            <Route exact path="/send">
                                 <Send/>
                             </Route>
                             <Route exact path="/receive">

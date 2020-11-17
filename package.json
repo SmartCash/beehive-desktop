@@ -36,7 +36,7 @@
         "react-input-mask": "~2.0.4",
         "react-phone-number-input": "~3.0.22",
         "react-router-dom": "~5.1.2",
-        "react-scripts": "~3.4.3",
+        "react-scripts": "^4.0.0",
         "react-text-mask": "~5.4.3",
         "request": "~2.88.0",
         "request-promise": "~4.2.5",

@@ -11,10 +11,7 @@ function Header() {
             <div className="nav">
                 <ul>
                     <li>
-                        <NavLink exact to="/">Dashboard</NavLink>
-                    </li>
-                    <li>
-                        <NavLink exact to="/send">Send</NavLink>
+                        <NavLink exact to="/">Send</NavLink>
                     </li>
                     <li>
                         <NavLink exact to="/receive">Receive</NavLink>

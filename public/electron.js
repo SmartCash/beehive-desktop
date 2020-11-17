@@ -10,7 +10,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 800,
-        icon: '',
+        icon: __dirname + 'favicon.ico',
     });
 
     setUpdateNotification({repository: 'SmartCash/smarthub_local'});
