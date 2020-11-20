@@ -13,7 +13,7 @@ function RewardsActivate() {
     const [rewards, setRewards] = useState();
     const [isActive, setIsActive] = useState(false);
     const [rewardsError, setRewardsError] = useState(false);
-    const privateKey = wallets && wallets.find(wallet => wallet.address === address).privateKey;
+    const { privateKey, balance} = wallets && wallets.find(wallet => wallet.address === address);
 
     const { register, handleSubmit, errors, setError, setValue, formState } = useForm({
         mode: 'onChange',
@@ -58,7 +58,7 @@ function RewardsActivate() {
         return createAndSendRawTransaction(address, amount, privateKey || _privateKey);
     };
 
-    if (rewardsError) {
+    if (rewardsError || balance < 1000) {
         return (
             <Page className="page-rewards">
                 <div className={style['wrapper']}>

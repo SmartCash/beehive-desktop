@@ -52,7 +52,7 @@ export const SendContext = createContext(initialValue);
 
 export const SendProvider = ({ children }) => {
     const [state, dispatch] = useReducer(sendReducer, initialValue);
-    const { wallets, walletCurrent, fiatList } = useContext(WalletContext);
+    const { wallets, walletCurrent, fiatList, updateWalletsBalance } = useContext(WalletContext);
 
     const defaultMaskOptions = {
         prefix: '',
@@ -99,7 +99,10 @@ export const SendProvider = ({ children }) => {
     function submitSendAmount() {
         dispatch({ type: 'setTXIDLoading', payload: true });
         createAndSendRawTransaction(state.addressToSend, state.amountToSend, getPrivateKey())
-            .then((data) => dispatch({ type: 'setTXID', payload: data?.txid}))
+            .then((data) => {
+                updateWalletsBalance();
+                dispatch({ type: 'setTXID', payload: data?.txid});
+            })
             .catch((error) => dispatch({ type: 'setTXIDError', payload: error[0]?.message}))
             .finally(() => dispatch({ type: 'setTXIDLoading', payload: false }));
     }

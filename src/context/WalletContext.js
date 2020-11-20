@@ -86,6 +86,15 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'updateBalance', payload: balance });
     }
 
+    function updateWalletsBalance() {
+        if (state.wallets && state.wallets.length) {
+            state.wallets.forEach(async (wallet) => {
+                wallet.balance = await _getBalance(wallet.address) || 0;
+            });
+            dispatch({ type: 'updateWallets', payload: state.wallets });
+        }
+    }
+
     function saveMasterKey(masterKey) {
         const encryptedWallet = localStorage.getItem('SMARTWALLET');
         let wallets = [];
@@ -97,6 +106,7 @@ export const WalletProvider = ({ children }) => {
                 return dispatch({ type: 'decryptError', payload: true });
             }
             dispatch({ type: 'updateWallets', payload: decryptedWallet ? JSON.parse(decryptedWallet) : [] });
+            setTimeout(() => updateWalletsBalance(), 1000);
         } else {
             dispatch({ type: 'updateWallets', payload: [] });
         }
@@ -111,6 +121,10 @@ export const WalletProvider = ({ children }) => {
         if (state.fiatList.length === 0) {
             loadFiats();
         }
+
+        setInterval(() => {
+            updateWalletsBalance();
+        }, 60000);
     }, []);
 
     const providerValue = {
@@ -118,6 +132,7 @@ export const WalletProvider = ({ children }) => {
         addWallet,
         setWalletCurrent,
         updateBalance,
+        updateWalletsBalance,
         saveMasterKey,
         downloadWallets
     };
