@@ -22,6 +22,13 @@
     font-size: 16px;
 }
 
+.page-transactions .transaction button {
+    background: none;
+    border: 0 !important;
+    outline: 0 !important;
+    cursor: pointer;
+}
+
 .page-transactions .transaction .value a {
     color: inherit;
     font-size: inherit;

@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useReducer } from 'react';
+import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import { WalletContext } from '../../context/WalletContext';
 import { subtractFloats, sumFloats, sumFloatsValues } from '../../lib/math';
@@ -57,12 +57,10 @@ export const SendProvider = ({ children }) => {
     const defaultMaskOptions = {
         prefix: '',
         suffix: '',
-        includeThousandsSeparator: true,
-        thousandsSeparatorSymbol: '',
         allowDecimal: true,
         decimalSymbol: '.',
         decimalLimit: 8,
-        integerLimit: 30,
+        integerLimit: 15,
         allowNegative: false,
         allowLeadingZeroes: false,
     };
@@ -98,7 +96,7 @@ export const SendProvider = ({ children }) => {
 
     function submitSendAmount() {
         dispatch({ type: 'setTXIDLoading', payload: true });
-        createAndSendRawTransaction(state.addressToSend, state.amountToSend, getPrivateKey())
+        createAndSendRawTransaction(state.addressToSend, Number(state.amountToSend), getPrivateKey())
             .then((data) => {
                 updateWalletsBalance();
                 dispatch({ type: 'setTXID', payload: data?.txid});

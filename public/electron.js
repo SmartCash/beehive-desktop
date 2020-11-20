@@ -11,9 +11,12 @@ function createWindow() {
         width: 1200,
         height: 800,
         icon: __dirname + 'favicon.ico',
+        webPreferences: {
+            nodeIntegration: true
+        }
     });
 
-    setUpdateNotification({repository: 'SmartCash/smarthub_local'});
+    setUpdateNotification({ repository: 'SmartCash/smarthub_local' });
 
     mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
     mainWindow.on('closed', () => (mainWindow = null));

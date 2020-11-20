@@ -4,6 +4,7 @@ import { WalletContext } from '../../context/WalletContext';
 import { getTransactionHistory } from '../../lib/sapi';
 import './Transactions.css';
 import { Scrollbars } from 'react-custom-scrollbars';
+const electron = window.require('electron')
 
 function Transactions() {
     const { walletCurrent } = useContext(WalletContext);
@@ -38,11 +39,9 @@ function Transactions() {
                                 <p className="label">Amount</p>
                                 <p className="value">{tx.amount}</p>
                                 <p className="label">Transaction Id</p>
-                                <p className="value">
-                                    <a href={`https://explorer.smartcash.org/#/tx/${tx.txid}`} target="_blank">
-                                        {tx.txid}
-                                    </a>
-                                </p>
+                                <button className="value" onClick={() => electron.shell.openExternal(`https://explorer.smartcash.org/tx/${tx.txid}`)}>
+                                    {tx.txid}
+                                </button>
                             </div>
                         );
                     })}

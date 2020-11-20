@@ -110,6 +110,7 @@
     color: #333;
     margin-bottom: var(--spacer-lg);
 }
+
 .page-send .hasBeenSent p {
     margin: 0;
     padding: 0;
@@ -117,10 +118,14 @@
     font-weight: 500;
 }
 
-.page-send .hasBeenSent a {
+.page-send .hasBeenSent button {
     margin-top: 25px;
     display: block;
     color: #333;
+    border: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
 }
 
 .page-send .showPK {
@@ -131,4 +136,13 @@
     color: #999;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.page-send .walletEmpty {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacer-lg);
+    color: var(--primary);
 }

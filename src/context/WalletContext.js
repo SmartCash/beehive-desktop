@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useReducer } from 'react';
 import { getSupportedCurrencies } from '../lib/smart';
 import { getUnspent, calculateFee } from '../lib/sapi';
 import { subtractFloats, sumFloats } from '../lib/math';
-import * as CryptoJS from "crypto-js";
+import * as CryptoJS from 'crypto-js';
 import generatePDF from '../lib/GeneratorPDF';
 
 const initialState = {
@@ -20,7 +20,7 @@ const _getBalance = async (address) => {
         return Number(_balance.toFixed(8));
     }
     return 0;
-}
+};
 
 const userReducer = (state, action) => {
     switch (action.type) {
@@ -43,13 +43,18 @@ const userReducer = (state, action) => {
             return { ...state, wallets: action.payload };
         }
         case 'updateBalance': {
-            return {...state, walletsBalance: action.payload };
+            return { ...state, walletsBalance: action.payload };
         }
         case 'saveMasterKey': {
-            return {...state, masterKey: action.payload };
+            return { ...state, masterKey: action.payload };
         }
         case 'decryptError': {
-            return {...state, decryptError: action.payload };
+            return { ...state, decryptError: action.payload };
+        }
+        case 'updateWalletsBalance': {
+            const _wallets = state.wallets;
+            _wallets.forEach(async (wallet) => (wallet.balance = await _getBalance(wallet.address)));
+            return { ...state, wallets: _wallets };
         }
         default: {
             return state;
@@ -63,11 +68,10 @@ export const WalletProvider = ({ children }) => {
     const [state, dispatch] = useReducer(userReducer, initialState);
 
     async function addWallet(wallet) {
-        const exists = state.wallets.find(_wallet => _wallet.address === wallet.address);
+        const exists = state.wallets.find((_wallet) => _wallet.address === wallet.address);
         if (exists) {
             return;
         }
-        wallet.balance = await _getBalance(wallet.address) || 0;
         if (state.wallets.length === 0) {
             dispatch({ type: 'setWalletCurrent', payload: wallet.address });
         }
@@ -86,15 +90,6 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'updateBalance', payload: balance });
     }
 
-    function updateWalletsBalance() {
-        if (state.wallets && state.wallets.length) {
-            state.wallets.forEach(async (wallet) => {
-                wallet.balance = await _getBalance(wallet.address) || 0;
-            });
-            dispatch({ type: 'updateWallets', payload: state.wallets });
-        }
-    }
-
     function saveMasterKey(masterKey) {
         const encryptedWallet = localStorage.getItem('SMARTWALLET');
         let wallets = [];
@@ -106,10 +101,10 @@ export const WalletProvider = ({ children }) => {
                 return dispatch({ type: 'decryptError', payload: true });
             }
             dispatch({ type: 'updateWallets', payload: decryptedWallet ? JSON.parse(decryptedWallet) : [] });
-            setTimeout(() => updateWalletsBalance(), 1000);
         } else {
             dispatch({ type: 'updateWallets', payload: [] });
         }
+        updateWalletsBalance();
         dispatch({ type: 'saveMasterKey', payload: masterKey });
     }
 
@@ -117,11 +112,14 @@ export const WalletProvider = ({ children }) => {
         generatePDF(state.wallets, 'MyWallets_SmartCash');
     }
 
+    function updateWalletsBalance() {
+        dispatch({ type: 'updateWalletsBalance' });
+    }
+
     useEffect(() => {
         if (state.fiatList.length === 0) {
             loadFiats();
         }
-
         setInterval(() => {
             updateWalletsBalance();
         }, 60000);
@@ -134,7 +132,7 @@ export const WalletProvider = ({ children }) => {
         updateBalance,
         updateWalletsBalance,
         saveMasterKey,
-        downloadWallets
+        downloadWallets,
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;

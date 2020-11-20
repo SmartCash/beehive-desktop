@@ -14,6 +14,7 @@ function RewardsActivate() {
     const [isActive, setIsActive] = useState(false);
     const [rewardsError, setRewardsError] = useState(false);
     const { privateKey, balance} = wallets && wallets.find(wallet => wallet.address === address);
+    const [countDownDate, setCountDownDate] = useState(0);
 
     const { register, handleSubmit, errors, setError, setValue, formState } = useForm({
         mode: 'onChange',
@@ -29,6 +30,7 @@ function RewardsActivate() {
 
     const onSubmit = async (data) => {
         setActivating(true);
+        setCountDownDate(Date.now() + 300000);
 
         let _unspents, _amount, _balance, transactionId;
 
@@ -78,7 +80,7 @@ function RewardsActivate() {
                         height="25px"
                     />
                     <p>
-                        <Countdown date={Date.now() + 300000} />
+                        <Countdown date={countDownDate} />
                     </p>
                     <p>Activating rewards for the address {address}.</p>
                     <p>This can take a while, do not reload this page.</p>

@@ -1,8 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import Page from '../../components/Page';
 import './Send.css';
 import { SendContext, SendProvider } from './SendContext';
 import MaskedInput from 'react-text-mask';
+const electron = window.require('electron')
 
 function SendComponent() {
     const {
@@ -20,7 +21,7 @@ function SendComponent() {
         canSend,
         TXID,
         walletCurrent,
-        walletCurrentBalance
+        walletCurrentBalance,
     } = useContext(SendContext);
 
     if (TXID) {
@@ -28,10 +29,28 @@ function SendComponent() {
             <Page className="page-send">
                 <div className="hasBeenSent">
                     <p>Amount has been sent</p>
-                    <a href={`https://explorer.smartcash.org/#/tx/${TXID}`} target="_blank" rel="noopener noreferrer">
+                    <button onClick={() => electron.shell.openExternal(`https://explorer.smartcash.org/tx/${TXID}`)}>
                         {TXID}
                         <small>(click to view details)</small>
-                    </a>
+                    </button>
+                </div>
+            </Page>
+        );
+    }
+
+    if (walletCurrentBalance === 0) {
+        return (
+            <Page className="page-send">
+                <div className="form-control privateKey">
+                    <p>
+                        Sending from <span>{walletCurrent}</span>
+                    </p>
+                    <p>
+                        Balance <span>{walletCurrentBalance}</span>
+                    </p>
+                </div>
+                <div className="walletEmpty">
+                    <p>This wallet is empty</p>
                 </div>
             </Page>
         );
@@ -40,8 +59,12 @@ function SendComponent() {
     return (
         <Page className="page-send">
             <div className="form-control privateKey">
-                <p>Sending from <span>{walletCurrent}</span></p>
-                <p>Balance <span>{walletCurrentBalance}</span></p>
+                <p>
+                    Sending from <span>{walletCurrent}</span>
+                </p>
+                <p>
+                    Balance <span>{walletCurrentBalance}</span>
+                </p>
             </div>
             <div className="form-group">
                 <div className="form-control address">
@@ -95,7 +118,7 @@ function SendComponent() {
                     </div>
                     <div>
                         <p className="label">Total in Smart</p>
-                        <p className="value">{totalInSmart}</p>
+                        <p className="value">{totalInSmart.toFixed(8)}</p>
                     </div>
                 </div>
             )}
