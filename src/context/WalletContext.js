@@ -4,6 +4,7 @@ import { getUnspent } from '../lib/sapi';
 import { sumFloats } from '../lib/math';
 import * as CryptoJS from 'crypto-js';
 import generatePDF from '../lib/GeneratorPDF';
+const { ipcRenderer } = window.require('electron');
 
 const initialState = {
     wallets: [],
@@ -26,8 +27,8 @@ const userReducer = (state, action) => {
     switch (action.type) {
         case 'addWallet': {
             const _wallets = [...state.wallets, action.payload];
-            const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(_wallets), state.masterKey);
-            localStorage.setItem('SMARTWALLET', encryptedWallet);
+            const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(_wallets), state.masterKey).toString();
+            ipcRenderer.send('setWalletData', encryptedWallet);
             return { ...state, wallets: _wallets };
         }
         case 'setWalletCurrent': {
@@ -95,7 +96,7 @@ export const WalletProvider = ({ children }) => {
     }
 
     function saveMasterKey(masterKey) {
-        const encryptedWallet = localStorage.getItem('SMARTWALLET');
+        const encryptedWallet = ipcRenderer.sendSync('getWalletData');
         let wallets = [];
         let decryptedWallet;
         if (encryptedWallet) {

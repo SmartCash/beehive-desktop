@@ -1,9 +1,10 @@
 const setUpdateNotification = require('./updateNotifier');
-const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
+const { ipcMain, app, BrowserWindow } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
+const Store = require('electron-store');
+
+const store = new Store();
 let mainWindow;
 
 function createWindow() {
@@ -15,9 +16,11 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true,
             webSecurity: false,
-            disableBlinkFeatures: 'OutOfBlinkCors'
-        }
+            disableBlinkFeatures: 'OutOfBlinkCors',
+        },
     });
+
+    mainWindow.setMenu(null);
 
     setUpdateNotification({ repository: 'SmartCash/smarthub_local' });
 
@@ -36,4 +39,12 @@ app.on('activate', () => {
     if (mainWindow === null) {
         createWindow();
     }
+});
+
+ipcMain.on('setWalletData', (event, arg) => {
+    store.set('wallets', `${arg}`);
+});
+
+ipcMain.on('getWalletData', (event) => {
+    event.returnValue = store.get('wallets');
 });
