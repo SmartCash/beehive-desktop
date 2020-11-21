@@ -1,12 +1,12 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import { getSupportedCurrencies } from '../lib/smart';
-import { getUnspent, calculateFee } from '../lib/sapi';
-import { subtractFloats, sumFloats } from '../lib/math';
+import { getUnspent } from '../lib/sapi';
+import { sumFloats } from '../lib/math';
 import * as CryptoJS from 'crypto-js';
 import generatePDF from '../lib/GeneratorPDF';
 
 const initialState = {
-    wallets: null,
+    wallets: [],
     walletCurrent: '',
     fiatList: [],
     walletsBalance: 0,
@@ -52,6 +52,9 @@ const userReducer = (state, action) => {
             return { ...state, decryptError: action.payload };
         }
         case 'updateWalletsBalance': {
+            if (state.wallets === null) {
+                return state;
+            }
             const _wallets = state.wallets;
             _wallets.forEach(async (wallet) => (wallet.balance = await _getBalance(wallet.address)));
             return { ...state, wallets: _wallets };
@@ -75,6 +78,7 @@ export const WalletProvider = ({ children }) => {
         if (state.wallets.length === 0) {
             dispatch({ type: 'setWalletCurrent', payload: wallet.address });
         }
+        wallet.balance = await _getBalance(wallet.address);
         dispatch({ type: 'addWallet', payload: wallet });
     }
 
@@ -100,9 +104,13 @@ export const WalletProvider = ({ children }) => {
             } catch (e) {
                 return dispatch({ type: 'decryptError', payload: true });
             }
-            dispatch({ type: 'updateWallets', payload: decryptedWallet ? JSON.parse(decryptedWallet) : [] });
+            if (decryptedWallet) {
+                wallets = JSON.parse(decryptedWallet);
+                wallets.forEach(async (wallet) => (wallet.balance = await _getBalance(wallet.address)));
+            }
+            dispatch({ type: 'updateWallets', payload: wallets });
         } else {
-            dispatch({ type: 'updateWallets', payload: [] });
+            dispatch({ type: 'updateWallets', payload: wallets });
         }
         updateWalletsBalance();
         dispatch({ type: 'saveMasterKey', payload: masterKey });

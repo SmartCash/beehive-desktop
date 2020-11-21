@@ -13,7 +13,7 @@ function RewardsActivate() {
     const [rewards, setRewards] = useState();
     const [isActive, setIsActive] = useState(false);
     const [rewardsError, setRewardsError] = useState(false);
-    const { privateKey, balance} = wallets && wallets.find(wallet => wallet.address === address);
+    const { privateKey, balance} = wallets.find(wallet => wallet.address === address);
     const [countDownDate, setCountDownDate] = useState(0);
 
     const { register, handleSubmit, errors, setError, setValue, formState } = useForm({

@@ -11,8 +11,11 @@ function createWindow() {
         width: 1200,
         height: 800,
         icon: __dirname + 'favicon.ico',
+        autoHideMenuBar: true,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            webSecurity: false,
+            disableBlinkFeatures: 'OutOfBlinkCors'
         }
     });
 
