@@ -245,6 +245,7 @@ body {
     color: #fff;
     margin: 8px 0 0;
     background: none;
+    max-width: 100%;
 }
 .form-control input::placeholder {
     color: #464444;

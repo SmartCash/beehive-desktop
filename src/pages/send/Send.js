@@ -3,7 +3,8 @@ import Page from '../../components/Page';
 import './Send.css';
 import { SendContext, SendProvider } from './SendContext';
 import MaskedInput from 'react-text-mask';
-const electron = window.require('electron')
+import Scrollbars from 'react-custom-scrollbars';
+const electron = window.require('electron');
 
 function SendComponent() {
     const {
@@ -58,6 +59,7 @@ function SendComponent() {
 
     return (
         <Page className="page-send">
+            <Scrollbars>
             <div className="form-control privateKey">
                 <p>
                     Sending from <span>{walletCurrent}</span>
@@ -74,7 +76,10 @@ function SendComponent() {
                         placeholder="Insert address here"
                         autoComplete="off"
                         type="text"
-                        onInput={(event) => setAddressToSend(event.target.value)}
+                        onInput={(event) => {
+                            event.target.value = event.target.value.trim();
+                            setAddressToSend(event.target.value);
+                        }}
                     />
                     {addressToSendError && <p className="invalidAddress">Invalid address</p>}
                 </div>
@@ -125,6 +130,7 @@ function SendComponent() {
             <button type="submit" onClick={() => submitSendAmount()} disabled={!canSend()}>
                 Send
             </button>
+            </Scrollbars>
         </Page>
     );
 }

@@ -45,3 +45,21 @@
 .page-transactions .error {
     color: var(--primary)
 }
+
+.page-transactions .refreshBtn {
+    margin-bottom: var(--spacer);
+    display: flex;
+    margin-left: auto;
+    border: 0;
+    background: none;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.page-transactions .refreshBtn:disabled {
+    opacity: .5;
+}

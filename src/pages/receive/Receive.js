@@ -4,6 +4,7 @@ import './Receive.css';
 import QRious from 'qrious';
 import { WalletContext } from '../../context/WalletContext';
 import { getCurrenciePrice } from '../../lib/smart';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 function Receive() {
     const { walletCurrent, fiatList } = useContext(WalletContext);
@@ -39,36 +40,38 @@ function Receive() {
 
     return (
         <Page className="page-receive">
-            <div className="qrcode">
-                <img src={qrAddress.toDataURL('image/png')} alt="" />
-            </div>
-            <div className="form-group">
-                <div className="form-control address">
-                    <label htmlFor="addressTo">Send funds to address</label>
-                    <input id="addressTo" value={walletCurrent} readOnly={true} />
+            <Scrollbars>
+                <div className="qrcode">
+                    <img src={qrAddress.toDataURL('image/png')} alt="" />
                 </div>
-                <div className="form-control fiat">
-                    <label htmlFor="fiat">Fiat</label>
-                    <select id="fiat" onInput={handleSelectedFiat}>
-                        <option value="smart">Smart</option>
-                        {fiatList?.map((currencie) => (
-                            <option key={currencie} value={currencie}>
-                                {currencie}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className="form-control amount">
-                    <label htmlFor="amount">Amount to receive {!isFiatSmart() && `in (${fiatSelected})`}:</label>
-                    <input id="amount" defaultValue={amount} onInput={(event) => setAmount(event.target.value)} />
-                </div>
-                {!isFiatSmart() && (
-                    <div className="form-control amountInSmart">
-                        <label htmlFor="receveInSmart">Amount to receive in SMART</label>
-                        <input id="receveInSmart" value={calcAmountConverted()} readOnly={true} />
+                <div className="form-group">
+                    <div className="form-control address">
+                        <label htmlFor="addressTo">Send funds to address</label>
+                        <input id="addressTo" value={walletCurrent} readOnly={true} />
                     </div>
-                )}
-            </div>
+                    <div className="form-control fiat">
+                        <label htmlFor="fiat">Fiat</label>
+                        <select id="fiat" onInput={handleSelectedFiat}>
+                            <option value="smart">Smart</option>
+                            {fiatList?.map((currencie) => (
+                                <option key={currencie} value={currencie}>
+                                    {currencie}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="form-control amount">
+                        <label htmlFor="amount">Amount to receive {!isFiatSmart() && `in (${fiatSelected})`}:</label>
+                        <input id="amount" defaultValue={amount} onInput={(event) => setAmount(event.target.value)} />
+                    </div>
+                    {!isFiatSmart() && (
+                        <div className="form-control amountInSmart">
+                            <label htmlFor="receveInSmart">Amount to receive in SMART</label>
+                            <input id="receveInSmart" value={calcAmountConverted()} readOnly={true} />
+                        </div>
+                    )}
+                </div>
+            </Scrollbars>
         </Page>
     );
 }

@@ -19,6 +19,9 @@
 .page-receive .fiat {
     width: 200px;
 }
+.page-receive .amount {
+    max-width: 220px;
+}
 .page-receive .amount,
 .page-receive .amountInSmart {
     flex: 1;
