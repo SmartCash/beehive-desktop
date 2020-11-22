@@ -32,3 +32,7 @@
 .page-receive .amountInSmart input {
     font-size: 16px;
 }
+
+.page-receive option {
+    color: #333;
+}
