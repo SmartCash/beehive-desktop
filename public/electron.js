@@ -9,8 +9,8 @@ let mainWindow;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 1200,
-        height: 800,
+        width: 1280,
+        height: 768,
         icon: __dirname + 'favicon.ico',
         autoHideMenuBar: true,
         webPreferences: {
