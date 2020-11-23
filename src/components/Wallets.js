@@ -16,6 +16,8 @@ function Wallets() {
         if (wallets && wallets.length === 0 && masterKey) {
             setDisableCloseButton(true);
             toggle();
+        } else {
+            setDisableCloseButton(false);
         }
     }, [wallets]);
 

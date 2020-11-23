@@ -14,6 +14,7 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
     const [isPKInvalid, setIsPKInvalid] = useState(false);
     const handleAddWallet = () => {
         addWallet(wallet);
+        setCreateWallet(false);
         generatePDF([wallet], 'SmartCash_Address');
         hide();
     };
