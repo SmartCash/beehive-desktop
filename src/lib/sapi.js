@@ -159,12 +159,13 @@ export async function getUnspent(_address) {
     return utxos;
 }
 
-export async function getTransactionHistory(_address) {
+export async function getTransactionHistory(address) {
     try {
         var options = {
             method: 'POST',
-            uri: `${getSapiUrl()}/v1/address/transactions/${_address}`,
+            uri: `https://sapi.smartcash.cc/v1/address/transactions`,
             body: {
+                address,
                 pageNumber: 1,
                 pageSize: 5,
             },
