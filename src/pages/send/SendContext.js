@@ -96,7 +96,7 @@ export const SendProvider = ({ children }) => {
 
     function submitSendAmount() {
         dispatch({ type: 'setTXIDLoading', payload: true });
-        createAndSendRawTransaction(state.addressToSend, Number(state.amountToSend), getPrivateKey())
+        createAndSendRawTransaction(state.addressToSend, Number(state.amountToSend.toFixed(8)), getPrivateKey())
             .then((data) => {
                 updateWalletsBalance();
                 dispatch({ type: 'setTXID', payload: data?.txid});
