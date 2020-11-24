@@ -19,7 +19,7 @@
 }
 
 .page-receive .qrcode .btnWrapper button ~ button {
-    margin-top: 16px
+    margin-top: 16px;
 }
 
 .page-receive .form-group {
@@ -58,8 +58,26 @@
     height: 20px;
     object-fit: contain;
     fill: #fff;
+    position: relative;
 }
 
 .page-receive .btnCopy:active {
     fill: var(--primary);
+}
+
+.page-receive .btn.copy {
+    position: relative;
+}
+
+.page-receive .btn.copy:active::after {
+    content: 'Copied';
+    display: block;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, calc(-100% - 10px));
+    background: #333;
+    color: #fff;
+    position: absolute;
+    padding: 10px;
+    border-radius: 10px;
 }

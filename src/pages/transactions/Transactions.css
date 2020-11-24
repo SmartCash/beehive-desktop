@@ -43,7 +43,7 @@
 }
 
 .page-transactions .error {
-    color: var(--primary)
+    color: #999;
 }
 
 .page-transactions .refreshBtn {

@@ -2,11 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { sumFloats, subtractFloats } from '../../lib/math';
 import { createAndSendRawTransaction, calculateFee, getTxId, getUnspent, getRewards } from '../../lib/sapi';
-import style from './activate.module.css';
+import './activate.css';
 import Countdown from 'react-countdown';
 import Page from '../../components/Page';
 import { WalletContext } from '../../context/WalletContext';
 import { ReactComponent as IconLoading } from '../../assets/images/loading.svg';
+import SmartRewardsImage from '../../assets/images/smart_rewards.png';
+import SuperRewardsImage from '../../assets/images/super_rewards.png';
 
 function RewardsActivate() {
     const { wallets, walletCurrent: address } = useContext(WalletContext);
@@ -14,7 +16,7 @@ function RewardsActivate() {
     const [rewards, setRewards] = useState();
     const [isActive, setIsActive] = useState(false);
     const [rewardsError, setRewardsError] = useState(false);
-    const { privateKey, balance} = wallets.find(wallet => wallet.address === address);
+    const { privateKey, balance } = wallets.find((wallet) => wallet.address === address);
     const [countDownDate, setCountDownDate] = useState(0);
 
     const { register, handleSubmit, errors, setError, setValue, formState } = useForm({
@@ -24,7 +26,9 @@ function RewardsActivate() {
     useEffect(() => {
         setRewards(null);
         setRewardsError(false);
-        getRewards(address).then(data => setRewards(data)).catch(() => setRewardsError(true));
+        getRewards(address)
+            .then((data) => setRewards(data))
+            .catch(() => setRewardsError(true));
     }, [address]);
 
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -64,8 +68,8 @@ function RewardsActivate() {
     if (rewardsError || balance < 1000) {
         return (
             <Page className="page-rewards">
-                <div className={style['wrapper']}>
-                    The address {address} is not eligible for rewards.
+                <div className="wrapper">
+                    The address <span className="text-primary">{address}</span> is not eligible for rewards.
                 </div>
             </Page>
         );
@@ -74,8 +78,8 @@ function RewardsActivate() {
     if (isActive === false && activating) {
         return (
             <Page className="page-rewards">
-                <div className={style['wrapperActivating']}>
-                    <IconLoading className={style['wrapperActivatingLoading']} />
+                <div className="wrapperActivating">
+                    <IconLoading className="wrapperActivatingLoading" />
                     <p>
                         <Countdown date={countDownDate} />
                     </p>
@@ -89,26 +93,40 @@ function RewardsActivate() {
     return (
         <Page className="page-rewards">
             {isActive && (
-                <div className={style['wrapper']}>
-                    <p>Rewards are already activated for this address {address}</p>
+                <div className="wrapper">
+                    <p>
+                        Rewards are already activated for this address <span className="text-primary">{address}</span>
+                    </p>
                 </div>
             )}
             {rewards && rewards.activated === 1 && isActive === false && (
-                <div className={style['wrapper']}>
-                    <div className={style['wrapper']}>
-                        <p>Rewards are already activated for this address {address}</p>
-                        <p>Balance Eligible: {rewards.balance_eligible}</p>
-                        <p>Bonus level: {rewards.bonus_level}</p>
+                <div className="wrapper">
+                    <div className="wrapper">
+                        <p>
+                            Rewards are already activated for this address <span className="text-primary">{address}</span>
+                        </p>
+                        <p>
+                            Balance Eligible: <span className="text-primary">{rewards.balance_eligible}</span>
+                        </p>
+                        <p>
+                            Bonus level: <span className="text-primary">{rewards.bonus_level}</span>
+                        </p>
+                        <div>
+                            {rewards.activated && rewards.balance_eligible > 1000 && rewards.balance_eligible < 1000000 && (
+                                <img src={SmartRewardsImage} className="rewardsImg" />
+                            )}
+                            {rewards.activated && rewards.balance_eligible >= 1000000 && (
+                                <img src={SuperRewardsImage} className="rewardsImg" />
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
             {rewards && rewards.activated === 0 && isActive === false && (
-                <div className={style['wrapper']}>
+                <div className="wrapper">
                     <p>The rewards is not activated for the address {address}</p>
                     <form onSubmit={handleSubmit(onSubmit)} className="formGroup" autoComplete="off">
-                        <button type="submit">
-                            Activate Rewards
-                        </button>
+                        <button type="submit">Activate Rewards</button>
                     </form>
                 </div>
             )}

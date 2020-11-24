@@ -1,0 +1,38 @@
+.page-rewards .wrapper {
+    text-align: center;
+    color: #999;
+}
+
+.page-rewards .wrapper p {
+    width: 100%;
+}
+
+.page-rewards .wrapper .text-primary {
+    color: var(--primary);
+}
+
+.page-rewards .rewardsImg {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.page-rewards .wrapperActivating {
+    text-align: center;
+    width: 100%;
+    color: var(--primary);
+}
+
+.page-rewards .wrapperActivatingLoading {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}

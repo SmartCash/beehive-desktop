@@ -55,7 +55,7 @@ function Receive() {
                         }}>
                             <IconDownload className="btnCopy"/>
                         </button>
-                        <button className="btn" title="Copy QRCode to clipboard" onClick={() => {
+                        <button className="btn copy" title="Copy QRCode to clipboard" onClick={() => {
                             electron.clipboard.writeImage(electron.nativeImage.createFromDataURL(qrAddress.toDataURL('image/png')));
                         }}>
                             <IconCopy className="btnCopy"/>
@@ -66,7 +66,7 @@ function Receive() {
                     <div className="form-control address">
                         <label htmlFor="addressTo">Send funds to address</label>
                         <input id="addressTo" value={walletCurrent} readOnly={true} />
-                        <button className="btn" title="Copy address to clipboard" onClick={() => electron.clipboard.writeText(walletCurrent)}>
+                        <button className="btn copy" title="Copy address to clipboard" onClick={() => electron.clipboard.writeText(walletCurrent)}>
                             <IconCopy className="btnCopy"/>
                         </button>
                     </div>
