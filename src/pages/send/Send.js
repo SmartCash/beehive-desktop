@@ -96,15 +96,8 @@ function SendComponent() {
                 </div>
                 {isSmartFiat() && (
                     <div className="form-control amount">
-                        <label>Quantity to send</label>
-                        <button type="button" onClick={() => calcSendFounds(0.25)}>
-                            1/4
-                        </button>
-                        <button type="button" onClick={() => calcSendFounds(0.5)}>
-                            Half
-                        </button>
                         <button type="button" onClick={() => calcSendFounds(1)}>
-                            All
+                            Send All
                         </button>
                     </div>
                 )}

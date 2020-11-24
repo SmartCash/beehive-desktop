@@ -32,9 +32,9 @@
 .page-send .amountInSmart {
     flex: 1;
     align-items: center;
-    border-left: 1px solid #999;
 }
 .page-send .amount button {
+    margin-left: auto;
     border: 1px solid #999;
     background: none;
     color: #999;

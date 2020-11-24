@@ -5,7 +5,23 @@
     border-radius: var(--borderRadius);
     background: #ffffff;
     margin: 0 auto var(--spacer-lg);
+    position: relative;
 }
+
+.page-receive .qrcode .btnWrapper {
+    position: absolute;
+    right: -40px;
+    bottom: 0;
+    width: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.page-receive .qrcode .btnWrapper button ~ button {
+    margin-top: 16px
+}
+
 .page-receive .form-group {
     display: flex;
     flex-wrap: wrap;
@@ -35,4 +51,15 @@
 
 .page-receive option {
     color: #333;
+}
+
+.page-receive .btnCopy {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    fill: #fff;
+}
+
+.page-receive .btnCopy:active {
+    fill: var(--primary);
 }
