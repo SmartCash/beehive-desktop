@@ -83,7 +83,7 @@ function RewardsActivate() {
                     <p>
                         <Countdown date={countDownDate} />
                     </p>
-                    <p>Activating rewards for the address {address}.</p>
+                    <p>Activating rewards for the address <span className="text-primary">{address}</span>.</p>
                     <p>This can take a while, do not reload this page.</p>
                 </div>
             </Page>
@@ -124,7 +124,7 @@ function RewardsActivate() {
             )}
             {rewards && rewards.activated === 0 && isActive === false && (
                 <div className="wrapper">
-                    <p>The rewards is not activated for the address {address}</p>
+                    <p>The rewards is not activated for the address <span className="text-primary">{address}</span></p>
                     <form onSubmit={handleSubmit(onSubmit)} className="formGroup" autoComplete="off">
                         <button type="submit">Activate Rewards</button>
                     </form>
