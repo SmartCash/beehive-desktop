@@ -30,7 +30,7 @@ function SendComponent() {
             <Page className="page-send">
                 <div className="hasBeenSent">
                     <p>Amount has been sent</p>
-                    <button onClick={() => electron.shell.openExternal(`https://explorer.smartcash.org/tx/${TXID}`)}>
+                    <button onClick={() => electron.shell.openExternal(`http://explorer.smartcash.org/tx/${TXID}`)}>
                         {TXID}
                         <small>(click to view details)</small>
                     </button>

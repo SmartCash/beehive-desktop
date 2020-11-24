@@ -56,7 +56,7 @@ function Transactions() {
                                 <p className="label">Transaction Id</p>
                                 <button
                                     className="value"
-                                    onClick={() => electron.shell.openExternal(`https://explorer.smartcash.org/tx/${tx.txid}`)}
+                                    onClick={() => electron.shell.openExternal(`http://explorer.smartcash.org/tx/${tx.txid}`)}
                                 >
                                     {tx.txid}
                                 </button>
