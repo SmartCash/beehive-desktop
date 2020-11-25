@@ -12,6 +12,7 @@ function SendComponent() {
         setAmountToSend,
         amountToSendError,
         currencyMask,
+        addressToSend,
         setAddressToSend,
         addressToSendError,
         netFee,
@@ -23,7 +24,8 @@ function SendComponent() {
         TXID,
         walletCurrent,
         walletCurrentBalance,
-        clearTxId
+        clearTxId,
+        address
     } = useContext(SendContext);
 
     if (walletCurrentBalance === 0) {
@@ -73,10 +75,8 @@ function SendComponent() {
                             placeholder="Insert address here"
                             autoComplete="off"
                             type="text"
-                            onInput={(event) => {
-                                event.target.value = event.target.value.trim();
-                                setAddressToSend(event.target.value);
-                            }}
+                            value={addressToSend}
+                            onInput={(event) => setAddressToSend(event.target.value.trim())}
                         />
                         {addressToSendError && <p className="invalidAddress">Invalid address</p>}
                     </div>

@@ -40,7 +40,8 @@ const sendReducer = (state, action) => {
             return {...state, TXIDError: action.payload };
         }
         case 'clearState': {
-            return initialValue
+            document.getElementById('addressTo').value = '';
+            return {...initialValue}
         }
         default: {
             return state;
@@ -81,13 +82,11 @@ export const SendProvider = ({ children }) => {
     }
 
     const setAddressToSend = (value) => {
+        dispatch({ type: 'setAddressToSend', payload: value});
         isAddress(value)
-        .then(() => {
-            dispatch({ type: 'setAddressToSend', payload: value});
-        })
-        .catch(() => {
-            dispatch({ type: 'setAddressToSendError', payload: true});
-        });
+            .catch(() => {
+                dispatch({ type: 'setAddressToSendError', payload: true});
+            });
     }
 
     useEffect(() => {
