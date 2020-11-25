@@ -15,12 +15,21 @@ const initialState = {
 };
 
 const _getBalance = async (address) => {
-    const _unspents = await getUnspent(address);
-    if (_unspents && _unspents.utxos) {
-        const _balance = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8));
-        return Number(_balance.toFixed(8));
+    const getBalanceFromSapi = async () => {
+        const _unspents = await getUnspent(address);
+        if (_unspents && _unspents.utxos) {
+            const _balance = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8));
+            return Number(_balance.toFixed(8));
+        }
+        return 0;
     }
-    return 0;
+    let balance = 0;
+    try {
+        balance = await getBalanceFromSapi();
+    } catch {
+        balance = await getBalanceFromSapi();
+    }
+    return balance;
 };
 
 const userReducer = (state, action) => {

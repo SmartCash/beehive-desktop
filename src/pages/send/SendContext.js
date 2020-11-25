@@ -98,6 +98,7 @@ export const SendProvider = ({ children }) => {
         dispatch({ type: 'setTXIDLoading', payload: true });
         createAndSendRawTransaction(state.addressToSend, Number(state.amountToSend), getPrivateKey())
             .then((data) => {
+                dispatch({ type: 'clearState' });
                 updateWalletsBalance();
                 dispatch({ type: 'setTXID', payload: data?.txid});
             })
@@ -135,6 +136,8 @@ export const SendProvider = ({ children }) => {
 
     const totalInSmart = sumFloatsValues(state.amountToSend, state.netFee);
 
+    const clearTxId = () => dispatch({ type: 'setTXID', payload: null });
+
     const providerValue = {
         ...state,
         walletCurrent,
@@ -148,7 +151,8 @@ export const SendProvider = ({ children }) => {
         isSmartFiat,
         calcSendFounds,
         canSend,
-        totalInSmart
+        totalInSmart,
+        clearTxId
     };
 
     return <SendContext.Provider value={providerValue}>{children}</SendContext.Provider>;

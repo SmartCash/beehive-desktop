@@ -1,0 +1,30 @@
+.wrapper {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    color: #999;
+    background: #0c0c0d;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 42px;
+}
+.wrapper h2 {
+    color: var(--primary);
+    font-size: 14px;
+    margin: 0 0 8px;
+    padding: 0;
+}
+.wrapper p {
+    font-size: 13px;
+    margin: 0;
+    padding: 0;
+}
+.wrapper p ~ p {
+    margin-top: 8px;
+}
+.wrapperColumn {
+    width: 50%;
+}
+.text-primary {
+    color: var(--primary);
+}

@@ -104,18 +104,29 @@
     color: var(--primary);
 }
 .page-send .hasBeenSent {
-    background: #d9e974;
+    background: var(--primary);
     padding: var(--spacer);
     border-radius: var(--borderRadius);
     color: #333;
     margin-bottom: var(--spacer-lg);
+    position: relative;
 }
-
 .page-send .hasBeenSent p {
     margin: 0;
     padding: 0;
     font-size: 23px;
     font-weight: 500;
+}
+.page-send .hasBeenSent .btnClose {
+    border: 1px solid #333;
+    font-weight: 700;
+    position: absolute;
+    top: 0;
+    right: 20px;
+    border-radius: 100%;
+    font-size: 12px;
+    text-align: center;
+    padding: 6px 10px;
 }
 
 .page-send .hasBeenSent button {

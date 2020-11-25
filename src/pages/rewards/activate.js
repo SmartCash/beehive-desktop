@@ -1,14 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { sumFloats, subtractFloats } from '../../lib/math';
-import { createAndSendRawTransaction, calculateFee, getTxId, getUnspent, getRewards } from '../../lib/sapi';
-import './activate.css';
 import Countdown from 'react-countdown';
-import Page from '../../components/Page';
-import { WalletContext } from '../../context/WalletContext';
+import { useForm } from 'react-hook-form';
 import { ReactComponent as IconLoading } from '../../assets/images/loading.svg';
 import SmartRewardsImage from '../../assets/images/smart_rewards.png';
 import SuperRewardsImage from '../../assets/images/super_rewards.png';
+import Page from '../../components/Page';
+import SmartNodeRewardsRoi from '../../components/SmartNodeRewardsRoi';
+import { WalletContext } from '../../context/WalletContext';
+import { subtractFloats, sumFloats } from '../../lib/math';
+import { calculateFee, createAndSendRawTransaction, getRewards, getTxId, getUnspent } from '../../lib/sapi';
+import './activate.css';
 
 function RewardsActivate() {
     const { wallets, walletCurrent: address } = useContext(WalletContext);
@@ -71,6 +72,7 @@ function RewardsActivate() {
                 <div className="wrapper">
                     The address <span className="text-primary">{address}</span> is not eligible for rewards.
                 </div>
+                <SmartNodeRewardsRoi />
             </Page>
         );
     }
@@ -83,7 +85,9 @@ function RewardsActivate() {
                     <p>
                         <Countdown date={countDownDate} />
                     </p>
-                    <p>Activating rewards for the address <span className="text-primary">{address}</span>.</p>
+                    <p>
+                        Activating rewards for the address <span className="text-primary">{address}</span>.
+                    </p>
                     <p>This can take a while, do not reload this page.</p>
                 </div>
             </Page>
@@ -124,12 +128,15 @@ function RewardsActivate() {
             )}
             {rewards && rewards.activated === 0 && isActive === false && (
                 <div className="wrapper">
-                    <p>The rewards is not activated for the address <span className="text-primary">{address}</span></p>
+                    <p>
+                        The rewards is not activated for the address <span className="text-primary">{address}</span>
+                    </p>
                     <form onSubmit={handleSubmit(onSubmit)} className="formGroup" autoComplete="off">
                         <button type="submit">Activate Rewards</button>
                     </form>
                 </div>
             )}
+            <SmartNodeRewardsRoi />
         </Page>
     );
 }

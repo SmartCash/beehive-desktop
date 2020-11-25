@@ -49,3 +49,12 @@ export function getSmartRewardsRoi() {
     };
     return request.get(options);
 }
+
+export function getSmartNodeRoi() {
+    let options = {
+        method: 'GET',
+        uri: `https://sapi.smartcash.cc/v1/smartnode/roi`,
+        json: true,
+    };
+    return request.get(options);
+}
