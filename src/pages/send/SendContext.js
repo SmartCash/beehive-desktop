@@ -40,7 +40,9 @@ const sendReducer = (state, action) => {
             return {...state, TXIDError: action.payload };
         }
         case 'clearState': {
-            document.getElementById('addressTo').value = '';
+            if (document.getElementById('addressTo')) {
+                document.getElementById('addressTo').value = '';
+            }
             return {...initialValue}
         }
         default: {
