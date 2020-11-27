@@ -20,7 +20,9 @@ function createWindow() {
         },
     });
 
-    mainWindow.setMenu(null);
+    if (!isDev) {
+        mainWindow.setMenu(null);
+    }
 
     setUpdateNotification({ repository: 'SmartCash/smarthub_local' });
 

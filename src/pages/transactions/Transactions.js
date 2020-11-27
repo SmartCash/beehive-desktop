@@ -22,10 +22,12 @@ function Transactions() {
             .finally(() => setLoading(false));
     }
 
-    useEffect(() => {
+    const handleGetTransactions = () => {
         _getTransactionHistory();
         setTimeout(() => _getTransactionHistory(), 60000);
-    }, [walletCurrent]);
+    }
+
+    useEffect(handleGetTransactions, [walletCurrent]);
 
     return (
         <Page className="page-transactions">

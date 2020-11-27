@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import { WalletContext } from '../../context/WalletContext';
-import { subtractFloats, sumFloats, sumFloatsValues } from '../../lib/math';
+import { subtractFloats, sumFloats, sumFloatsValues, exceeds } from '../../lib/math';
 import { calculateFee, createAndSendRawTransaction, getUnspent, getFee } from '../../lib/sapi';
 import { isAddress } from '../../lib/smart';
 
@@ -60,6 +60,7 @@ export const SendProvider = ({ children }) => {
     const defaultMaskOptions = {
         prefix: '',
         suffix: '',
+        thousandsSeparatorSymbol: '',
         allowDecimal: true,
         decimalSymbol: '.',
         decimalLimit: 8,
@@ -71,7 +72,7 @@ export const SendProvider = ({ children }) => {
 
     const setAmountToSend = (value) => {
         const { balance } = wallets.find(wallet => wallet.address === walletCurrent);
-        if (value >= balance) {
+        if (exceeds(value, balance)) {
             dispatch({type: 'setAmountToSendError', payload: 'Exceeds balance' });
         } else if (value < 0.001) {
             dispatch({type: 'setAmountToSendError', payload: 'The minimum amount to send is 0.001' });

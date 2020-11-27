@@ -24,8 +24,7 @@ function SendComponent() {
         TXID,
         walletCurrent,
         walletCurrentBalance,
-        clearTxId,
-        address
+        clearTxId
     } = useContext(SendContext);
 
     if (walletCurrentBalance === 0) {
