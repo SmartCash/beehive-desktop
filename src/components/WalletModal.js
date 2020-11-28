@@ -1,16 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import ReactDOM from 'react-dom';
-import style from './WalletModal.module.css';
-import { createNewWalletKeyPair, getAddress } from '../lib/sapi';
-import { isPK } from '../lib/smart';
 import { WalletContext } from '../context/WalletContext';
 import generatePDF from '../lib/GeneratorPDF';
+import { createNewWalletKeyPair, getAddress } from '../lib/sapi';
+import { isPK } from '../lib/smart';
+import style from './WalletModal.module.css';
 
 function WalletModal({ isShowing, hide, disableCloseButton }) {
     const [wallet, setWallet] = useState();
     const [createWallet, setCreateWallet] = useState(false);
     const { addWallet } = useContext(WalletContext);
     const [privateKey, setPrivateKey] = useState();
+    const [showPrivateKey, setShowPrivateKey] = useState(false);
     const [isPKInvalid, setIsPKInvalid] = useState(false);
     const handleAddWallet = () => {
         addWallet(wallet);
@@ -96,9 +97,15 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
                                                 <p>
                                                     <strong>Private Key:</strong>
                                                 </p>
-                                                <p>{wallet.privateKey}</p>
+                                                <p>
+                                                    {showPrivateKey && wallet.privateKey}
+                                                    {!showPrivateKey && '*****************************************'}
+                                                </p>
                                             </div>
-                                            <button onClick={handleAddWallet}>Use this one and save as PDF</button>
+                                            <button className="btn" onClick={handleAddWallet}>Use this one and save as PDF</button>
+                                            <button className={style['btn-show-pk']} onClick={() => setShowPrivateKey(!showPrivateKey)}>
+                                                {showPrivateKey ? 'Hide PK' : 'Show PK'}
+                                            </button>
                                         </div>
                                     )
                                 }
