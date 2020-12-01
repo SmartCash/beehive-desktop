@@ -48,10 +48,10 @@ function RewardsActivate() {
         };
 
         activeRewards();
-        await sleep(60000 * 1.5);
+        await sleep(60000 * 2.5);
 
         activeRewards();
-        await sleep(60000 * 1.5);
+        await sleep(60000 * 2.5);
 
         let transaction = await getTxId(transactionId.txid);
         let isActivated = transaction.vin.length === 1 && transaction.vout.length === 1;
