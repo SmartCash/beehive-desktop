@@ -3,6 +3,8 @@ const request = require('request-promise');
 const _ = require('lodash');
 let getSapiUrl = require('./poolSapi');
 
+const LOCKED = 'pubkeyhashlocked';
+
 export async function createAndSendRawTransaction(toAddress, amount, keyString) {
     let key = smartCash.ECPair.fromWIF(keyString);
 
@@ -50,7 +52,6 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString) 
         return await sendTransaction(signedTransaction);
     } catch (err) {
         console.error(err);
-        throw err;
     }
 }
 
@@ -89,7 +90,7 @@ export async function getBalance(_address) {
             json: true,
         });
     } catch (err) {
-        throw err;
+        console.error(err);
     }
 }
 
@@ -99,7 +100,7 @@ export async function getTxId(_txId) {
             json: true,
         });
     } catch (err) {
-        throw err;
+        console.error(err);
     }
 }
 
@@ -109,7 +110,7 @@ export async function getRewards(_address) {
             json: true,
         });
     } catch (err) {
-        throw err;
+        console.error(err);
     }
 }
 
@@ -173,7 +174,27 @@ export async function getTransactionHistory(address) {
         };
         return await request.post(options).then((res) => res.data);
     } catch (err) {
-        throw err;
+        console.error(err);
+    }
+}
+
+export function isLockedTransaction(tx, address) {
+    try {
+        return (
+            tx &&
+            tx?.vout &&
+            tx?.vout?.find(
+                (f) =>
+                    f?.scriptPubKey &&
+                    f?.scriptPubKey?.addresses &&
+                    f?.scriptPubKey?.addresses?.includes(address) &&
+                    f.scriptPubKey.type &&
+                    f.scriptPubKey.type === LOCKED
+            )
+        );
+    } catch (err) {
+        console.error(err);
+        return false;
     }
 }
 
@@ -192,7 +213,7 @@ export async function sendTransaction(hex) {
     try {
         return await request.post(options);
     } catch (err) {
-        throw err;
+        console.error(err);
     }
 }
 
