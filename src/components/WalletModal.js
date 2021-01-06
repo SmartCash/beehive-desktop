@@ -35,7 +35,7 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
     const handleCreateNewOne = () => {
         setCreateWallet(true);
         setWallet(createNewWalletKeyPair());
-    }
+    };
 
     const insertPrivateKey = (event) => setPrivateKey(event.target.value);
 
@@ -43,7 +43,7 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
         setCreateWallet(false);
         setWallet(null);
         hide();
-    }
+    };
 
     return (
         isShowing &&
@@ -68,47 +68,48 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
                         </div>
                         <div className={style['modal-body']}>
                             <div className={style['address-content']}>
-                                {
-                                    !createWallet && (
-                                        <div className={style['import-address']}>
-                                            <h2>Import from Private Key</h2>
-                                            <textarea
-                                                onInput={insertPrivateKey}
-                                                placeholder="Insert your private key here"
-                                                rows={5}
-                                            />
-                                            {isPKInvalid && <p>Invalid Private Key</p>}
-                                            <button onClick={handleImportPrivateKey}>Import</button>
-                                            <button onClick={handleCreateNewOne}>Create new one</button>
+                                {!createWallet && (
+                                    <div className={style['import-address']}>
+                                        <h2>Import from Private Key</h2>
+                                        <textarea
+                                            onInput={insertPrivateKey}
+                                            placeholder="Insert your private key here"
+                                            rows={5}
+                                        />
+                                        {isPKInvalid && <p>Invalid Private Key</p>}
+                                        <button onClick={handleImportPrivateKey}>Import</button>
+                                        <button onClick={handleCreateNewOne}>Create new one</button>
+                                    </div>
+                                )}
+                                {createWallet && (
+                                    <div className={style['new-address']}>
+                                        <h2>New Private Key</h2>
+                                        <div>
+                                            <p>
+                                                <strong>Public Key (address):</strong>
+                                            </p>
+                                            <p>{wallet.address}</p>
                                         </div>
-                                    )
-                                }
-                                {
-                                    createWallet && (
-                                        <div className={style['new-address']}>
-                                            <h2>New Private Key</h2>
-                                            <div>
-                                                <p>
-                                                    <strong>Public Key (address):</strong>
-                                                </p>
-                                                <p>{wallet.address}</p>
-                                            </div>
-                                            <div>
-                                                <p>
-                                                    <strong>Private Key:</strong>
-                                                </p>
-                                                <p>
-                                                    {showPrivateKey && wallet.privateKey}
-                                                    {!showPrivateKey && '*****************************************'}
-                                                </p>
-                                            </div>
-                                            <button className="btn" onClick={handleAddWallet}>Use this one and save as PDF</button>
-                                            <button className={style['btn-show-pk']} onClick={() => setShowPrivateKey(!showPrivateKey)}>
-                                                {showPrivateKey ? 'Hide PK' : 'Show PK'}
-                                            </button>
+                                        <div>
+                                            <p>
+                                                <strong>Private Key:</strong>
+                                            </p>
+                                            <p>
+                                                {showPrivateKey && wallet.privateKey}
+                                                {!showPrivateKey && '*****************************************'}
+                                            </p>
                                         </div>
-                                    )
-                                }
+                                        <button className="btn" onClick={handleAddWallet}>
+                                            Use this one and save as PDF
+                                        </button>
+                                        <button
+                                            className={style['btn-show-pk']}
+                                            onClick={() => setShowPrivateKey(!showPrivateKey)}
+                                        >
+                                            {showPrivateKey ? 'Hide PK' : 'Show PK'}
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -117,7 +118,7 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
             document.getElementById('root')
         )
     );
-};
+}
 
 function areEqual(prev, next) {
     return prev.isShowing === next.isShowing;

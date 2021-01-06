@@ -16,13 +16,13 @@ function App() {
                     <Router>
                         <Switch>
                             <Route exact path="/">
-                                <Send/>
+                                <Send />
                             </Route>
                             <Route exact path="/receive">
-                                <Receive/>
+                                <Receive />
                             </Route>
                             <Route exact path="/transactions">
-                                <Transactions/>
+                                <Transactions />
                             </Route>
                             <Route exact path="/rewards">
                                 <RewardsActivate />

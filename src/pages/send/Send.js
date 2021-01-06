@@ -24,7 +24,7 @@ function SendComponent() {
         TXID,
         walletCurrent,
         walletCurrentBalance,
-        clearTxId
+        clearTxId,
     } = useContext(SendContext);
 
     if (walletCurrentBalance === 0) {
@@ -50,7 +50,9 @@ function SendComponent() {
             <Scrollbars>
                 {TXID && (
                     <div className="hasBeenSent">
-                        <button className="btnClose" onClick={() => clearTxId()}>X</button>
+                        <button className="btnClose" onClick={() => clearTxId()}>
+                            X
+                        </button>
                         <p>Amount has been sent</p>
                         <button onClick={() => electron.shell.openExternal(`http://explorer.smartcash.org/tx/${TXID}`)}>
                             {TXID}

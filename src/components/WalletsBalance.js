@@ -7,12 +7,10 @@ function WalletsBalance() {
     useEffect(() => {
         const getBalance = () => {
             const reducer = (accumulator, currentValue) => accumulator + currentValue;
-            return wallets && wallets
-                .map(wallet => wallet.balance || 0)
-                .reduce(reducer, 0);
-        }
-        updateBalance(getBalance())
-    }, [wallets])
+            return wallets && wallets.map((wallet) => wallet.balance || 0).reduce(reducer, 0);
+        };
+        updateBalance(getBalance());
+    }, [wallets]);
 
     return (
         <div className="wallets-balance">

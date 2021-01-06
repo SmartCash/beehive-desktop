@@ -25,7 +25,7 @@ function Transactions() {
     const handleGetTransactions = () => {
         _getTransactionHistory();
         setTimeout(() => _getTransactionHistory(), 60000);
-    }
+    };
 
     useEffect(handleGetTransactions, [walletCurrent]);
 
