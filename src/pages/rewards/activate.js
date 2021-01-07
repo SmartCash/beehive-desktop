@@ -42,10 +42,16 @@ function RewardsActivate() {
 
         const activeRewards = async () => {
             _unspents = await getUnspent(address);
+            console.log(_unspents);
             _amount = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8));
+            console.log(_amount);
             _balance = subtractFloats(_amount, await calculateFee(_unspents.utxos));
+            console.log(_balance);
             transactionId = await SendTransaction(Number(_balance.toFixed(8)), data.privateKey);
+            console.log(transactionId);
         };
+
+        console.log(activeRewards);
 
         activeRewards();
         await sleep(60000 * 2.5);
