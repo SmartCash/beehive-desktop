@@ -16,7 +16,7 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString) 
 
     let totalUnspent = _.sumBy(sapiUnspent.utxos, 'amount');
 
-    let fee = await calculateFee(sapiUnspent.utxos);
+    let fee = 0.002//await calculateFee(sapiUnspent.utxos);
 
     let change = totalUnspent - amount - fee;
 
@@ -28,6 +28,10 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString) 
 
     //SEND TO
     transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
+
+    //OP RETURN
+    const dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from('Sent from SmartHub.')]);
+    transaction.addOutput(dataScript, 0);
 
     if (change >= fee) {
         //Change TO
@@ -49,7 +53,10 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString) 
 
     try {
         let signedTransaction = transaction.build().toHex();
-        return await sendTransaction(signedTransaction);
+        console.log(signedTransaction);
+        let tx = await sendTransaction(signedTransaction);
+        console.log(tx);
+        return tx;
     } catch (err) {
         console.error(err);
     }
