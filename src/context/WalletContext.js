@@ -22,7 +22,7 @@ const _getBalance = async (address) => {
             return Number(_balance.toFixed(8));
         }
         return 0;
-    }
+    };
     let balance = 0;
     try {
         balance = await getBalanceFromSapi();

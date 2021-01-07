@@ -14,28 +14,26 @@ function DashboardComponent() {
                     </tr>
                 </thead>
                 <tbody>
-                {
-                    smartRewardsRoi?.map(roi => {
+                    {smartRewardsRoi?.map((roi) => {
                         return (
                             <tr key={roi.label}>
                                 <td>{roi.label}</td>
                                 <td>{roi.value} %</td>
                             </tr>
                         );
-                    })
-                }
+                    })}
                 </tbody>
             </table>
         </Page>
-    )
+    );
 }
 
 function Dashboard() {
     return (
         <DashboardProvider>
-            <DashboardComponent/>
+            <DashboardComponent />
         </DashboardProvider>
-    )
+    );
 }
 
 export default Dashboard;

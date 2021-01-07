@@ -7,43 +7,43 @@ import { isAddress } from '../../lib/smart';
 
 const initialValue = {
     amountToSend: 0,
-    selectedFiat: 'smart'
+    selectedFiat: 'smart',
 };
 
 const sendReducer = (state, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case 'setAmountToSend': {
-            return {...state, amountToSend: action.payload };
+            return { ...state, amountToSend: action.payload };
         }
         case 'setAmountToSendError': {
-            return {...state, amountToSendError: action.payload };
+            return { ...state, amountToSendError: action.payload };
         }
         case 'setAddressToSend': {
-            return {...state, addressToSend: action.payload, addressToSendError: false };
+            return { ...state, addressToSend: action.payload, addressToSendError: false };
         }
         case 'setAddressToSendError': {
-            return {...state, addressToSendError: action.payload, addressToSend: null };
+            return { ...state, addressToSendError: action.payload, addressToSend: null };
         }
         case 'setSelectedFiat': {
-            return {...state, selectedFiat: action.payload };
+            return { ...state, selectedFiat: action.payload };
         }
         case 'setNetFee': {
-            return {...state, netFee: action.payload };
+            return { ...state, netFee: action.payload };
         }
         case 'setTXIDLoading': {
-            return {...state, TXIDLoading: action.payload };
+            return { ...state, TXIDLoading: action.payload };
         }
         case 'setTXID': {
-            return {...state, TXID: action.payload };
+            return { ...state, TXID: action.payload };
         }
         case 'setTXIDError': {
-            return {...state, TXIDError: action.payload };
+            return { ...state, TXIDError: action.payload };
         }
         case 'clearState': {
             if (document.getElementById('addressTo')) {
                 document.getElementById('addressTo').value = '';
             }
-            return {...initialValue}
+            return { ...initialValue };
         }
         default: {
             return state;
@@ -71,30 +71,28 @@ export const SendProvider = ({ children }) => {
     const currencyMask = createNumberMask(defaultMaskOptions);
 
     const setAmountToSend = (value) => {
-        const { balance } = wallets.find(wallet => wallet.address === walletCurrent);
+        const { balance } = wallets.find((wallet) => wallet.address === walletCurrent);
         if (exceeds(value, balance)) {
-            dispatch({type: 'setAmountToSendError', payload: 'Exceeds balance' });
+            dispatch({ type: 'setAmountToSendError', payload: 'Exceeds balance' });
         } else if (value < 0.001) {
-            dispatch({type: 'setAmountToSendError', payload: 'The minimum amount to send is 0.001' });
+            dispatch({ type: 'setAmountToSendError', payload: 'The minimum amount to send is 0.001' });
         } else {
-            getFee(Number(value), state.addressToSend)
-            .then(fee => dispatch({ type: 'setNetFee', payload: fee }));
-            dispatch({type: 'setAmountToSendError', payload: null });
+            getFee(Number(value), state.addressToSend).then((fee) => dispatch({ type: 'setNetFee', payload: fee }));
+            dispatch({ type: 'setAmountToSendError', payload: null });
         }
-        dispatch({ type: 'setAmountToSend', payload: value});
-    }
+        dispatch({ type: 'setAmountToSend', payload: value });
+    };
 
     const setAddressToSend = (value) => {
-        dispatch({ type: 'setAddressToSend', payload: value});
-        isAddress(value)
-            .catch(() => {
-                dispatch({ type: 'setAddressToSendError', payload: true});
-            });
-    }
+        dispatch({ type: 'setAddressToSend', payload: value });
+        isAddress(value).catch(() => {
+            dispatch({ type: 'setAddressToSendError', payload: true });
+        });
+    };
 
     useEffect(() => {
         dispatch({ type: 'clearState' });
-    }, [walletCurrent])
+    }, [walletCurrent]);
 
     function submitSendAmount() {
         dispatch({ type: 'setTXIDLoading', payload: true });
@@ -102,15 +100,15 @@ export const SendProvider = ({ children }) => {
             .then((data) => {
                 dispatch({ type: 'clearState' });
                 updateWalletsBalance();
-                dispatch({ type: 'setTXID', payload: data?.txid});
+                dispatch({ type: 'setTXID', payload: data?.txid });
             })
-            .catch((error) => dispatch({ type: 'setTXIDError', payload: error[0]?.message}))
+            .catch((error) => dispatch({ type: 'setTXIDError', payload: error[0]?.message }))
             .finally(() => dispatch({ type: 'setTXIDLoading', payload: false }));
     }
 
-    function handleSelectedFiat (e) {
+    function handleSelectedFiat(e) {
         const { value } = e.target;
-        dispatch({ type: 'setSelectedFiat', payload: value});
+        dispatch({ type: 'setSelectedFiat', payload: value });
     }
 
     function isSmartFiat() {
@@ -122,13 +120,13 @@ export const SendProvider = ({ children }) => {
         const _amount = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8) * percentage);
         const fee = await calculateFee(_unspents.utxos);
         const _balanceToSend = subtractFloats(_amount, fee);
-        dispatch({type: 'setAmountToSendError', payload: null });
-        dispatch({ type: 'setNetFee', payload: fee});
-        dispatch({ type: 'setAmountToSend', payload: _balanceToSend});
+        dispatch({ type: 'setAmountToSendError', payload: null });
+        dispatch({ type: 'setNetFee', payload: fee });
+        dispatch({ type: 'setAmountToSend', payload: _balanceToSend });
     }
 
     function getPrivateKey() {
-        const wallet = wallets.find(wallet => wallet.address === walletCurrent);
+        const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
         return wallet?.privateKey;
     }
 
@@ -143,7 +141,7 @@ export const SendProvider = ({ children }) => {
     const providerValue = {
         ...state,
         walletCurrent,
-        walletCurrentBalance: wallets.find(wallet => wallet.address === walletCurrent)?.balance,
+        walletCurrentBalance: wallets.find((wallet) => wallet.address === walletCurrent)?.balance,
         fiatList,
         currencyMask,
         setAmountToSend,
@@ -154,7 +152,7 @@ export const SendProvider = ({ children }) => {
         calcSendFounds,
         canSend,
         totalInSmart,
-        clearTxId
+        clearTxId,
     };
 
     return <SendContext.Provider value={providerValue}>{children}</SendContext.Provider>;

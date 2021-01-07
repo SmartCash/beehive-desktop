@@ -5,7 +5,7 @@ import QRious from 'qrious';
 import { WalletContext } from '../../context/WalletContext';
 import { getCurrenciePrice } from '../../lib/smart';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { saveAs } from "file-saver";
+import { saveAs } from 'file-saver';
 import { ReactComponent as IconDownload } from '../../assets/images/fileDownload.svg';
 import { ReactComponent as IconCopy } from '../../assets/images/copy.svg';
 const electron = window.require('electron');
@@ -48,17 +48,27 @@ function Receive() {
                 <div className="qrcode">
                     <img src={qrAddress.toDataURL('image/png')} alt="" />
                     <div className="btnWrapper">
-                        <button className="btn" title="Download Image" onClick={async () => {
-                            const base64Response = await fetch(qrAddress.toDataURL('image/png'));
-                            const blob = await base64Response.blob();
-                            saveAs(blob, 'SendMeSmartCash.png')
-                        }}>
-                            <IconDownload className="btnCopy"/>
+                        <button
+                            className="btn"
+                            title="Download Image"
+                            onClick={async () => {
+                                const base64Response = await fetch(qrAddress.toDataURL('image/png'));
+                                const blob = await base64Response.blob();
+                                saveAs(blob, 'SendMeSmartCash.png');
+                            }}
+                        >
+                            <IconDownload className="btnCopy" />
                         </button>
-                        <button className="btn copy" title="Copy QRCode to clipboard" onClick={() => {
-                            electron.clipboard.writeImage(electron.nativeImage.createFromDataURL(qrAddress.toDataURL('image/png')));
-                        }}>
-                            <IconCopy className="btnCopy"/>
+                        <button
+                            className="btn copy"
+                            title="Copy QRCode to clipboard"
+                            onClick={() => {
+                                electron.clipboard.writeImage(
+                                    electron.nativeImage.createFromDataURL(qrAddress.toDataURL('image/png'))
+                                );
+                            }}
+                        >
+                            <IconCopy className="btnCopy" />
                         </button>
                     </div>
                 </div>
@@ -66,8 +76,12 @@ function Receive() {
                     <div className="form-control address">
                         <label htmlFor="addressTo">Send funds to address</label>
                         <input id="addressTo" value={walletCurrent} readOnly={true} />
-                        <button className="btn copy" title="Copy address to clipboard" onClick={() => electron.clipboard.writeText(walletCurrent)}>
-                            <IconCopy className="btnCopy"/>
+                        <button
+                            className="btn copy"
+                            title="Copy address to clipboard"
+                            onClick={() => electron.clipboard.writeText(walletCurrent)}
+                        >
+                            <IconCopy className="btnCopy" />
                         </button>
                     </div>
                     <div className="form-control fiat">

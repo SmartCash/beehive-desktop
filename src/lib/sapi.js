@@ -3,6 +3,8 @@ const request = require('request-promise');
 const _ = require('lodash');
 let getSapiUrl = require('./poolSapi');
 
+const LOCKED = 'pubkeyhashlocked';
+
 export async function createAndSendRawTransaction(toAddress, amount, keyString) {
     let key = smartCash.ECPair.fromWIF(keyString);
 
@@ -14,7 +16,7 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString) 
 
     let totalUnspent = _.sumBy(sapiUnspent.utxos, 'amount');
 
-    let fee = await calculateFee(sapiUnspent.utxos);
+    let fee = 0.002//await calculateFee(sapiUnspent.utxos);
 
     let change = totalUnspent - amount - fee;
 
@@ -26,6 +28,10 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString) 
 
     //SEND TO
     transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
+
+    //OP RETURN
+    const dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from('Sent from SmartHub.')]);
+    transaction.addOutput(dataScript, 0);
 
     if (change >= fee) {
         //Change TO
@@ -47,10 +53,12 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString) 
 
     try {
         let signedTransaction = transaction.build().toHex();
-        return await sendTransaction(signedTransaction);
+        console.log(signedTransaction);
+        let tx = await sendTransaction(signedTransaction);
+        console.log(tx);
+        return tx;
     } catch (err) {
         console.error(err);
-        throw err;
     }
 }
 
@@ -89,7 +97,7 @@ export async function getBalance(_address) {
             json: true,
         });
     } catch (err) {
-        throw err;
+        console.error(err);
     }
 }
 
@@ -99,7 +107,7 @@ export async function getTxId(_txId) {
             json: true,
         });
     } catch (err) {
-        throw err;
+        console.error(err);
     }
 }
 
@@ -109,7 +117,7 @@ export async function getRewards(_address) {
             json: true,
         });
     } catch (err) {
-        throw err;
+        console.error(err);
     }
 }
 
@@ -173,7 +181,27 @@ export async function getTransactionHistory(address) {
         };
         return await request.post(options).then((res) => res.data);
     } catch (err) {
-        throw err;
+        console.error(err);
+    }
+}
+
+export function isLockedTransaction(tx, address) {
+    try {
+        return (
+            tx &&
+            tx?.vout &&
+            tx?.vout?.find(
+                (f) =>
+                    f?.scriptPubKey &&
+                    f?.scriptPubKey?.addresses &&
+                    f?.scriptPubKey?.addresses?.includes(address) &&
+                    f.scriptPubKey.type &&
+                    f.scriptPubKey.type === LOCKED
+            )
+        );
+    } catch (err) {
+        console.error(err);
+        return false;
     }
 }
 
@@ -192,7 +220,7 @@ export async function sendTransaction(hex) {
     try {
         return await request.post(options);
     } catch (err) {
-        throw err;
+        console.error(err);
     }
 }
 

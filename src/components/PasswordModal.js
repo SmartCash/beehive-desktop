@@ -6,8 +6,8 @@ import { ReactComponent as Logo } from '../assets/images/logo.svg';
 
 function PasswordModal() {
     const { masterKey, saveMasterKey, decryptError } = useContext(WalletContext);
-    const [ _masterKey, setMasterKey ] = useState();
-    const [ showPK, setShowPK ] = useState(false);
+    const [_masterKey, setMasterKey] = useState();
+    const [showPK, setShowPK] = useState(false);
 
     return (
         !masterKey &&
@@ -27,17 +27,27 @@ function PasswordModal() {
                                 <p>Your wallet can only be recovered with your password.</p>
                                 <p>Keep in mind that this password will not be stored on the SmartCash Hub.</p>
                                 <div className={style['password-wrapper']}>
-                                    <input className="form-control" placeholder="Insert your password" onInput={(e) => setMasterKey(e.target.value)} type={showPK ? 'text' : 'password'} autoFocus />
-                                    <button type="button" className="showPK" onClick={() => setShowPK(!showPK)}>{showPK ? 'Hide' : 'Show'}</button>
+                                    <input
+                                        className="form-control"
+                                        placeholder="Insert your password"
+                                        onInput={(e) => setMasterKey(e.target.value)}
+                                        type={showPK ? 'text' : 'password'}
+                                        autoFocus
+                                    />
+                                    <button type="button" className="showPK" onClick={() => setShowPK(!showPK)}>
+                                        {showPK ? 'Hide' : 'Show'}
+                                    </button>
                                 </div>
-                                {decryptError && <p className="alert-error">Do not possible decrypt local data using this password.</p>}
+                                {decryptError && (
+                                    <p className="alert-error">Do not possible decrypt local data using this password.</p>
+                                )}
                                 <button onClick={() => saveMasterKey(_masterKey)}>Use password and/or recover wallet</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </React.Fragment>,
-            document.getElementById('root'),
+            document.getElementById('root')
         )
     );
 }
