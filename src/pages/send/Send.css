@@ -157,3 +157,34 @@
     margin-top: var(--spacer-lg);
     color: var(--primary);
 }
+
+
+.page-send .btnCopy {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    fill: #fff;
+    position: relative;
+}
+
+
+.page-send .btnCopy:active {
+    fill: var(--primary);
+}
+
+.page-send .btn.copy {
+    position: relative;
+}
+
+.page-send .btn.copy:active::after {
+    content: 'Copied';
+    display: block;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, calc(-100% - 10px));
+    background: #333;
+    color: #fff;
+    position: absolute;
+    padding: 10px;
+    border-radius: 10px;
+}

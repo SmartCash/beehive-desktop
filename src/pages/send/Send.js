@@ -4,6 +4,7 @@ import './Send.css';
 import { SendContext, SendProvider } from './SendContext';
 import MaskedInput from 'react-text-mask';
 import Scrollbars from 'react-custom-scrollbars';
+import { ReactComponent as IconCopy } from '../../assets/images/copy.svg';
 const electron = window.require('electron');
 
 function SendComponent() {
@@ -32,7 +33,15 @@ function SendComponent() {
             <Page className="page-send">
                 <div className="form-control privateKey">
                     <p>
-                        Sending from <span>{walletCurrent}</span>
+                        Sending from <span>{walletCurrent}  </span> 
+
+                        <button
+                            className="btn copy"
+                            title="Copy address to clipboard"
+                            onClick={() => electron.clipboard.writeText(walletCurrent)}
+                        >
+                            <IconCopy className="btnCopy" />
+                        </button>        
                     </p>
                     <p>
                         Balance <span>{walletCurrentBalance}</span>
@@ -62,7 +71,14 @@ function SendComponent() {
                 )}
                 <div className="form-control privateKey">
                     <p>
-                        Sending from <span>{walletCurrent}</span>
+                        Sending from <span>{walletCurrent}  </span>
+                        <button
+                            className="btn copy"
+                            title="Copy address to clipboard"
+                            onClick={() => electron.clipboard.writeText(walletCurrent)}
+                        >
+                            <IconCopy className="btnCopy" />
+                        </button>                
                     </p>
                     <p>
                         Balance <span>{walletCurrentBalance}</span>

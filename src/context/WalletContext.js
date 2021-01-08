@@ -29,6 +29,7 @@ const _getBalance = async (address) => {
     } catch {
         balance = await getBalanceFromSapi();
     }
+
     return balance;
 };
 
@@ -100,7 +101,7 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'setFiatList', payload: await getSupportedCurrencies() });
     }
 
-    function updateBalance(balance) {
+    function updateBalance(balance) {        
         dispatch({ type: 'updateBalance', payload: balance });
     }
 

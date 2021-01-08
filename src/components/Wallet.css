@@ -1,0 +1,28 @@
+.btnCopy {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    fill: #fff;
+    position: relative;
+}
+
+.btnCopy:active {
+    fill: var(--primary);
+}
+
+.btn.copy {
+    position: relative;
+}
+
+.btn.copy:active::after {
+    content: 'Copied';
+    display: block;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, calc(-100% - 10px));
+    background: #333;
+    color: #fff;
+    position: absolute;
+    padding: 10px;
+    border-radius: 10px;
+}
