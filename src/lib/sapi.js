@@ -149,7 +149,7 @@ export async function getUnspent(_address) {
 
     let options = {
         method: 'POST',
-        uri: `${getSapiUrl()}/v1/address/unspent`,
+        uri: `${getSapiUrl()}/v1/address/unspent`,        
         body: {
             address: _address,
             pageNumber: 1,

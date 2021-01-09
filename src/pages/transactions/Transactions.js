@@ -4,6 +4,7 @@ import { WalletContext } from '../../context/WalletContext';
 import { getTransactionHistory, isLockedTransaction } from '../../lib/sapi';
 import './Transactions.css';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { ReactComponent as IconCopy } from '../../assets/images/copy.svg';
 const electron = window.require('electron');
 
 function Transactions() {
@@ -48,13 +49,33 @@ function Transactions() {
                                 <p className="value">{tx.isLocked}</p>
                                 <p className="label">Amount</p>
                                 <p className="value">{tx.amount}</p>
-                                <p className="label">Transaction Id</p>
+                                <p className="label">Transaction Id</p>                               
+                                {tx.txid}    
+                                 &nbsp;
                                 <button
-                                    className="value"
-                                    onClick={() => electron.shell.openExternal(`http://explorer.smartcash.org/tx/${tx.txid}`)}
+                                    className="btn copy"
+                                    title="Copy address to clipboard"
+                                    onClick={() => electron.clipboard.writeText(tx.txid)}
                                 >
-                                    {tx.txid}
-                                </button>
+                            <IconCopy className="btnCopy" />
+                        </button>                                
+                                <p> 
+                                    <button
+                                        className="value"
+                                        onClick={() => electron.shell.openExternal(`https://insight.smartcash.cc/tx/${tx.txid}`)}
+                                    >
+                                        Insight
+                                    </button>
+
+                                    <span className="spaceicon">|</span> 
+
+                                    <button
+                                        className="value"
+                                        onClick={() => electron.shell.openExternal(`http://explorer.smartcash.org/tx/${tx.txid}`)}
+                                    >
+                                        Sapi Explorer
+                                    </button>
+                                </p>
                             </div>
                         );
                     })}
