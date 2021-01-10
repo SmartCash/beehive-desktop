@@ -26,6 +26,8 @@ function SendComponent() {
         walletCurrent,
         walletCurrentBalance,
         clearTxId,
+        messageToSend,
+        setMessageToSend,
     } = useContext(SendContext);
 
     if (walletCurrentBalance === 0) {
@@ -33,15 +35,14 @@ function SendComponent() {
             <Page className="page-send">
                 <div className="form-control privateKey">
                     <p>
-                        Sending from <span>{walletCurrent}  </span> 
-
+                        Sending from <span>{walletCurrent} </span>
                         <button
                             className="btn copy"
                             title="Copy address to clipboard"
                             onClick={() => electron.clipboard.writeText(walletCurrent)}
                         >
                             <IconCopy className="btnCopy" />
-                        </button>        
+                        </button>
                     </p>
                     <p>
                         Balance <span>{walletCurrentBalance}</span>
@@ -71,14 +72,14 @@ function SendComponent() {
                 )}
                 <div className="form-control privateKey">
                     <p>
-                        Sending from <span>{walletCurrent}  </span>
+                        Sending from <span>{walletCurrent} </span>
                         <button
                             className="btn copy"
                             title="Copy address to clipboard"
                             onClick={() => electron.clipboard.writeText(walletCurrent)}
                         >
                             <IconCopy className="btnCopy" />
-                        </button>                
+                        </button>
                     </p>
                     <p>
                         Balance <span>{walletCurrentBalance}</span>
@@ -107,6 +108,17 @@ function SendComponent() {
                             autoComplete="off"
                         />
                         {amountToSendError && <p className="amountToSendError">{amountToSendError}</p>}
+                    </div>
+                    <div className="form-control message">
+                        <label htmlFor="message">Write your message</label>
+                        <input
+                            id="messageTo"
+                            placeholder="Insert message here"
+                            autoComplete="off"
+                            type="text"
+                            value={messageToSend}
+                            onInput={(event) => setMessageToSend(event.target.value)}
+                        />
                     </div>
                     {isSmartFiat() && (
                         <div className="form-control amount">

@@ -8,12 +8,16 @@ import { isAddress } from '../../lib/smart';
 const initialValue = {
     amountToSend: 0,
     selectedFiat: 'smart',
+    messageToSend: '',
 };
 
 const sendReducer = (state, action) => {
     switch (action.type) {
         case 'setAmountToSend': {
             return { ...state, amountToSend: action.payload };
+        }
+        case 'setMessageToSend': {
+            return { ...state, messageToSend: action.payload };
         }
         case 'setAmountToSendError': {
             return { ...state, amountToSendError: action.payload };
@@ -42,6 +46,9 @@ const sendReducer = (state, action) => {
         case 'clearState': {
             if (document.getElementById('addressTo')) {
                 document.getElementById('addressTo').value = '';
+            }
+            if (document.getElementById('messageTo')) {
+                document.getElementById('messageTo').value = '';
             }
             return { ...initialValue };
         }
@@ -89,6 +96,9 @@ export const SendProvider = ({ children }) => {
             dispatch({ type: 'setAddressToSendError', payload: true });
         });
     };
+    const setMessageToSend = (value) => {
+        dispatch({ type: 'setMessageToSend', payload: value });
+    };
 
     useEffect(() => {
         dispatch({ type: 'clearState' });
@@ -96,7 +106,7 @@ export const SendProvider = ({ children }) => {
 
     function submitSendAmount() {
         dispatch({ type: 'setTXIDLoading', payload: true });
-        createAndSendRawTransaction(state.addressToSend, Number(state.amountToSend), getPrivateKey())
+        createAndSendRawTransaction(state.addressToSend, Number(state.amountToSend), getPrivateKey(), state.messageToSend)
             .then((data) => {
                 dispatch({ type: 'clearState' });
                 updateWalletsBalance();
@@ -146,6 +156,7 @@ export const SendProvider = ({ children }) => {
         currencyMask,
         setAmountToSend,
         setAddressToSend,
+        setMessageToSend,
         submitSendAmount,
         handleSelectedFiat,
         isSmartFiat,

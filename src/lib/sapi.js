@@ -5,7 +5,7 @@ let getSapiUrl = require('./poolSapi');
 
 const LOCKED = 'pubkeyhashlocked';
 
-export async function createAndSendRawTransaction(toAddress, amount, keyString) {
+export async function createAndSendRawTransaction(toAddress, amount, keyString, messageOpReturn) {
     let key = smartCash.ECPair.fromWIF(keyString);
 
     let fromAddress = key.getAddress().toString();
@@ -30,7 +30,10 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString) 
     transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
 
     //OP RETURN
-    const dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from('Sent from SmartHub.')]);
+    const dataScript = smartCash.script.compile([
+        smartCash.opcodes.OP_RETURN,
+        Buffer.from(messageOpReturn ? messageOpReturn : 'Sent from SmartHub.'),
+    ]);
     transaction.addOutput(dataScript, 0);
 
     if (change >= fee) {
