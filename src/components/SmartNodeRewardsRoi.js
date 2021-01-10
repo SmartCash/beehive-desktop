@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getSmartRewardsRoi, getSmartNodeRoi } from '../lib/smart';
+import { getSmartRewardsRoi, getSmartNodeRoi } from '../lib/sapi';
 import style from './SmartNodeRewardsRoi.module.css';
 
 export default function SmartNodeRewardsRoi() {
@@ -20,15 +20,15 @@ export default function SmartNodeRewardsRoi() {
                 <div className={style['wrapperColumn']}>
                     <h2>SmartRewards</h2>
                     <p>
-                        SmartRewards (1k+){' '}
+                        SmartRewards Yearly Yield % 4 week with compounding (1 thousand or more){' '}
                         <span className={style['text-primary']}>
-                            {rewardsRoi['SmartRewards Yearly Yield % with 4 Week Bonus']}%
+                            {rewardsRoi['SmartRewards Yearly Yield % 4 week with compounding']}%
                         </span>
                     </p>
                     <p>
-                        SuperRewards (1kk+){' '}
+                        SuperRewards Yearly Yield % 4 week with compounding (1 million or more){' '}
                         <span className={style['text-primary']}>
-                            {rewardsRoi['SuperRewards Yearly Yield % with 4 week Bonux']}%
+                            {rewardsRoi['SuperRewards Yearly Yield % 4 week with compounding']}%
                         </span>
                     </p>
                 </div>

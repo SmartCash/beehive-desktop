@@ -16,7 +16,7 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString) 
 
     let totalUnspent = _.sumBy(sapiUnspent.utxos, 'amount');
 
-    let fee = 0.002//await calculateFee(sapiUnspent.utxos);
+    let fee = 0.002; //await calculateFee(sapiUnspent.utxos);
 
     let change = totalUnspent - amount - fee;
 
@@ -149,7 +149,7 @@ export async function getUnspent(_address) {
 
     let options = {
         method: 'POST',
-        uri: `${getSapiUrl()}/v1/address/unspent`,        
+        uri: `${getSapiUrl()}/v1/address/unspent`,
         body: {
             address: _address,
             pageNumber: 1,
@@ -241,4 +241,22 @@ export async function calculateFee(listUnspent) {
 function roundUp(num, precision) {
     precision = Math.pow(10, precision);
     return Math.ceil(num * precision) / precision;
+}
+
+export function getSmartRewardsRoi() {
+    let options = {
+        method: 'GET',
+        uri: `https://sapi.smartcash.cc/v1/smartrewards/roi`,
+        json: true,
+    };
+    return request.get(options);
+}
+
+export function getSmartNodeRoi() {
+    let options = {
+        method: 'GET',
+        uri: `https://sapi.smartcash.cc/v1/smartnode/roi`,
+        json: true,
+    };
+    return request.get(options);
 }

@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useReducer } from 'react';
-import { getSmartRewardsRoi } from '../../lib/smart';
+import { getSmartRewardsRoi } from '../../lib/sapi';
 
 const dashboardReducer = (state, action) => {
     switch (action.type) {
