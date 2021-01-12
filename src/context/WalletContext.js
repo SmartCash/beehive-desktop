@@ -4,6 +4,8 @@ import { getUnspent } from '../lib/sapi';
 import { sumFloats } from '../lib/math';
 import * as CryptoJS from 'crypto-js';
 import generatePDF from '../lib/GeneratorPDF';
+import { stat } from 'fs';
+import { update } from 'lodash';
 const { ipcRenderer } = window.require('electron');
 
 const initialState = {
@@ -36,6 +38,7 @@ const _getBalance = async (address) => {
 const userReducer = (state, action) => {
     switch (action.type) {
         case 'addWallet': {
+            // ToDo: Encapsular linha 40 a 42 em um método para ser reutilizado
             const _wallets = [...state.wallets, action.payload];
             const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(_wallets), state.masterKey).toString();
             ipcRenderer.send('setWalletData', encryptedWallet);
@@ -47,8 +50,9 @@ const userReducer = (state, action) => {
         case 'setFiatList': {
             return { ...state, fiatList: action.payload };
         }
-        case 'updateWallets': {
+        case 'updateWallets': {            
             if (action.payload.length > 0) {
+                //ToDo: Criar método com linha 40 a 42 para salvar wallets em arquivo local com balanco atualizado
                 return { ...state, wallets: action.payload, walletCurrent: action.payload[0].address };
             }
             return { ...state, wallets: action.payload };
@@ -63,12 +67,17 @@ const userReducer = (state, action) => {
             return { ...state, decryptError: action.payload };
         }
         case 'updateWalletsBalance': {
+            //ToDo: Criar método com linha 40 a 42 para salvar wallets em arquivo local com balanco atualizado
             if (state.wallets === null) {
                 return state;
             }
             const _wallets = state.wallets;
-            _wallets.forEach(async (wallet) => (wallet.balance = await _getBalance(wallet.address)));
-            return { ...state, wallets: _wallets };
+                     
+            const reducer = (accumulator, currentValue) => accumulator + currentValue;           
+            const _walletsBalance = _wallets.map((wallet) => wallet.balance || 0).reduce(reducer, 0);
+            
+
+            return { ...state, walletsBalance: _walletsBalance.toFixed(8) };
         }
         default: {
             return state;
@@ -105,7 +114,7 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'updateBalance', payload: balance });
     }
 
-    function saveMasterKey(masterKey) {
+    async function saveMasterKey(masterKey) {
         const encryptedWallet = ipcRenderer.sendSync('getWalletData');
         let wallets = [];
         let decryptedWallet;
@@ -116,13 +125,22 @@ export const WalletProvider = ({ children }) => {
                 return dispatch({ type: 'decryptError', payload: true });
             }
             if (decryptedWallet) {
-                wallets = JSON.parse(decryptedWallet);
-                wallets.forEach(async (wallet) => (wallet.balance = await _getBalance(wallet.address)));
+                wallets = JSON.parse(decryptedWallet);                           
+
+                for(const wallet of wallets){               
+                    const balance = await _getBalance(wallet.address);
+                    if(balance){
+                        wallet.balance = balance;
+                    }
+                }
+
+                dispatch({ type: 'updateWallets', payload: wallets });
             }
-            dispatch({ type: 'updateWallets', payload: wallets });
-        } else {
+           
+        } else {            
             dispatch({ type: 'updateWallets', payload: wallets });
         }
+
         updateWalletsBalance();
         dispatch({ type: 'saveMasterKey', payload: masterKey });
     }
@@ -132,6 +150,20 @@ export const WalletProvider = ({ children }) => {
     }
 
     function updateWalletsBalance() {
+        dispatch({ type: 'updateWalletsBalance' });
+    }
+
+    async function getAndUpdateWalletsBallance(){
+        const _wallets = state.wallets;
+
+        for(const wallet of _wallets){               
+            const balance = await _getBalance(wallet.address);
+            if(balance){
+                wallet.balance = balance;
+            }
+        }
+
+        dispatch({ type: 'updateWallets', payload: _wallets });
         dispatch({ type: 'updateWalletsBalance' });
     }
 
@@ -152,6 +184,7 @@ export const WalletProvider = ({ children }) => {
         updateWalletsBalance,
         saveMasterKey,
         downloadWallets,
+        getAndUpdateWalletsBallance,
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;

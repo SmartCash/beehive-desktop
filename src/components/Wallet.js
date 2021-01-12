@@ -6,8 +6,7 @@ const electron = window.require('electron');
 
 
 function Wallet({ wallet, isCurrent }) {
-    const { setWalletCurrent } = useContext(WalletContext);
-
+    const { setWalletCurrent } = useContext(WalletContext);                    
     return (
         <div className={`wallet ${isCurrent && 'wallet-current'}`}  role="button">
             <div className="symbol">∑</div>

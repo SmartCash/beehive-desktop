@@ -13,6 +13,7 @@ function Wallets() {
     const [disableCloseButton, setDisableCloseButton] = useState(false);
 
     useEffect(() => {
+        console.log(wallets);
         if (wallets && wallets.length === 0 && masterKey) {
             setDisableCloseButton(true);
             toggle();
