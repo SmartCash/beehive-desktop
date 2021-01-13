@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import { WalletContext } from '../../context/WalletContext';
 import { subtractFloats, sumFloats, sumFloatsValues, exceeds } from '../../lib/math';
-import { calculateFee, createAndSendRawTransaction, getUnspent, getFee } from '../../lib/sapi';
+import { calculateFee, createAndSendRawTransaction, getUnspent } from '../../lib/sapi';
 import { isAddress } from '../../lib/smart';
 
 const initialValue = {
@@ -78,13 +78,14 @@ export const SendProvider = ({ children }) => {
     const currencyMask = createNumberMask(defaultMaskOptions);
 
     const setAmountToSend = (value) => {
-        const { balance } = wallets.find((wallet) => wallet.address === walletCurrent);
-        if (exceeds(value, balance)) {
+        const { balance, unspent } = wallets.find((wallet) => wallet.address === walletCurrent);
+        if (exceeds(value, balance.unlocked)) {
             dispatch({ type: 'setAmountToSendError', payload: 'Exceeds balance' });
         } else if (value < 0.001) {
             dispatch({ type: 'setAmountToSendError', payload: 'The minimum amount to send is 0.001' });
         } else {
-            getFee(Number(value), state.addressToSend).then((fee) => dispatch({ type: 'setNetFee', payload: fee }));
+            calculateFee(unspent, state.messageToSend).then((fee) => dispatch({ type: 'setNetFee', payload: fee || 0 }));
+
             dispatch({ type: 'setAmountToSendError', payload: null });
         }
         dispatch({ type: 'setAmountToSend', payload: value });
@@ -106,7 +107,12 @@ export const SendProvider = ({ children }) => {
 
     function submitSendAmount() {
         dispatch({ type: 'setTXIDLoading', payload: true });
-        createAndSendRawTransaction(state.addressToSend, Number(state.amountToSend), getPrivateKey(), state.messageToSend)
+        createAndSendRawTransaction(
+            state.addressToSend,
+            Number(state.amountToSend.toFixed(8)),
+            getPrivateKey(),
+            state.messageToSend
+        )
             .then((data) => {
                 dispatch({ type: 'clearState' });
                 // updateWalletsBalance();
@@ -127,13 +133,13 @@ export const SendProvider = ({ children }) => {
     }
 
     async function calcSendFounds(percentage) {
-        const _unspents = await getUnspent(walletCurrent);
-        const _amount = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8) * percentage);
-        const fee = await calculateFee(_unspents.utxos);
-        const _balanceToSend = subtractFloats(_amount, fee);
+        const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
+        const balance = Number(wallet.balance.unlocked * percentage);
+        const fee = await calculateFee(wallet.unspent, state.messageToSend);
+        const amountToSend = subtractFloats(balance, fee);
         dispatch({ type: 'setAmountToSendError', payload: null });
         dispatch({ type: 'setNetFee', payload: fee });
-        dispatch({ type: 'setAmountToSend', payload: _balanceToSend });
+        dispatch({ type: 'setAmountToSend', payload: amountToSend });
     }
 
     function getPrivateKey() {
@@ -151,8 +157,9 @@ export const SendProvider = ({ children }) => {
 
     const providerValue = {
         ...state,
+        wallets,
         walletCurrent,
-        walletCurrentBalance: wallets.find((wallet) => wallet.address === walletCurrent)?.balance,
+        walletCurrentBalance: wallets.find((wallet) => wallet.address === walletCurrent)?.balance.unlocked,
         fiatList,
         currencyMask,
         setAmountToSend,

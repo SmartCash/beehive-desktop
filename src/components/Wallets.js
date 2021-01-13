@@ -38,13 +38,8 @@ function Wallets() {
                 </button>
             </div>
             <Scrollbars>
-                {wallets && wallets.map((wallet) => (
-                    <Wallet
-                        wallet={wallet}
-                        key={wallet.address}
-                        isCurrent={isCurrent(wallet)}
-                    />
-                ))}
+                {wallets &&
+                    wallets.map((wallet) => <Wallet wallet={wallet} key={wallet.address} isCurrent={isCurrent(wallet)} />)}
             </Scrollbars>
             <WalletModal isShowing={isShowing} hide={toggle} disableCloseButton={disableCloseButton}></WalletModal>
         </div>

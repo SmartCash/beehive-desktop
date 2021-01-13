@@ -1,3 +1,5 @@
+import { sumFloats } from './math';
+
 const smartCash = require('smartcashjs-lib');
 const request = require('request-promise');
 const _ = require('lodash');
@@ -5,26 +7,30 @@ let getSapiUrl = require('./poolSapi');
 
 const LOCKED = 'pubkeyhashlocked';
 
-export async function createAndSendRawTransaction(toAddress, amount, keyString, messageOpReturn) {
+export async function createAndSendRawTransaction(toAddress, amount, keyString, messageOpReturn, unspentList, fee, totalUnspent) {
     let key = smartCash.ECPair.fromWIF(keyString);
 
     let fromAddress = key.getAddress().toString();
 
     let transaction = new smartCash.TransactionBuilder();
 
-    let sapiUnspent = await getUnspentWithAmount(fromAddress, amount);
-
-    let totalUnspent = _.sumBy(sapiUnspent.utxos, 'amount');
-
-    let fee = 0.002; //await calculateFee(sapiUnspent.utxos);
-
     let change = totalUnspent - amount - fee;
 
-    if (totalUnspent < amount + fee) throw new Error('The amount exceeds your balance!');
+    if (totalUnspent < amount + fee) {
+        return {
+            status: 400,
+            value: 'The amount exceeds your balance!',
+        };
+    }
 
-    if (amount < 0.001) throw new Error('The amount is smaller than the minimum accepted. Minimum amount: 0.001.');
+    if (amount < 0.001) {
+        return {
+            status: 400,
+            value: 'The amount is smaller than the minimum accepted. Minimum amount: 0.001.',
+        };
+    }
 
-    transaction.setLockTime(sapiUnspent.blockHeight);
+    transaction.setLockTime(unspentList.blockHeight);
 
     //SEND TO
     transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
@@ -44,22 +50,25 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString, 
     }
 
     //Add unspent and sign them all
-    if (!_.isUndefined(sapiUnspent.utxos) && sapiUnspent.utxos.length > 0) {
-        sapiUnspent.utxos.forEach((element) => {
+    if (!_.isUndefined(unspentList.utxos) && unspentList.utxos.length > 0) {
+        unspentList.utxos.forEach((element) => {
             transaction.addInput(element.txid, element.index);
         });
 
-        for (let i = 0; i < sapiUnspent.utxos.length; i += 1) {
+        for (let i = 0; i < unspentList.utxos.length; i += 1) {
             transaction.sign(i, key);
         }
     }
 
     try {
         let signedTransaction = transaction.build().toHex();
-        console.log(signedTransaction);
+
         let tx = await sendTransaction(signedTransaction);
-        console.log(tx);
-        return tx;
+
+        return {
+            status: 200,
+            value: tx.txid,
+        };
     } catch (err) {
         console.error(err);
     }
@@ -79,19 +88,6 @@ export function createNewWalletKeyPair() {
         privateKey: key,
         address: address,
     };
-}
-
-/*
-    This method should be public
-    This is used to get the FROM address and the amount
-    After it does call private methods to calculate the fee
-*/
-export async function getFee(amount, fromAddress) {
-    let sapiUnspent = await getUnspentWithAmount(fromAddress, amount);
-
-    let fee = calculateFee(sapiUnspent.utxos);
-
-    return fee;
 }
 
 export async function getBalance(_address) {
@@ -124,30 +120,13 @@ export async function getRewards(_address) {
     }
 }
 
-export async function getUnspentWithAmount(_address, _amount) {
-    let utxos = {};
+export const UXTO_TYPE = {
+    SPENDABLE: 1,
+    LOCKED: 0,
+    ALL: -1,
+};
 
-    let options = {
-        method: 'POST',
-        uri: `${getSapiUrl()}/v1/address/unspent/amount`,
-        body: {
-            address: _address,
-            amount: _amount,
-            random: true,
-            instantpay: false,
-        },
-        json: true,
-    };
-
-    try {
-        utxos = await request.post(options);
-    } catch (err) {
-        utxos = {};
-    }
-    return utxos;
-}
-
-export async function getUnspent(_address) {
+export async function getUnspent(_address, uxtoType = UXTO_TYPE.ALL, updateLocalUnspent = false) {
     let utxos = {};
 
     let options = {
@@ -156,7 +135,7 @@ export async function getUnspent(_address) {
         body: {
             address: _address,
             pageNumber: 1,
-            pageSize: 10,
+            pageSize: 500,
             ascending: false,
         },
         json: true,
@@ -164,10 +143,36 @@ export async function getUnspent(_address) {
 
     try {
         utxos = await request.post(options);
+
+        if (uxtoType === UXTO_TYPE.SPENDABLE) {
+            utxos = utxos.utxos.filter((utxo) => utxo.spendable === UXTO_TYPE.SPENDABLE);
+        } else if (uxtoType === UXTO_TYPE.LOCKED) {
+            utxos = utxos.utxos.filter((utxo) => utxo.spendable === UXTO_TYPE.LOCKED);
+        }
     } catch (err) {
         utxos = {};
     }
     return utxos;
+}
+
+export async function getSpendableInputs(address) {
+    return await getUnspent(address, UXTO_TYPE.SPENDABLE);
+}
+
+export async function getLockedInputs(address) {
+    return await getUnspent(address, UXTO_TYPE.LOCKED);
+}
+
+export async function getSpendableBalance(address) {
+    const unspentList = await getUnspent(address, UXTO_TYPE.SPENDABLE);
+    const balance = Number(sumFloats(unspentList.utxos.map((utxo) => utxo.value)).toFixed(8));
+    return Number(balance.toFixed(8));
+}
+
+export async function getLockedBalance(address) {
+    const unspentList = await getUnspent(address, UXTO_TYPE.LOCKED);
+    const balance = Number(sumFloats(unspentList.utxos.map((utxo) => utxo.value)).toFixed(8));
+    return Number(balance.toFixed(8));
 }
 
 export async function getTransactionHistory(address) {
@@ -227,14 +232,14 @@ export async function sendTransaction(hex) {
     }
 }
 
-export async function calculateFee(listUnspent) {
+export async function calculateFee(listUnspent, messageOpReturn) {
     let MIN_FEE = 0.001;
 
     if (_.isUndefined(listUnspent)) return MIN_FEE;
 
     let countUnspent = listUnspent.length;
 
-    let newFee = (0.001 * (countUnspent * 148 + 2 * 34 + 10 + 9)) / 1024;
+    let newFee = (0.001 * (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : 0))) / 1024;
 
     if (newFee > MIN_FEE) MIN_FEE = newFee;
 

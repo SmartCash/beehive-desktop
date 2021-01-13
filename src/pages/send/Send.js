@@ -23,6 +23,7 @@ function SendComponent() {
         calcSendFounds,
         canSend,
         TXID,
+        wallets,
         walletCurrent,
         walletCurrentBalance,
         clearTxId,
