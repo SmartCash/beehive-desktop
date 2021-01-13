@@ -46,7 +46,10 @@ function SendComponent() {
                         </button>
                     </p>
                     <p>
-                        Balance <span>{walletCurrentBalance}</span>
+                        Balance <span>{walletCurrentBalance.unlocked}</span>
+                    </p>
+                    <p>
+                        Locked <span>{walletCurrentBalance.locked}</span>
                     </p>
                 </div>
                 <div className="walletEmpty">
@@ -83,7 +86,10 @@ function SendComponent() {
                         </button>
                     </p>
                     <p>
-                        Balance <span>{walletCurrentBalance}</span>
+                        Balance <span>{walletCurrentBalance.unlocked}</span>
+                    </p>
+                    <p>
+                        Locked <span>{walletCurrentBalance.locked}</span>
                     </p>
                 </div>
                 <div className="form-group">
