@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import { WalletContext } from '../../context/WalletContext';
 import { subtractFloats, sumFloats, sumFloatsValues, exceeds } from '../../lib/math';
-import { calculateFee, createAndSendRawTransaction, getUnspent } from '../../lib/sapi';
+import { calculateFee, createAndSendRawTransaction } from '../../lib/sapi';
 import { isAddress } from '../../lib/smart';
 
 const initialValue = {
@@ -107,17 +107,32 @@ export const SendProvider = ({ children }) => {
 
     function submitSendAmount() {
         dispatch({ type: 'setTXIDLoading', payload: true });
-        createAndSendRawTransaction(
-            state.addressToSend,
-            Number(state.amountToSend.toFixed(8)),
-            getPrivateKey(),
-            state.messageToSend
-        )
+
+        const { balance, unspent } = wallets.find((wallet) => wallet.address === walletCurrent);
+
+        createAndSendRawTransaction({
+            toAddress: state.addressToSend,
+            amount: Number(Number(state.amountToSend).toFixed(8)),
+            privateKey: getPrivateKey(),
+            messageOpReturn: state.messageToSend,
+            unspentList: unspent,
+            fee: state.netFee,
+            unlockedBalance: balance.unlocked,
+        })
             .then((data) => {
                 dispatch({ type: 'clearState' });
-                // updateWalletsBalance();
+
                 getAndUpdateWalletsBallance();
-                dispatch({ type: 'setTXID', payload: data?.txid });
+
+                if (!data) {
+                    dispatch({ type: 'setTXIDError', payload: 'Something wrong with trying to send the transaction' });
+                }
+
+                if (data && data.status === 400) {
+                    dispatch({ type: 'setTXIDError', payload: data?.value });
+                }
+
+                dispatch({ type: 'setTXID', payload: data?.value });
             })
             .catch((error) => dispatch({ type: 'setTXIDError', payload: error[0]?.message }))
             .finally(() => dispatch({ type: 'setTXIDLoading', payload: false }));

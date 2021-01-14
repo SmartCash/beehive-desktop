@@ -7,16 +7,65 @@ let getSapiUrl = require('./poolSapi');
 
 const LOCKED = 'pubkeyhashlocked';
 
-export async function createAndSendRawTransaction(toAddress, amount, keyString, messageOpReturn, unspentList, fee, totalUnspent) {
-    let key = smartCash.ECPair.fromWIF(keyString);
+export async function createAndSendRawTransaction({
+    toAddress,
+    amount,
+    privateKey,
+    messageOpReturn,
+    unspentList,
+    fee,
+    unlockedBalance,
+}) {
+    if (!toAddress) {
+        return {
+            status: 400,
+            value: 'You must provide the destination address.',
+        };
+    }
 
-    let fromAddress = key.getAddress().toString();
+    if (!amount) {
+        return {
+            status: 400,
+            value: 'You must provide the amount.',
+        };
+    }
 
-    let transaction = new smartCash.TransactionBuilder();
+    if (!privateKey) {
+        return {
+            status: 400,
+            value: 'You must provide the private key to sign the raw transaction.',
+        };
+    }
 
-    let change = totalUnspent - amount - fee;
+    if (!unspentList) {
+        return {
+            status: 400,
+            value: 'You must provide the unspent list.',
+        };
+    }
 
-    if (totalUnspent < amount + fee) {
+    if (!unspentList.utxos) {
+        return {
+            status: 400,
+            value: 'You must provide the UTXOs unspent list.',
+        };
+    }
+
+    if (!fee) {
+        return {
+            status: 400,
+            value: 'You must provide the calculated fee.',
+        };
+    }
+
+    if (!unlockedBalance) {
+        return {
+            status: 400,
+            value: 'You must provide the unlocked balance.',
+        };
+    }
+
+    if (unlockedBalance < amount + fee) {
         return {
             status: 400,
             value: 'The amount exceeds your balance!',
@@ -29,6 +78,14 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString, 
             value: 'The amount is smaller than the minimum accepted. Minimum amount: 0.001.',
         };
     }
+
+    let key = smartCash.ECPair.fromWIF(privateKey);
+
+    let fromAddress = key.getAddress().toString();
+
+    let transaction = new smartCash.TransactionBuilder();
+
+    let change = unlockedBalance - amount - fee;
 
     transaction.setLockTime(unspentList.blockHeight);
 
@@ -70,7 +127,10 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString, 
             value: tx.txid,
         };
     } catch (err) {
-        console.error(err);
+        return {
+            status: 400,
+            value: err.message,
+        };
     }
 }
 

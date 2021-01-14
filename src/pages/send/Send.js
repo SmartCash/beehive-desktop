@@ -23,7 +23,6 @@ function SendComponent() {
         calcSendFounds,
         canSend,
         TXID,
-        wallets,
         walletCurrent,
         walletCurrentBalance,
         clearTxId,
@@ -124,7 +123,12 @@ function SendComponent() {
                             autoComplete="off"
                             type="text"
                             value={messageToSend}
-                            onInput={(event) => setMessageToSend(event.target.value)}
+                            onInput={(event) => {
+                                setMessageToSend(event.target.value);
+                            }}
+                            onChange={(event) => {
+                                calcSendFounds(1);
+                            }}
                         />
                     </div>
                     {isSmartFiat() && (
