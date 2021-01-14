@@ -187,7 +187,7 @@ export const UXTO_TYPE = {
 };
 
 export async function getUnspent(_address, uxtoType = UXTO_TYPE.ALL, updateLocalUnspent = false) {
-    let utxos = {};
+    let inputs = {};
 
     let options = {
         method: 'POST',
@@ -202,17 +202,16 @@ export async function getUnspent(_address, uxtoType = UXTO_TYPE.ALL, updateLocal
     };
 
     try {
-        utxos = await request.post(options);
-
+        inputs = await request.post(options);
         if (uxtoType === UXTO_TYPE.SPENDABLE) {
-            utxos = utxos.utxos.filter((utxo) => utxo.spendable === UXTO_TYPE.SPENDABLE);
+            inputs.utxos = inputs.utxos.filter((input) => input.spendable === UXTO_TYPE.SPENDABLE);
         } else if (uxtoType === UXTO_TYPE.LOCKED) {
-            utxos = utxos.utxos.filter((utxo) => utxo.spendable === UXTO_TYPE.LOCKED);
+            inputs.utxos = inputs.utxos.filter((input) => input.spendable === UXTO_TYPE.LOCKED);
         }
     } catch (err) {
-        utxos = {};
+        inputs = {};
     }
-    return utxos;
+    return inputs;
 }
 
 export async function getSpendableInputs(address) {
