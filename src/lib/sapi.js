@@ -7,13 +7,14 @@ let getSapiUrl = require('./poolSapi');
 
 const LOCKED = 'pubkeyhashlocked';
 
-export async function createAndSendRawTransaction(toAddress, amount, keyString, messageOpReturn, unspentList, fee, totalUnspent) {
-    let key = smartCash.ECPair.fromWIF(keyString);
+export async function createAndSendRawTransaction(toAddress, amount, keyString, messageOpReturn, unspentList, fee, totalUnspent) {    
+    let key = smartCash.ECPair.fromWIF(keyString);    
+    console.log(unspentList);
+    console.log(fee);
+    console.log(totalUnspent);
 
     let fromAddress = key.getAddress().toString();
-
     let transaction = new smartCash.TransactionBuilder();
-
     let change = totalUnspent - amount - fee;
 
     if (totalUnspent < amount + fee) {
@@ -31,7 +32,7 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString, 
     }
 
     transaction.setLockTime(unspentList.blockHeight);
-
+    
     //SEND TO
     transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
 
@@ -47,7 +48,7 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString, 
         transaction.addOutput(fromAddress, parseFloat(smartCash.amount(change.toString()).toString()));
     } else {
         fee = change;
-    }
+    }    
 
     //Add unspent and sign them all
     if (!_.isUndefined(unspentList.utxos) && unspentList.utxos.length > 0) {
@@ -58,7 +59,7 @@ export async function createAndSendRawTransaction(toAddress, amount, keyString, 
         for (let i = 0; i < unspentList.utxos.length; i += 1) {
             transaction.sign(i, key);
         }
-    }
+    }    
 
     try {
         let signedTransaction = transaction.build().toHex();

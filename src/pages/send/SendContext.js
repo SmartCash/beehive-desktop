@@ -109,9 +109,13 @@ export const SendProvider = ({ children }) => {
         dispatch({ type: 'setTXIDLoading', payload: true });
         createAndSendRawTransaction(
             state.addressToSend,
-            Number(state.amountToSend.toFixed(8)),
+            //Number(state.amountToSend.toFixed(8)),
+            Number(state.amountToSend),
             getPrivateKey(),
-            state.messageToSend
+            state.messageToSend,
+            wallets.find(w => w.address === walletCurrent).unspent,
+            state.netFee,
+            wallets.find(w => w.address === walletCurrent).balance.unlocked,
         )
             .then((data) => {
                 dispatch({ type: 'clearState' });
