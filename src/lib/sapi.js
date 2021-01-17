@@ -6,6 +6,7 @@ const _ = require('lodash');
 let getSapiUrl = require('./poolSapi');
 
 const LOCKED = 'pubkeyhashlocked';
+const OP_RETURN_DEFAULT = 'Sent from SmartHub.';
 
 export async function createAndSendRawTransaction({
     toAddress,
@@ -95,7 +96,7 @@ export async function createAndSendRawTransaction({
     //OP RETURN
     const dataScript = smartCash.script.compile([
         smartCash.opcodes.OP_RETURN,
-        Buffer.from(messageOpReturn ? messageOpReturn : 'Sent from SmartHub.'),
+        Buffer.from(messageOpReturn ? messageOpReturn : OP_RETURN_DEFAULT),
     ]);
     transaction.addOutput(dataScript, 0);
 
@@ -120,7 +121,11 @@ export async function createAndSendRawTransaction({
     try {
         let signedTransaction = transaction.build().toHex();
 
+        console.log(signedTransaction);
+
         let tx = await sendTransaction(signedTransaction);
+
+        console.log(tx);
 
         return {
             status: 200,
@@ -292,13 +297,15 @@ export async function sendTransaction(hex) {
 }
 
 export async function calculateFee(listUnspent, messageOpReturn) {
-    let MIN_FEE = 0.001;
+    let MIN_FEE = 0.002;
 
     if (_.isUndefined(listUnspent)) return MIN_FEE;
 
     let countUnspent = listUnspent.length;
 
-    let newFee = (0.001 * (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : 0))) / 1024;
+    let newFee =
+        (0.001 * (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length))) /
+        1024;
 
     if (newFee > MIN_FEE) MIN_FEE = newFee;
 

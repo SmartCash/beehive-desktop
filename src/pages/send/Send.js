@@ -20,7 +20,8 @@ function SendComponent() {
         totalInSmart,
         submitSendAmount,
         isSmartFiat,
-        calcSendFounds,
+        calculateSendAll,
+        calculateSendAmount,
         canSend,
         TXID,
         walletCurrent,
@@ -125,15 +126,13 @@ function SendComponent() {
                             value={messageToSend}
                             onInput={(event) => {
                                 setMessageToSend(event.target.value);
-                            }}
-                            onChange={(event) => {
-                                calcSendFounds(1);
+                                calculateSendAmount(event.target.value);
                             }}
                         />
                     </div>
                     {isSmartFiat() && (
                         <div className="form-control amount">
-                            <button type="button" onClick={() => calcSendFounds(1)}>
+                            <button type="button" onClick={() => calculateSendAll(1)}>
                                 Send All
                             </button>
                         </div>

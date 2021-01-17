@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import { WalletContext } from '../../context/WalletContext';
-import { subtractFloats, sumFloats, sumFloatsValues, exceeds } from '../../lib/math';
+import { subtractFloats, sumFloatsValues, exceeds } from '../../lib/math';
 import { calculateFee, createAndSendRawTransaction } from '../../lib/sapi';
 import { isAddress } from '../../lib/smart';
 
@@ -84,7 +84,7 @@ export const SendProvider = ({ children }) => {
         } else if (value < 0.001) {
             dispatch({ type: 'setAmountToSendError', payload: 'The minimum amount to send is 0.001' });
         } else {
-            calculateFee(unspent, state.messageToSend).then((fee) => dispatch({ type: 'setNetFee', payload: fee || 0 }));
+            calculateFee(unspent.utxos, state.messageToSend).then((fee) => dispatch({ type: 'setNetFee', payload: fee || 0 }));
 
             dispatch({ type: 'setAmountToSendError', payload: null });
         }
@@ -147,11 +147,20 @@ export const SendProvider = ({ children }) => {
         return state.selectedFiat === 'smart';
     }
 
-    async function calcSendFounds(percentage) {
+    async function calculateSendAll(percentage) {
         const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
         const balance = Number(wallet.balance.unlocked * percentage);
-        const fee = await calculateFee(wallet.unspent, state.messageToSend);
+        const fee = await calculateFee(wallet.unspent.utxos, state.messageToSend);
         const amountToSend = subtractFloats(balance, fee);
+        dispatch({ type: 'setAmountToSendError', payload: null });
+        dispatch({ type: 'setNetFee', payload: fee });
+        dispatch({ type: 'setAmountToSend', payload: amountToSend });
+    }
+
+    async function calculateSendAmount(messageOpReturn) {
+        const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
+        const fee = await calculateFee(wallet.unspent.utxos, messageOpReturn);
+        const amountToSend = subtractFloats(state.amountToSend, fee);
         dispatch({ type: 'setAmountToSendError', payload: null });
         dispatch({ type: 'setNetFee', payload: fee });
         dispatch({ type: 'setAmountToSend', payload: amountToSend });
@@ -183,7 +192,8 @@ export const SendProvider = ({ children }) => {
         submitSendAmount,
         handleSelectedFiat,
         isSmartFiat,
-        calcSendFounds,
+        calculateSendAll,
+        calculateSendAmount,
         canSend,
         totalInSmart,
         clearTxId,
