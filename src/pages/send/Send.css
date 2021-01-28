@@ -188,3 +188,12 @@
     padding: 10px;
     border-radius: 10px;
 }
+
+
+.page-send .SendError{
+    background-color:brown;
+    color: white;
+    padding:10px;
+    border-radius: var(--borderRadius);
+    position: relative;
+}

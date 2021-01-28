@@ -119,20 +119,22 @@ export const SendProvider = ({ children }) => {
             fee: state.netFee,
             unlockedBalance: balance.unlocked,
         })
-            .then((data) => {
-                dispatch({ type: 'clearState' });
-
-                getAndUpdateWalletsBallance();
+            .then((data) => {                
+                dispatch({ type: 'clearState' });                
 
                 if (!data) {
                     dispatch({ type: 'setTXIDError', payload: 'Something wrong with trying to send the transaction' });
                 }
 
                 if (data && data.status === 400) {
-                    dispatch({ type: 'setTXIDError', payload: data?.value });
+                    dispatch({ type: 'setTXIDError', payload: data.value });                    
                 }
 
-                dispatch({ type: 'setTXID', payload: data?.value });
+                if (data && data.status === 200) {
+                    dispatch({ type: 'setTXID', payload: data?.value });
+                    dispatch({ type: 'setTXIDError', payload: null });   
+                    //getAndUpdateWalletsBallance();
+                }                                
             })
             .catch((error) => dispatch({ type: 'setTXIDError', payload: error[0]?.message }))
             .finally(() => dispatch({ type: 'setTXIDLoading', payload: false }));
@@ -152,18 +154,18 @@ export const SendProvider = ({ children }) => {
         const balance = Number(wallet.balance.unlocked * percentage);
         const fee = await calculateFee(wallet.unspent.utxos, state.messageToSend);
         const amountToSend = subtractFloats(balance, fee);
+
         dispatch({ type: 'setAmountToSendError', payload: null });
-        //dispatch({ type: 'setNetFee', payload: fee });
-        dispatch({ type: 'setAmountToSend', payload: totalInSmart });
+        dispatch({ type: 'setNetFee', payload: fee });
+        dispatch({ type: 'setAmountToSend', payload: amountToSend });
     }
 
     async function calculateSendAmount(messageOpReturn) {
         const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
-        const fee = await calculateFee(wallet.unspent.utxos, messageOpReturn);
-        const amountToSend = subtractFloats(state.amountToSend, fee);
+        const fee = await calculateFee(wallet.unspent.utxos, messageOpReturn);             
+
         dispatch({ type: 'setAmountToSendError', payload: null });
-        dispatch({ type: 'setNetFee', payload: fee });
-        dispatch({ type: 'setAmountToSend', payload: amountToSend });
+        dispatch({ type: 'setNetFee', payload: fee });        
     }
 
     function getPrivateKey() {

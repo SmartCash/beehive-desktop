@@ -29,6 +29,7 @@ function SendComponent() {
         clearTxId,
         messageToSend,
         setMessageToSend,
+        TXIDError
     } = useContext(SendContext);
 
     if (walletCurrentBalance === 0) {
@@ -62,6 +63,10 @@ function SendComponent() {
     return (
         <Page className="page-send">
             <Scrollbars>
+                {TXIDError && (
+                    <p className="SendError">{TXIDError}</p>
+                )}
+
                 {TXID && (
                     <div className="hasBeenSent">
                         <button className="btnClose" onClick={() => clearTxId()}>

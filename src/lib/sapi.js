@@ -120,12 +120,14 @@ export async function createAndSendRawTransaction({
 
     try {
         let signedTransaction = transaction.build().toHex();
-
-        console.log(signedTransaction);
-
         let tx = await sendTransaction(signedTransaction);
-
-        console.log(tx);
+                
+        if(tx.status === 400){
+            return {
+                status: 400,
+                value: tx.value,
+            };
+        }
 
         return {
             status: 200,
@@ -292,17 +294,18 @@ export async function sendTransaction(hex) {
     try {
         return await request.post(options);
     } catch (err) {
-        console.error(err);
+        return {
+            status: 400,
+            value: err.error[0].message
+        };
     }
 }
 
 export async function calculateFee(listUnspent, messageOpReturn) {
     let MIN_FEE = 0.002;
 
-    if (_.isUndefined(listUnspent)) return MIN_FEE;
-    console.log(listUnspent);
-    let countUnspent = listUnspent.length;
-    console.log(countUnspent);
+    if (_.isUndefined(listUnspent)) return MIN_FEE;    
+    let countUnspent = listUnspent.length;    
 
     let newFee =
         (0.001 * (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length))) /

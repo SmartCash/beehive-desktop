@@ -51,8 +51,6 @@ function RewardsActivate() {
             console.log(transactionId);
         };
 
-        console.log(activeRewards);
-
         activeRewards();
         await sleep(60000 * 2.5);
 
