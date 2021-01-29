@@ -1,0 +1,100 @@
+.page-transactions {}
+
+.page-transactions .transaction {
+    padding: var(--spacer);
+    background: #0c0c0d;
+    color: #999;
+    border-radius: 16px;
+}
+
+.page-transactions .transaction .label {
+    margin: 0 0 8px;
+    padding: 0;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.page-transactions .transaction .value {
+    margin: 0 0 0;
+    padding: 0;
+    color: var(--primary);
+    font-size: 16px;
+}
+
+.page-transactions .transaction button {
+    background: none;
+    border: 0 !important;
+    outline: 0 !important;
+    cursor: pointer;
+}
+
+.page-transactions .transaction .value a {
+    color: inherit;
+    font-size: inherit;
+}
+
+.page-transactions .transaction .value + .label {
+    margin-top: var(--spacer);
+}
+
+.page-transactions .transaction ~ .transaction {
+    margin-top: var(--spacer);
+}
+
+.page-transactions .error {
+    color: #999;
+}
+
+.page-transactions .refreshBtn {
+    margin-bottom: var(--spacer);
+    display: flex;
+    margin-left: auto;
+    border: 0;
+    background: none;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.page-transactions .refreshBtn:disabled {
+    opacity: .5;
+}
+
+.page-transactions .spaceicon{
+    margin:0 20px;
+}
+
+
+.page-transactions .btnCopy {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    fill: #fff;
+    position: relative;
+}
+
+
+.page-transactions .btnCopy:active {
+    fill: var(--primary);
+}
+
+.page-transactions .btn.copy {
+    position: relative;
+}
+
+.page-transactions .btn.copy:active::after {
+    content: 'Copied';
+    display: block;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, calc(-100% - 10px));
+    background: #333;
+    color: #fff;
+    position: absolute;
+    padding: 10px;
+    border-radius: 10px;
+}

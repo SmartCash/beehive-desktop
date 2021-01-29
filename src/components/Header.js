@@ -26,6 +26,11 @@ function Header() {
                         </NavLink>
                     </li>
                     <li>
+                        <NavLink exact to="/chat">
+                            Chat
+                        </NavLink>
+                    </li>
+                    <li>
                         <NavLink exact to="/rewards">
                             Rewards
                         </NavLink>

@@ -259,6 +259,14 @@ export async function getTransactionHistory(address) {
     }
 }
 
+export async function getTransactionHistoryGroupedByAddresses(address) {
+    try {
+        return groupByAddress(await getTransactionHistory(address));
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 export function isLockedTransaction(tx, address) {
     try {
         return (
@@ -302,6 +310,76 @@ export function getOpReturnMessage(tx) {
     }
 }
 
+export function groupByAddress(txs) {
+    try {
+        let parsedTransactions = txs.map((tx) => getAddressAndMessage(tx)).filter((f) => f !== null);
+
+        var grouped = _(parsedTransactions)
+            .groupBy('toAddress')
+            .map(function (messages, key) {
+                return {
+                    chatAddress: key,
+                    messages: messages,
+                };
+            })
+            .value();
+
+        console.log(`grouped`, grouped);
+        return grouped;
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
+}
+
+export function getAddressAndMessage(tx) {
+    let transaction = {};
+    transaction.fromAddress = tx.address;
+    transaction.direction = tx.direction;
+    transaction.time = tx.time;
+    try {
+        if (tx && tx?.vout) {
+            if (tx.direction === 'Sent') {
+                const outAddress = tx?.vout?.find(
+                    (f) =>
+                        f?.scriptPubKey &&
+                        f?.scriptPubKey?.addresses &&
+                        f?.scriptPubKey?.addresses.length > 0 &&
+                        !f?.scriptPubKey?.addresses?.includes(tx.address)
+                );
+
+                if (outAddress) {
+                    const address = outAddress?.scriptPubKey?.addresses[0];
+                    transaction.toAddress = address;
+                }
+            } else {
+                const input = tx?.vin[0];
+                if (input) {
+                    const inputAddress = input?.scriptPubKey?.addresses[0];
+                    transaction.toAddress = inputAddress;
+                }
+            }
+
+            const outWithOpReturn = tx?.vout?.find(
+                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN')
+            );
+            if (outWithOpReturn) {
+                const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
+                if (message) {
+                    const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
+                    const hexToUtf8 = convert('hex', 'utf8');
+                    const decodedMessage = hexToUtf8(message);
+                    transaction.message = decodedMessage;
+                }
+            }
+        }
+        if (!transaction.toAddress) return null;
+    } catch (err) {
+        console.error(err);
+        return '';
+    }
+    return transaction;
+}
 export async function sendTransaction(hex) {
     var options = {
         method: 'POST',

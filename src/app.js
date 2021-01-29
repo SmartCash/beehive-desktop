@@ -5,6 +5,7 @@ import { WalletProvider } from './context/WalletContext';
 import Send from './pages/send/Send';
 import Receive from './pages/receive/Receive';
 import Transactions from './pages/transactions/Transactions';
+import Chat from './pages/chat/Chat';
 import RewardsActivate from './pages/rewards/activate';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -23,6 +24,9 @@ function App() {
                             </Route>
                             <Route exact path="/transactions">
                                 <Transactions />
+                            </Route>
+                            <Route exact path="/chat">
+                                <Chat />
                             </Route>
                             <Route exact path="/rewards">
                                 <RewardsActivate />
