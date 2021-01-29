@@ -89,7 +89,7 @@ export async function createAndSendRawTransaction({
     let change = unlockedBalance - amount - fee;
 
     transaction.setLockTime(unspentList.blockHeight);
-    
+
     //SEND TO
     transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
 
@@ -105,7 +105,7 @@ export async function createAndSendRawTransaction({
         transaction.addOutput(fromAddress, parseFloat(smartCash.amount(change.toString()).toString()));
     } else {
         fee = change;
-    }    
+    }
 
     //Add unspent and sign them all
     if (!_.isUndefined(unspentList.utxos) && unspentList.utxos.length > 0) {
@@ -116,13 +116,13 @@ export async function createAndSendRawTransaction({
         for (let i = 0; i < unspentList.utxos.length; i += 1) {
             transaction.sign(i, key);
         }
-    }    
+    }
 
     try {
         let signedTransaction = transaction.build().toHex();
         let tx = await sendTransaction(signedTransaction);
-                
-        if(tx.status === 400){
+
+        if (tx.status === 400) {
             return {
                 status: 400,
                 value: tx.value,
@@ -279,6 +279,29 @@ export function isLockedTransaction(tx, address) {
     }
 }
 
+export function getOpReturnMessage(tx) {
+    try {
+        if (tx && tx?.vout) {
+            const outWithOpReturn = tx?.vout?.find(
+                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN')
+            );
+            if (outWithOpReturn) {
+                const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
+                if (message) {
+                    const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
+                    const hexToUtf8 = convert('hex', 'utf8');
+                    const decodedMessage = hexToUtf8(message);
+                    return decodedMessage;
+                }
+            }
+        }
+        return '';
+    } catch (err) {
+        console.error(err);
+        return '';
+    }
+}
+
 export async function sendTransaction(hex) {
     var options = {
         method: 'POST',
@@ -296,7 +319,7 @@ export async function sendTransaction(hex) {
     } catch (err) {
         return {
             status: 400,
-            value: err.error[0].message
+            value: err.error[0].message,
         };
     }
 }
@@ -304,8 +327,8 @@ export async function sendTransaction(hex) {
 export async function calculateFee(listUnspent, messageOpReturn) {
     let MIN_FEE = 0.002;
 
-    if (_.isUndefined(listUnspent)) return MIN_FEE;    
-    let countUnspent = listUnspent.length;    
+    if (_.isUndefined(listUnspent)) return MIN_FEE;
+    let countUnspent = listUnspent.length;
 
     let newFee =
         (0.001 * (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length))) /

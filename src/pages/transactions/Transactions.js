@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Page from '../../components/Page';
 import { WalletContext } from '../../context/WalletContext';
-import { getTransactionHistory, isLockedTransaction } from '../../lib/sapi';
+import { getOpReturnMessage, getTransactionHistory, isLockedTransaction } from '../../lib/sapi';
 import './Transactions.css';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { ReactComponent as IconCopy } from '../../assets/images/copy.svg';
@@ -41,6 +41,7 @@ function Transactions() {
                 <Scrollbars>
                     {history?.map((tx, index) => {
                         tx.isLocked = isLockedTransaction(tx, walletCurrent) ? 1 : 0;
+                        tx.message = getOpReturnMessage(tx);
                         return (
                             <div className="transaction" key={index}>
                                 <p className="label">Direction</p>
@@ -49,17 +50,19 @@ function Transactions() {
                                 <p className="value">{tx.isLocked}</p>
                                 <p className="label">Amount</p>
                                 <p className="value">{tx.amount}</p>
-                                <p className="label">Transaction Id</p>                               
-                                {tx.txid}    
-                                 &nbsp;
+                                <p className="label">Message</p>
+                                <p className="value">{tx.message}</p>
+                                <p className="label">Transaction Id</p>
+                                {tx.txid}
+                                &nbsp;
                                 <button
                                     className="btn copy"
                                     title="Copy address to clipboard"
                                     onClick={() => electron.clipboard.writeText(tx.txid)}
                                 >
-                            <IconCopy className="btnCopy" />
-                        </button>                                
-                                <p> 
+                                    <IconCopy className="btnCopy" />
+                                </button>
+                                <p>
                                     <button
                                         className="value"
                                         onClick={() => electron.shell.openExternal(`https://insight.smartcash.cc/tx/${tx.txid}`)}
@@ -67,7 +70,7 @@ function Transactions() {
                                         Insight
                                     </button>
 
-                                    <span className="spaceicon">|</span> 
+                                    <span className="spaceicon">|</span>
 
                                     <button
                                         className="value"
