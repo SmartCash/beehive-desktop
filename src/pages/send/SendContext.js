@@ -79,7 +79,14 @@ export const SendProvider = ({ children }) => {
 
     const setAmountToSend = (value) => {
         const { balance, unspent } = wallets.find((wallet) => wallet.address === walletCurrent);
-        if (exceeds(value, balance.unlocked)) {
+        
+        var total = 0;
+
+        if(state.netFee != undefined){
+            total = sumFloatsValues(value, state.netFee);
+        }        
+
+        if (exceeds(total, balance.unlocked)) {
             dispatch({ type: 'setAmountToSendError', payload: 'Exceeds balance' });
         } else if (value < 0.001) {
             dispatch({ type: 'setAmountToSendError', payload: 'The minimum amount to send is 0.001' });
