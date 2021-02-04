@@ -11,22 +11,22 @@ sudo apt install git npm -y
 sudo apt install curl -y
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt install nodejs -y
+```
+
+## Cloning the correct repo and branch
+
+```
 git clone https://github.com/SmartCash/smarthub_local.git
 cd smarthub_local
 git checkout develop
+```
+
+## Install dev dependencies, app dependencies and RUN the electron app
+
+```
 npm i
 npm start
 ```
-
-## Install Dependencies
-sudo apt install git npm<br />
-curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -<br />
-sudo apt install nodejs<br />
-git clone https://github.com/SmartCash/smarthub_local.git<br />
-
-## Install and Run
-npm install<br />
-npm start<br />
 
 ### Your equivalent to wallet.dat but called config.json is stored at:
 
