@@ -7,9 +7,16 @@ import { ReactComponent as Logo } from '../assets/images/logo.svg';
 function PasswordModal() {
     const { decryptWallets, decryptError, password } = useContext(WalletContext);
     const [showPassword, setShowPassword] = useState(false);
-    const [ _password, setPassword] = useState();
+    const [_password, setPassword] = useState();
+    const [showModdal, setShowModal] = useState(true);
+
+    const handleDecryptWallets = () => {
+        if (!_password) decryptError = true;
+        decryptWallets(_password);
+        setShowModal(!decryptError);
+    };
     return (
-        !password &&
+        showModdal &&
         ReactDOM.createPortal(
             <React.Fragment>
                 <div className={style['modal-overlay']} />
@@ -40,7 +47,7 @@ function PasswordModal() {
                                 {decryptError && (
                                     <p className="alert-error">Do not possible decrypt local data using this password.</p>
                                 )}
-                                <button onClick={() => decryptWallets(_password)}>Use password and/or recover wallet</button>
+                                <button onClick={handleDecryptWallets}>Use password and/or recover wallet</button>
                             </div>
                         </div>
                     </div>
