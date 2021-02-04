@@ -3,9 +3,9 @@ import { WalletContext } from '../context/WalletContext';
 import PasswordModal from './PasswordModal';
 
 function ProtectedRoute({ children }) {
-    const { masterKey } = useContext(WalletContext);
+    const { password } = useContext(WalletContext);
 
-    if (!masterKey) {
+    if (!password) {
         return <PasswordModal />;
     }
 

@@ -9,6 +9,7 @@ const initialValue = {
     amountToSend: 0,
     selectedFiat: 'smart',
     messageToSend: '',
+    password: null,
 };
 
 const sendReducer = (state, action) => {
@@ -18,6 +19,9 @@ const sendReducer = (state, action) => {
         }
         case 'setMessageToSend': {
             return { ...state, messageToSend: action.payload };
+        }
+        case 'setPassword': {
+            return { ...state, password: action.payload };
         }
         case 'setAmountToSendError': {
             return { ...state, amountToSendError: action.payload };
@@ -79,12 +83,12 @@ export const SendProvider = ({ children }) => {
 
     const setAmountToSend = (value) => {
         const { balance, unspent } = wallets.find((wallet) => wallet.address === walletCurrent);
-        
+
         var total = 0;
 
-        if(state.netFee != undefined){
+        if (state.netFee != undefined) {
             total = sumFloatsValues(value, state.netFee);
-        }        
+        }
 
         if (exceeds(total, balance.unlocked)) {
             dispatch({ type: 'setAmountToSendError', payload: 'Exceeds balance' });
@@ -104,8 +108,13 @@ export const SendProvider = ({ children }) => {
             dispatch({ type: 'setAddressToSendError', payload: true });
         });
     };
+
     const setMessageToSend = (value) => {
         dispatch({ type: 'setMessageToSend', payload: value });
+    };
+
+    const setPassword = (value) => {
+        dispatch({ type: 'setPassword', payload: value });
     };
 
     useEffect(() => {
@@ -126,22 +135,22 @@ export const SendProvider = ({ children }) => {
             fee: state.netFee,
             unlockedBalance: balance.unlocked,
         })
-            .then((data) => {                
-                dispatch({ type: 'clearState' });                
+            .then((data) => {
+                dispatch({ type: 'clearState' });
 
                 if (!data) {
                     dispatch({ type: 'setTXIDError', payload: 'Something wrong with trying to send the transaction' });
                 }
 
                 if (data && data.status === 400) {
-                    dispatch({ type: 'setTXIDError', payload: data.value });                    
+                    dispatch({ type: 'setTXIDError', payload: data.value });
                 }
 
                 if (data && data.status === 200) {
                     dispatch({ type: 'setTXID', payload: data?.value });
-                    dispatch({ type: 'setTXIDError', payload: null });   
+                    dispatch({ type: 'setTXIDError', payload: null });
                     //getAndUpdateWalletsBallance();
-                }                                
+                }
             })
             .catch((error) => dispatch({ type: 'setTXIDError', payload: error[0]?.message }))
             .finally(() => dispatch({ type: 'setTXIDLoading', payload: false }));
@@ -169,10 +178,10 @@ export const SendProvider = ({ children }) => {
 
     async function calculateSendAmount(messageOpReturn) {
         const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
-        const fee = await calculateFee(wallet.unspent.utxos, messageOpReturn);             
+        const fee = await calculateFee(wallet.unspent.utxos, messageOpReturn);
 
         dispatch({ type: 'setAmountToSendError', payload: null });
-        dispatch({ type: 'setNetFee', payload: fee });        
+        dispatch({ type: 'setNetFee', payload: fee });
     }
 
     function getPrivateKey() {
@@ -198,6 +207,7 @@ export const SendProvider = ({ children }) => {
         setAmountToSend,
         setAddressToSend,
         setMessageToSend,
+        setPassword,
         submitSendAmount,
         handleSelectedFiat,
         isSmartFiat,

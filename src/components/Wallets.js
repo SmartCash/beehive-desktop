@@ -8,13 +8,13 @@ import useModal from '../hooks/useModal';
 import WalletModal from './WalletModal';
 
 function Wallets() {
-    const { wallets, walletCurrent, masterKey, downloadWallets } = useContext(WalletContext);
+    const { wallets, walletCurrent, password, downloadWallets } = useContext(WalletContext);
     const { isShowing, toggle } = useModal();
     const [disableCloseButton, setDisableCloseButton] = useState(false);
 
     useEffect(() => {
         console.log(wallets);
-        if (wallets && wallets.length === 0 && masterKey) {
+        if (wallets && wallets.length === 0 && password) {
             setDisableCloseButton(true);
             toggle();
         } else {

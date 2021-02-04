@@ -157,9 +157,9 @@ export function createNewWalletKeyPair() {
     };
 }
 
-export function createRSAKeyPair(masterKey) {
+export function createRSAKeyPair(password) {
     const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-        modulusLength: 4096,
+        modulusLength: 2048,
         publicKeyEncoding: {
             type: 'spki',
             format: 'pem',
@@ -168,40 +168,30 @@ export function createRSAKeyPair(masterKey) {
             type: 'pkcs8',
             format: 'pem',
             cipher: 'aes-256-cbc',
-            passphrase: masterKey,
+            passphrase: password,
         },
     });
     const RSA = {
         rsaPublicKey: publicKey,
         rsaPrivateKey: privateKey,
     };
-    console.log(RSA);
     return RSA;
 }
 
-export function encryptTextWithRSAPublicKey(rsaPublicKey, message) {
-    const encryptedData = crypto.publicEncrypt(
-        {
-            key: rsaPublicKey,
-            padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-            oaepHash: 'sha256',
-        },
-        // We convert the data string to a buffer using `Buffer.from`
-        Buffer.from(message)
-    );
-    return encryptedData.toString('base64');
+// We must encrypt a message with the receiver PUBLIC KEY so when this person receives it
+// They can decrypt with their Private Key
+export function encryptTextWithReceiverRSAPublicKey(rsaReceiverPublicKey, message) {
+    var encMsg = crypto.publicEncrypt(rsaReceiverPublicKey, Buffer.from(message));
+    return encMsg.toString('base64');
 }
 
-export function decryptTextWithRSAPrivateKey(rsaPrivateKey, encryptedMessage) {
-    const decryptedData = crypto.privateDecrypt(
-        {
-            key: rsaPrivateKey,
-            padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-            oaepHash: 'sha256',
-        },
-        encryptedMessage
-    );
-    return decryptedData.toString();
+export function decryptTextWithRSAPrivateKey(rsaPrivateKey, passphrase, encryptedMessage) {
+    const privateKeyWithPassphrase = {
+        key: rsaPrivateKey,
+        passphrase: passphrase,
+    };
+    var decMsg = crypto.privateDecrypt(privateKeyWithPassphrase, Buffer.from(encryptedMessage, 'base64'));
+    return decMsg.toString('utf8');
 }
 
 export async function getBalance(_address) {

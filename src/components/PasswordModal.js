@@ -5,12 +5,11 @@ import { WalletContext } from '../context/WalletContext';
 import { ReactComponent as Logo } from '../assets/images/logo.svg';
 
 function PasswordModal() {
-    const { masterKey, saveMasterKey, decryptError } = useContext(WalletContext);
-    const [_masterKey, setMasterKey] = useState();
-    const [showPK, setShowPK] = useState(false);
-
+    const { decryptWallets, decryptError } = useContext(WalletContext);
+    const [showPassword, setShowPassword] = useState(false);
+    const [password, setPassword] = useState();
     return (
-        !masterKey &&
+        !password &&
         ReactDOM.createPortal(
             <React.Fragment>
                 <div className={style['modal-overlay']} />
@@ -30,18 +29,18 @@ function PasswordModal() {
                                     <input
                                         className="form-control"
                                         placeholder="Insert your password"
-                                        onInput={(e) => setMasterKey(e.target.value)}
-                                        type={showPK ? 'text' : 'password'}
+                                        onInput={(e) => setPassword(e.target.value)}
+                                        type={showPassword ? 'text' : 'password'}
                                         autoFocus
                                     />
-                                    <button type="button" className="showPK" onClick={() => setShowPK(!showPK)}>
-                                        {showPK ? 'Hide' : 'Show'}
+                                    <button type="button" className="showPK" onClick={() => setShowPassword(!showPassword)}>
+                                        {showPassword ? 'Hide' : 'Show'}
                                     </button>
                                 </div>
                                 {decryptError && (
                                     <p className="alert-error">Do not possible decrypt local data using this password.</p>
                                 )}
-                                <button onClick={() => saveMasterKey(_masterKey)}>Use password and/or recover wallet</button>
+                                <button onClick={() => decryptWallets(password)}>Use password and/or recover wallet</button>
                             </div>
                         </div>
                     </div>

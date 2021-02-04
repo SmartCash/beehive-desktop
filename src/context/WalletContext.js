@@ -1,6 +1,12 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import { getSupportedCurrencies } from '../lib/smart';
-import { getBalance, getSpendableInputs, createRSAKeyPair } from '../lib/sapi';
+import {
+    getBalance,
+    getSpendableInputs,
+    createRSAKeyPair,
+    encryptTextWithReceiverRSAPublicKey,
+    decryptTextWithRSAPrivateKey,
+} from '../lib/sapi';
 import * as CryptoJS from 'crypto-js';
 import generatePDF from '../lib/GeneratorPDF';
 const { ipcRenderer } = window.require('electron');
@@ -10,7 +16,7 @@ const initialState = {
     walletCurrent: '',
     fiatList: [],
     walletsBalance: {},
-    masterKey: null,
+    password: null,
 };
 
 const _getBalance = async (address) => {
@@ -32,7 +38,7 @@ const userReducer = (state, action) => {
         case 'addWallet': {
             const _wallets = [...state.wallets, action.payload];
 
-            const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(_wallets), state.masterKey).toString();
+            const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(_wallets), state.password).toString();
 
             ipcRenderer.send('setWalletData', encryptedWallet);
 
@@ -53,8 +59,8 @@ const userReducer = (state, action) => {
         case 'updateBalance': {
             return { ...state, walletsBalance: action.payload };
         }
-        case 'saveMasterKey': {
-            return { ...state, masterKey: action.payload };
+        case 'decryptWallets': {
+            return { ...state, password: action.payload };
         }
         case 'decryptError': {
             return { ...state, decryptError: action.payload };
@@ -91,8 +97,17 @@ export const WalletProvider = ({ children }) => {
             dispatch({ type: 'setWalletCurrent', payload: wallet.address });
         }
 
-        wallet.balance = await _getBalance(wallet.address);
+        if (!wallet.RSA) {
+            wallet.RSA = createRSAKeyPair(state.password);
+        }
 
+        let rsaMessage = encryptTextWithReceiverRSAPublicKey(wallet.RSA.rsaPublicKey, 'Oie');
+        console.log(`RSA encrypted Message with PUB_KEY`, rsaMessage);
+        let textMessage = decryptTextWithRSAPrivateKey(wallet.RSA.rsaPrivateKey, state.password, rsaMessage);
+        console.log(`RSA DEcrypted Message with PRIV_KEY`, textMessage);
+
+        wallet.balance = await _getBalance(wallet.address);
+        wallet.privateKey = CryptoJS.AES.encrypt(wallet.privateKey, state.password).toString();
         wallet.unspent = await getSpendableInputs(wallet.address);
 
         dispatch({ type: 'addWallet', payload: wallet });
@@ -110,13 +125,13 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'updateBalance', payload: balance });
     }
 
-    async function saveMasterKey(masterKey) {
+    async function decryptWallets(password) {
         const encryptedWallet = ipcRenderer.sendSync('getWalletData');
         let wallets = [];
         let decryptedWallet;
         if (encryptedWallet) {
             try {
-                decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(encryptedWallet, masterKey));
+                decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(encryptedWallet, password));
             } catch (e) {
                 return dispatch({ type: 'decryptError', payload: true });
             }
@@ -125,8 +140,16 @@ export const WalletProvider = ({ children }) => {
 
                 for (const wallet of wallets) {
                     if (!wallet.RSA) {
-                        wallet.RSA = createRSAKeyPair(masterKey);
+                        wallet.RSA = createRSAKeyPair(password);
                     }
+
+                    let rsaMessage = encryptTextWithReceiverRSAPublicKey(wallet.RSA.rsaPublicKey, 'Oie');
+                    console.log(`RSA encrypted Message with PUB_KEY`, rsaMessage);
+                    let textMessage = decryptTextWithRSAPrivateKey(wallet.RSA.rsaPrivateKey, password, rsaMessage);
+                    console.log(`RSA DEcrypted Message with PRIV_KEY`, textMessage);
+
+                    if (!CryptoJS.AES.decrypt(wallet.privateKey, password))
+                        wallet.privateKey = CryptoJS.AES.encrypt(wallet.privateKey, password).toString();
 
                     const balance = await _getBalance(wallet.address);
                     if (balance) {
@@ -142,7 +165,6 @@ export const WalletProvider = ({ children }) => {
         }
 
         updateWalletsBalance();
-        dispatch({ type: 'saveMasterKey', payload: masterKey });
     }
 
     function downloadWallets() {
@@ -181,7 +203,7 @@ export const WalletProvider = ({ children }) => {
         setWalletCurrent,
         updateBalance,
         updateWalletsBalance,
-        saveMasterKey,
+        decryptWallets,
         downloadWallets,
         getAndUpdateWalletsBallance,
     };

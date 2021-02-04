@@ -5,6 +5,7 @@ import generatePDF from '../lib/GeneratorPDF';
 import { createNewWalletKeyPair, getAddress } from '../lib/sapi';
 import { isPK } from '../lib/smart';
 import style from './WalletModal.module.css';
+import * as CryptoJS from 'crypto-js';
 
 function WalletModal({ isShowing, hide, disableCloseButton }) {
     const [wallet, setWallet] = useState();
@@ -13,6 +14,8 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
     const [privateKey, setPrivateKey] = useState();
     const [showPrivateKey, setShowPrivateKey] = useState(false);
     const [isPKInvalid, setIsPKInvalid] = useState(false);
+    const [_password, setPassword] = useState();
+
     const handleAddWallet = () => {
         addWallet(wallet);
         setCreateWallet(false);
@@ -23,7 +26,7 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
         isPK(privateKey)
             .then(() => {
                 const _wallet = {
-                    privateKey,
+                    privateKey: CryptoJS.AES.encrypt(privateKey, _password).toString(),
                     address: getAddress(privateKey),
                 };
                 addWallet(_wallet);

@@ -15,6 +15,8 @@ function SendComponent() {
         currencyMask,
         addressToSend,
         setAddressToSend,
+        setPassword,
+        password,
         addressToSendError,
         netFee,
         totalInSmart,
@@ -29,7 +31,7 @@ function SendComponent() {
         clearTxId,
         messageToSend,
         setMessageToSend,
-        TXIDError
+        TXIDError,
     } = useContext(SendContext);
 
     if (walletCurrentBalance === 0) {
@@ -63,9 +65,7 @@ function SendComponent() {
     return (
         <Page className="page-send">
             <Scrollbars>
-                {TXIDError && (
-                    <p className="SendError">{TXIDError}</p>
-                )}
+                {TXIDError && <p className="SendError">{TXIDError}</p>}
 
                 {TXID && (
                     <div className="hasBeenSent">
@@ -135,6 +135,21 @@ function SendComponent() {
                             }}
                         />
                     </div>
+
+                    <div className="form-control message">
+                        <label htmlFor="message">Password</label>
+                        <input
+                            id="messageTo"
+                            placeholder="Insert your password here"
+                            autoComplete="off"
+                            type="password"
+                            value={password}
+                            onInput={(event) => {
+                                setPassword(event.target.value);
+                            }}
+                        />
+                    </div>
+
                     {isSmartFiat() && (
                         <div className="form-control amount">
                             <button type="button" onClick={() => calculateSendAll(1)}>
