@@ -1,10 +1,8 @@
 const random = require('random');
 
-let sapis = [
-    `http://23.227.167.45:8080`,
-];
+let sapis = [`https://sapi.smartcash.cc`];
 
-let sapiAddress = `http://23.227.167.45:8080`;
+let sapiAddress = `https://sapi.smartcash.cc`;
 
 if (window.location.protocol === 'http:') {
     sapiAddress = sapis[random.int(0, sapis.length - 1)];
