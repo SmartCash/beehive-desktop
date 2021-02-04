@@ -5,9 +5,9 @@ import { WalletContext } from '../context/WalletContext';
 import { ReactComponent as Logo } from '../assets/images/logo.svg';
 
 function PasswordModal() {
-    const { decryptWallets, decryptError } = useContext(WalletContext);
+    const { decryptWallets, decryptError, password } = useContext(WalletContext);
     const [showPassword, setShowPassword] = useState(false);
-    const [password, setPassword] = useState();
+    const [ _password, setPassword] = useState();
     return (
         !password &&
         ReactDOM.createPortal(
@@ -40,7 +40,7 @@ function PasswordModal() {
                                 {decryptError && (
                                     <p className="alert-error">Do not possible decrypt local data using this password.</p>
                                 )}
-                                <button onClick={() => decryptWallets(password)}>Use password and/or recover wallet</button>
+                                <button onClick={() => decryptWallets(_password)}>Use password and/or recover wallet</button>
                             </div>
                         </div>
                     </div>
