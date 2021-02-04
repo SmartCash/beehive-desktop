@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import { getSupportedCurrencies } from '../lib/smart';
-import { getBalance, getSpendableInputs } from '../lib/sapi';
+import { getBalance, getSpendableInputs, createRSAKeyPair } from '../lib/sapi';
 import * as CryptoJS from 'crypto-js';
 import generatePDF from '../lib/GeneratorPDF';
 const { ipcRenderer } = window.require('electron');
@@ -124,6 +124,10 @@ export const WalletProvider = ({ children }) => {
                 wallets = JSON.parse(decryptedWallet);
 
                 for (const wallet of wallets) {
+                    if (!wallet.RSA) {
+                        wallet.RSA = createRSAKeyPair(masterKey);
+                    }
+
                     const balance = await _getBalance(wallet.address);
                     if (balance) {
                         wallet.balance = balance;

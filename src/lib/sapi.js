@@ -4,6 +4,7 @@ const smartCash = require('smartcashjs-lib');
 const request = require('request-promise');
 const _ = require('lodash');
 let getSapiUrl = require('./poolSapi');
+const crypto = window.require('crypto');
 
 const LOCKED = 'pubkeyhashlocked';
 const OP_RETURN_DEFAULT = 'Sent from SmartHub.';
@@ -143,7 +144,6 @@ export async function createAndSendRawTransaction({
 
 export function getAddress(privateKey) {
     let key = smartCash.ECPair.fromWIF(privateKey);
-
     return key.getAddress().toString();
 }
 
@@ -155,6 +155,53 @@ export function createNewWalletKeyPair() {
         privateKey: key,
         address: address,
     };
+}
+
+export function createRSAKeyPair(masterKey) {
+    const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 4096,
+        publicKeyEncoding: {
+            type: 'spki',
+            format: 'pem',
+        },
+        privateKeyEncoding: {
+            type: 'pkcs8',
+            format: 'pem',
+            cipher: 'aes-256-cbc',
+            passphrase: masterKey,
+        },
+    });
+    const RSA = {
+        rsaPublicKey: publicKey,
+        rsaPrivateKey: privateKey,
+    };
+    console.log(RSA);
+    return RSA;
+}
+
+export function encryptTextWithRSAPublicKey(rsaPublicKey, message) {
+    const encryptedData = crypto.publicEncrypt(
+        {
+            key: rsaPublicKey,
+            padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+            oaepHash: 'sha256',
+        },
+        // We convert the data string to a buffer using `Buffer.from`
+        Buffer.from(message)
+    );
+    return encryptedData.toString('base64');
+}
+
+export function decryptTextWithRSAPrivateKey(rsaPrivateKey, encryptedMessage) {
+    const decryptedData = crypto.privateDecrypt(
+        {
+            key: rsaPrivateKey,
+            padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+            oaepHash: 'sha256',
+        },
+        encryptedMessage
+    );
+    return decryptedData.toString();
 }
 
 export async function getBalance(_address) {
