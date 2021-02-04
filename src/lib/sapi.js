@@ -403,18 +403,18 @@ export async function sendTransaction(hex) {
 }
 
 export async function calculateFee(listUnspent, messageOpReturn) {
-    let MIN_FEE = 0.002;
+    let MIN_FEE = 0.001;
 
     if (_.isUndefined(listUnspent)) return MIN_FEE;
     let countUnspent = listUnspent.length;
 
     let newFee =
-        (0.001 * (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length))) /
-        1024;
+        0.001 * roundUP (((countUnspent * 148) + (2 * 34) + 10 + 9 + (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length))/
+        1024), 1);
 
     if (newFee > MIN_FEE) MIN_FEE = newFee;
 
-    return roundUp(MIN_FEE, 5);
+    return MIN_FEE
 }
 
 function roundUp(num, precision) {
