@@ -5,15 +5,15 @@ import { WalletContext } from '../context/WalletContext';
 import { ReactComponent as Logo } from '../assets/images/logo.svg';
 
 function PasswordModal() {
-    const { decryptWallets, decryptError, password } = useContext(WalletContext);
+    const { decryptWallets, decryptError } = useContext(WalletContext);
     const [showPassword, setShowPassword] = useState(false);
     const [_password, setPassword] = useState();
     const [showModdal, setShowModal] = useState(true);
 
-    const handleDecryptWallets = () => {
+    const handleDecryptWallets = async () => {
         if (!_password) decryptError = true;
-        decryptWallets(_password);
-        setShowModal(!decryptError);
+        const wallets = await decryptWallets(_password);
+        if (wallets && wallets.length > 0) setShowModal(false);
     };
     return (
         showModdal &&

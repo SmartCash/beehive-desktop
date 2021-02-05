@@ -165,6 +165,7 @@ export const WalletProvider = ({ children }) => {
         }
 
         updateWalletsBalance();
+        return wallets;
     }
 
     function downloadWallets() {
