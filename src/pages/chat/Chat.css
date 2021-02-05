@@ -1,13 +1,27 @@
-.page-transactions {}
+.page-chat {
+}
 
-.page-transactions .transaction {
+.page-chat .message-sent {
+    margin-left: auto;
+}
+
+.page-chat .message {
+    width: 60%;
+}
+
+.page-chat .transaction-messages {
+    display: flex;
+    flex-direction: column;
+}
+
+.page-chat .transaction {
     padding: var(--spacer);
     background: #0c0c0d;
     color: #999;
     border-radius: 16px;
 }
 
-.page-transactions .transaction .label {
+.page-chat .transaction .label {
     margin: 0 0 8px;
     padding: 0;
     font-size: 11px;
@@ -15,38 +29,38 @@
     text-transform: uppercase;
 }
 
-.page-transactions .transaction .value {
+.page-chat .transaction .value {
     margin: 0 0 0;
     padding: 0;
     color: var(--primary);
     font-size: 16px;
 }
 
-.page-transactions .transaction button {
+.page-chat .transaction button {
     background: none;
     border: 0 !important;
     outline: 0 !important;
     cursor: pointer;
 }
 
-.page-transactions .transaction .value a {
+.page-chat .transaction .value a {
     color: inherit;
     font-size: inherit;
 }
 
-.page-transactions .transaction .value + .label {
+.page-chat .transaction .value + .label {
     margin-top: var(--spacer);
 }
 
-.page-transactions .transaction ~ .transaction {
+.page-chat .transaction ~ .transaction {
     margin-top: var(--spacer);
 }
 
-.page-transactions .error {
+.page-chat .error {
     color: #999;
 }
 
-.page-transactions .refreshBtn {
+.page-chat .refreshBtn {
     margin-bottom: var(--spacer);
     display: flex;
     margin-left: auto;
@@ -60,16 +74,15 @@
     cursor: pointer;
 }
 
-.page-transactions .refreshBtn:disabled {
-    opacity: .5;
+.page-chat .refreshBtn:disabled {
+    opacity: 0.5;
 }
 
-.page-transactions .spaceicon{
-    margin:0 20px;
+.page-chat .spaceicon {
+    margin: 0 20px;
 }
 
-
-.page-transactions .btnCopy {
+.page-chat .btnCopy {
     width: 20px;
     height: 20px;
     object-fit: contain;
@@ -77,16 +90,15 @@
     position: relative;
 }
 
-
-.page-transactions .btnCopy:active {
+.page-chat .btnCopy:active {
     fill: var(--primary);
 }
 
-.page-transactions .btn.copy {
+.page-chat .btn.copy {
     position: relative;
 }
 
-.page-transactions .btn.copy:active::after {
+.page-chat .btn.copy:active::after {
     content: 'Copied';
     display: block;
     top: 0;

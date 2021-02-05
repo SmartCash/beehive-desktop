@@ -29,7 +29,7 @@ function Chat() {
     useEffect(handleGetTransactions, [walletCurrent]);
 
     return (
-        <Page className="page-transactions">
+        <Page className="page-chat">
             <button onClick={() => _getTransactionHistory()} className="refreshBtn">
                 Refresh
             </button>
@@ -39,14 +39,14 @@ function Chat() {
                 <Scrollbars>
                     {history?.map((tx, index) => {
                         return (
-                            <div className="transaction" key={index}>
+                            <div className="transaction transaction-messages" key={index}>
                                 <p className="label">Chat Address</p>
                                 <p className="value">{tx.chatAddress}</p>
                                 {tx.messages
                                     .sort((a, b) => (a.time > b.time ? 1 : -1))
                                     .map((m) => {
                                         return (
-                                            <div className="transaction">
+                                            <div className={`transaction message message-${m.direction}`}>
                                                 <p className="label">Direction</p>
                                                 <p className="value">{m.direction}</p>
                                                 <p className="label">Message</p>
