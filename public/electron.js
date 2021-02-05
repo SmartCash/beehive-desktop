@@ -20,6 +20,8 @@ function createWindow() {
         },
     });
 
+    mainWindow.maximize();
+
     if (!isDev) {
         mainWindow.setMenu(null);
     }
