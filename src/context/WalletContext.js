@@ -21,7 +21,8 @@ const initialState = {
 
 const _getBalance = async (address) => {
     const getBalanceFromSapi = async () => {
-        const balanceResponse = await getBalance(address);
+        const balanceResponse = await getBalance(address);        
+        balanceResponse.balance.unlocked = balanceResponse.balance.unlocked + balanceResponse.unconfirmed.delta;        
         return balanceResponse.balance;
     };
     let balance = {};

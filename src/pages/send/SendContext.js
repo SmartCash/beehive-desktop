@@ -149,7 +149,7 @@ export const SendProvider = ({ children }) => {
                 if (data && data.status === 200) {
                     dispatch({ type: 'setTXID', payload: data?.value });
                     dispatch({ type: 'setTXIDError', payload: null });
-                    //getAndUpdateWalletsBallance();
+                    getAndUpdateWalletsBallance();
                 }
             })
             .catch((error) => dispatch({ type: 'setTXIDError', payload: error[0]?.message }))

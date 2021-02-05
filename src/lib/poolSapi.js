@@ -8,6 +8,4 @@ if (window.location.protocol === 'http:') {
     sapiAddress = sapis[random.int(0, sapis.length - 1)];
 }
 
-console.log(sapiAddress);
-
 module.exports = () => sapiAddress;
