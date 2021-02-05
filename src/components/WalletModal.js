@@ -12,16 +12,20 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
     const [createWallet, setCreateWallet] = useState(false);
     const { addWallet } = useContext(WalletContext);
     const [privateKey, setPrivateKey] = useState();
-    const [showPrivateKey, setShowPrivateKey] = useState(false);
     const [isPKInvalid, setIsPKInvalid] = useState(false);
     const [_password, setPassword] = useState();
 
     const handleAddWallet = () => {
-        addWallet(wallet);
-        setCreateWallet(false);
         generatePDF([wallet], 'SmartCash_Address');
+        const _wallet = {
+            privateKey: CryptoJS.AES.encrypt(wallet.privateKey, _password).toString(),
+            address: wallet.address,
+        };
+        addWallet(_wallet, _password);
+        setCreateWallet(false);
         hide();
     };
+
     const handleImportPrivateKey = () => {
         isPK(privateKey)
             .then(() => {
@@ -29,7 +33,7 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
                     privateKey: CryptoJS.AES.encrypt(privateKey, _password).toString(),
                     address: getAddress(privateKey),
                 };
-                addWallet(_wallet);
+                addWallet(_wallet, _password);
                 hide();
             })
             .catch(() => setIsPKInvalid(true));
@@ -69,8 +73,10 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
                                 </button>
                             )}
                         </div>
+
                         <div className={style['modal-body']}>
                             <div className={style['address-content']}>
+                                
                                 {!createWallet && (
                                     <div className={style['import-address']}>
                                         <h2>Import from Private Key</h2>
@@ -79,11 +85,13 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
                                             placeholder="Insert your private key here"
                                             rows={5}
                                         />
+                                        <input type="password" placeholder="Password" onInput={(event) => setPassword(event.target.value)}/>
                                         {isPKInvalid && <p>Invalid Private Key</p>}
                                         <button onClick={handleImportPrivateKey}>Import</button>
                                         <button onClick={handleCreateNewOne}>Create new one</button>
                                     </div>
                                 )}
+
                                 {createWallet && (
                                     <div className={style['new-address']}>
                                         <h2>New Private Key</h2>
@@ -94,22 +102,10 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
                                             <p>{wallet.address}</p>
                                         </div>
                                         <div>
-                                            <p>
-                                                <strong>Private Key:</strong>
-                                            </p>
-                                            <p>
-                                                {showPrivateKey && wallet.privateKey}
-                                                {!showPrivateKey && '*****************************************'}
-                                            </p>
+                                            <input type="password" placeholder="Password" onInput={(event) => setPassword(event.target.value)}/>
                                         </div>
                                         <button className="btn" onClick={handleAddWallet}>
                                             Use this one and save as PDF
-                                        </button>
-                                        <button
-                                            className={style['btn-show-pk']}
-                                            onClick={() => setShowPrivateKey(!showPrivateKey)}
-                                        >
-                                            {showPrivateKey ? 'Hide PK' : 'Show PK'}
                                         </button>
                                     </div>
                                 )}

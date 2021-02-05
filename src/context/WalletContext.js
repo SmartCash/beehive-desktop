@@ -37,11 +37,6 @@ const userReducer = (state, action) => {
     switch (action.type) {
         case 'addWallet': {
             const _wallets = [...state.wallets, action.payload];
-
-            const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(_wallets), state.password).toString();
-
-            ipcRenderer.send('setWalletData', encryptedWallet);
-
             return { ...state, wallets: _wallets };
         }
         case 'setWalletCurrent': {
@@ -86,7 +81,7 @@ export const WalletContext = createContext(initialState);
 export const WalletProvider = ({ children }) => {
     const [state, dispatch] = useReducer(userReducer, initialState);
 
-    async function addWallet(wallet) {
+    async function addWallet(wallet, password) {
         const exists = state.wallets.find((_wallet) => _wallet.address === wallet.address);
 
         if (exists) {
@@ -98,19 +93,23 @@ export const WalletProvider = ({ children }) => {
         }
 
         if (!wallet.RSA) {
-            wallet.RSA = createRSAKeyPair(state.password);
+            wallet.RSA = createRSAKeyPair(password);
         }
 
         let rsaMessage = encryptTextWithReceiverRSAPublicKey(wallet.RSA.rsaPublicKey, 'Oie');
         console.log(`RSA encrypted Message with PUB_KEY`, rsaMessage);
-        let textMessage = decryptTextWithRSAPrivateKey(wallet.RSA.rsaPrivateKey, state.password, rsaMessage);
+        let textMessage = decryptTextWithRSAPrivateKey(wallet.RSA.rsaPrivateKey, password, rsaMessage);
         console.log(`RSA DEcrypted Message with PRIV_KEY`, textMessage);
 
         wallet.balance = await _getBalance(wallet.address);
-        wallet.privateKey = CryptoJS.AES.encrypt(wallet.privateKey, state.password).toString();
         wallet.unspent = await getSpendableInputs(wallet.address);
 
-        dispatch({ type: 'addWallet', payload: wallet });
+        const _wallets = [...state.wallets, wallet];
+
+        const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(_wallets), password).toString();
+        ipcRenderer.send('setWalletData', encryptedWallet);
+
+        dispatch({ type: 'updateWallets', payload: _wallets });
     }
 
     function setWalletCurrent(wallet) {
@@ -125,16 +124,29 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'updateBalance', payload: balance });
     }
 
+    function saveWalletsInStorage(wallets, password) {
+        const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(wallets), password).toString();
+        ipcRenderer.send('setWalletData', encryptedWallet);
+    }
+
+    function getWalletsFromStorage(password) {
+        const encryptedWallet = ipcRenderer.sendSync('getWalletData');
+        const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(encryptedWallet, password));
+        return JSON.parse(decryptedWallet);
+    }
+
     async function decryptWallets(password) {
         const encryptedWallet = ipcRenderer.sendSync('getWalletData');
         let wallets = [];
         let decryptedWallet;
+        
         if (encryptedWallet) {
             try {
                 decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(encryptedWallet, password));
             } catch (e) {
                 return dispatch({ type: 'decryptError', payload: true });
             }
+
             if (decryptedWallet) {
                 wallets = JSON.parse(decryptedWallet);
 
@@ -157,7 +169,7 @@ export const WalletProvider = ({ children }) => {
                         wallet.unspent = await getSpendableInputs(wallet.address);
                     }
                 }
-
+                
                 dispatch({ type: 'updateWallets', payload: wallets });
             }
         } else {
