@@ -8,7 +8,7 @@ function PasswordModal() {
     const { decryptWallets, decryptError } = useContext(WalletContext);
     const [showPassword, setShowPassword] = useState(false);
     const [_password, setPassword] = useState();
-    const [showModdal, setShowModal] = useState(true);
+    const [showModal, setShowModal] = useState(true);
 
     const handleDecryptWallets = async () => {
         if (!_password) decryptError = true;
@@ -16,7 +16,7 @@ function PasswordModal() {
         if (wallets && wallets.length > 0) setShowModal(false);
     };
     return (
-        showModdal &&
+        showModal &&
         ReactDOM.createPortal(
             <React.Fragment>
                 <div className={style['modal-overlay']} />
