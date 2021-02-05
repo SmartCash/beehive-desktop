@@ -2,7 +2,7 @@ import React from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import HttpsRedirect from './components/RedirectToHttps';
 import { WalletProvider } from './context/WalletContext';
-import Send from './pages/send/Send';
+import { Send } from './pages/send/Send';
 import Receive from './pages/receive/Receive';
 import Transactions from './pages/transactions/Transactions';
 import Chat from './pages/chat/Chat';

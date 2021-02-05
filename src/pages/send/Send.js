@@ -110,6 +110,7 @@ function SendComponent() {
                         />
                         {addressToSendError && <p className="invalidAddress">Invalid address</p>}
                     </div>
+
                     <div className="form-control amount">
                         <label htmlFor="amount">Amount to send</label>
                         <MaskedInput
@@ -121,6 +122,15 @@ function SendComponent() {
                         />
                         {amountToSendError && <p className="amountToSendError">{amountToSendError}</p>}
                     </div>
+                    
+                    {isSmartFiat() && (
+                        <div className="form-control amount">
+                            <button type="button" onClick={() => calculateSendAll(1)}>
+                                Send All
+                            </button>
+                        </div>
+                    )}
+
                     <div className="form-control message">
                         <label htmlFor="message">Write your message</label>
                         <input
@@ -150,19 +160,6 @@ function SendComponent() {
                         />
                     </div>
 
-                    {isSmartFiat() && (
-                        <div className="form-control amount">
-                            <button type="button" onClick={() => calculateSendAll(1)}>
-                                Send All
-                            </button>
-                        </div>
-                    )}
-                    {!isSmartFiat() && (
-                        <div className="form-control amountInSmart">
-                            <label htmlFor="receveInSmart">In SMART</label>
-                            <input id="receveInSmart" value={0} readOnly={true} />
-                        </div>
-                    )}
                 </div>
                 {netFee && (
                     <div className="transactionInfo">
@@ -184,12 +181,10 @@ function SendComponent() {
     );
 }
 
-const Send = () => {
+export function Send() {
     return (
         <SendProvider>
             <SendComponent />
         </SendProvider>
     );
-};
-
-export default Send;
+}

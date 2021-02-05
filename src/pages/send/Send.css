@@ -55,6 +55,11 @@
 .page-send .amountToSendError {
     color: var(--primary);
 }
+
+.page-send .message {
+    border-top: 1px solid #999;
+}
+
 .page-send .transactionInfo {
     margin-top: var(--spacer);
     display: flex;
