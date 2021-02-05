@@ -53,6 +53,13 @@ export async function createAndSendRawTransaction({
         };
     }
 
+    if (!unspentList.utxos.length === 0) {
+        return {
+            status: 400,
+            value: 'You must provide the UTXOs unspent list.',
+        };
+    }
+
     if (!fee) {
         return {
             status: 400,

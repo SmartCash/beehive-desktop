@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import { WalletContext } from '../../context/WalletContext';
 import { subtractFloats, sumFloatsValues, exceeds } from '../../lib/math';
-import { calculateFee, createAndSendRawTransaction } from '../../lib/sapi';
+import { calculateFee, createAndSendRawTransaction, getSpendableInputs } from '../../lib/sapi';
 import { isAddress } from '../../lib/smart';
 
 const initialValue = {
@@ -121,10 +121,13 @@ export const SendProvider = ({ children }) => {
         dispatch({ type: 'clearState' });
     }, [walletCurrent]);
 
-    function submitSendAmount() {
+    async function submitSendAmount() {
         dispatch({ type: 'setTXIDLoading', payload: true });
 
-        const { balance, unspent } = wallets.find((wallet) => wallet.address === walletCurrent);
+        const { balance } = wallets.find((wallet) => wallet.address === walletCurrent);
+
+        // You must get the latest unspent from the NODE
+        const unspent = await getSpendableInputs(walletCurrent);
 
         createAndSendRawTransaction({
             toAddress: state.addressToSend,
