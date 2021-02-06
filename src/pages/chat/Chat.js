@@ -28,11 +28,45 @@ function Chat() {
 
     useEffect(handleGetTransactions, [walletCurrent]);
 
+    const localArray = Array.from(Array(10).keys());
+
     return (
         <Page className="page-chat">
-            <button onClick={() => _getTransactionHistory()} className="refreshBtn">
-                Refresh
-            </button>
+            <div className="chat-wallets">
+                <Scrollbars>
+                    {localArray.map((item) => (
+                        <div className={`wallet ${item === 1 ? 'active' : ''}`} key={item}>
+                            <p className="address">SZs723CRDM5T32vYMu8CZfM45HSihYMW53</p>
+                            <p className="lastMessage">Hello</p>
+                        </div>
+                    ))}
+                </Scrollbars>
+            </div>
+            <div className="chat-messages">
+                <div className="transaction chatAddress">
+                    <p className="label">Chat Address</p>
+                    <p className="value">TXID SdasdEasdASdaEasdasDfasdDRadsdD</p>
+                </div>
+                <Scrollbars>
+                    <div className={`transaction message message-sent`}>
+                        <p className="value">Message</p>
+                        <p className="label">{new Date().toLocaleString()}</p>
+                    </div>
+                    <div className={`transaction message message-receive`}>
+                        <p className="value">Lorem ipsum</p>
+                        <p className="label">{new Date().toLocaleString()}</p>
+                    </div>
+                </Scrollbars>
+                <div className="send-wrapper">
+                    <textarea placeholder="Type a message..." className="send-input" />
+                    <button className="btn send-button">Send</button>
+                </div>
+            </div>
+        </Page>
+    );
+
+    return (
+        <Page className="page-chat">
             {loading && <p className="error">Loading Conversations</p>}
             {error && <p className="error">{error}</p>}
             {!error && history && (
