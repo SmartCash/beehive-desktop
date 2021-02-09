@@ -99,6 +99,7 @@
     width: 100%;
 }
 
+.new-address input,
 .import-address input,
 .import-address textarea {
     background: none;
