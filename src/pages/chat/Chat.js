@@ -10,13 +10,17 @@ function Chat() {
     const [history, setHistory] = useState([]);
     const [error, setError] = useState();
     const [loading, setLoading] = useState();
+    const [_tx, setTx] = useState();
 
     async function _getTransactionHistory() {
         setLoading(true);
         setError(null);
         setHistory([]);
         await getTransactionHistoryGroupedByAddresses(walletCurrent)
-            .then((data) => setHistory(data))
+            .then((data) => {
+                setHistory(data);
+                setTx(data[0]);
+            })
             .catch(() => setError('There is no chat for this wallet'))
             .finally(() => setLoading(false));
     }
@@ -28,34 +32,44 @@ function Chat() {
 
     useEffect(handleGetTransactions, [walletCurrent]);
 
-    const localArray = Array.from(Array(10).keys());
-
     return (
         <Page className="page-chat">
             <div className="chat-wallets">
+                <div className="header">
+                    <span className="title">Chat</span>
+                    <button>Start Chat</button>
+                </div>
+                {loading && <p className="error">Loading Conversations</p>}
+                {error && <p className="error">{error}</p>}
                 <Scrollbars>
-                    {localArray.map((item) => (
-                        <div className={`wallet ${item === 1 ? 'active' : ''}`} key={item}>
-                            <p className="address">SZs723CRDM5T32vYMu8CZfM45HSihYMW53</p>
-                            <p className="lastMessage">Hello</p>
-                        </div>
-                    ))}
+                    {history &&
+                        history?.map((tx, index) => {
+                            return (
+                                <div className={`wallet ${tx.chatAddress === _tx?.chatAddress} ? 'active' : ''`} key={index} onClick={() => setTx(tx)}>
+                                    <p className="address">{tx.chatAddress}</p>
+                                    <p className="lastMessage">Hello</p>
+                                </div>
+                            );
+                        })}
                 </Scrollbars>
             </div>
             <div className="chat-messages">
                 <div className="transaction chatAddress">
                     <p className="label">Chat Address</p>
-                    <p className="value">TXID SdasdEasdASdaEasdasDfasdDRadsdD</p>
+                    <p className="value">{_tx?.chatAddress}</p>
                 </div>
                 <Scrollbars>
-                    <div className={`transaction message message-sent`}>
-                        <p className="value">Message</p>
-                        <p className="label">{new Date().toLocaleString()}</p>
-                    </div>
-                    <div className={`transaction message message-receive`}>
-                        <p className="value">Lorem ipsum</p>
-                        <p className="label">{new Date().toLocaleString()}</p>
-                    </div>
+                    {_tx &&
+                        _tx.messages
+                            .sort((a, b) => (a.time > b.time ? 1 : -1))
+                            .map((m) => {
+                                return (
+                                    <div className={`transaction message message-${m.direction}`} key={m.time}>
+                                        <p className="value">{m.message}</p>
+                                        <p className="label">{new Date(m.time * 1000).toLocaleString()}</p>
+                                    </div>
+                                );
+                            })}
                 </Scrollbars>
                 <div className="send-wrapper">
                     <textarea placeholder="Type a message..." className="send-input" />

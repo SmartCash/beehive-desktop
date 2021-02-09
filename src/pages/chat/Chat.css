@@ -5,35 +5,66 @@
 }
 
 .page-chat .chat-wallets {
-    width: 350px;
+    width: 300px;
+    padding: 25px;
     height: 100%;
     background: #0c0c0d;
     border-left: 1px solid #1b1b1b;
 }
 
+.page-chat .chat-wallets .header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    height: 68px;
+    justify-content: space-between;
+}
+
+.page-chat .chat-wallets .header .title {
+    font-size: 18px;
+    color: #fff;
+}
+
+.page-chat .chat-wallets .header button {
+    background: var(--primary);
+    border: 0;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 .page-chat .chat-wallets .wallet {
-    padding: 32px 16px;
+    padding: 16px;
+    border: 1px solid #1b1b1b;
+    border-radius: 4px;
+}
+
+.page-chat .chat-wallets .wallet ~ .wallet {
+    margin-top: 25px;
 }
 
 .page-chat .chat-wallets .address {
     padding: 0;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: 600;
     margin: 0;
     color: #a09d9d;
     width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .page-chat .chat-wallets .lastMessage {
     padding: 0;
     font-size: 14px;
-    margin: 16px 0 0;
+    margin: 8px 0 0;
     display: block;
     color: #a09d9d;
 }
 
 .page-chat .chat-wallets .active {
-    border-left: 2px solid var(--primary);
+    border-color: var(--primary);
     opacity: 1;
     background: var(--black);
 }
@@ -72,7 +103,7 @@
     margin-left: 8px;
 }
 
-.page-chat .message-sent {
+.page-chat .message-Sent {
     margin-left: auto;
 }
 
@@ -180,4 +211,9 @@
     position: absolute;
     padding: 10px;
     border-radius: 10px;
+}
+
+.page-chat .wallet .symbol {
+    width: 30px;
+    height: 30px;
 }
