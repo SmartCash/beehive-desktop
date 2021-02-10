@@ -5,7 +5,7 @@ import { WalletProvider } from './context/WalletContext';
 import { Send } from './pages/send/Send';
 import Receive from './pages/receive/Receive';
 import Transactions from './pages/transactions/Transactions';
-import Chat from './pages/chat/Chat';
+import { Chat } from './pages/chat/Chat';
 import RewardsActivate from './pages/rewards/activate';
 import ProtectedRoute from './components/ProtectedRoute';
 

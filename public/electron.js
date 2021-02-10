@@ -15,7 +15,6 @@ function createWindow() {
         autoHideMenuBar: true,
         webPreferences: {
             nodeIntegration: true,
-            webSecurity: false,
             disableBlinkFeatures: 'OutOfBlinkCors',
         },
     });
