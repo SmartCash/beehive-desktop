@@ -103,12 +103,11 @@ export async function createAndSendRawTransaction({
     //SEND TO
     transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
 
-    //OP RETURN
-    const dataScript = smartCash.script.compile([
-        smartCash.opcodes.OP_RETURN,
-        Buffer.from(messageOpReturn ? messageOpReturn : OP_RETURN_DEFAULT),
-    ]);
-    transaction.addOutput(dataScript, 0);
+    if (messageOpReturn) {
+        //OP RETURN
+        const dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from(messageOpReturn)]);
+        transaction.addOutput(dataScript, 0);
+    }
 
     if (change >= fee) {
         //Change TO
@@ -482,7 +481,6 @@ export async function activateRewards({ toAddress, unspentList, privateKey }) {
         toAddress,
         fee: MIN_FEE,
         amount: calculateUTXOAmountLessFee,
-        messageOpReturn: 'reward-activation',
         unlockedBalance,
         privateKey,
         unspentList: minUnspentList,
