@@ -8,6 +8,8 @@ const crypto = window.require('crypto');
 
 const LOCKED = 'pubkeyhashlocked';
 const OP_RETURN_DEFAULT = 'Sent from SmartHub.';
+const MIN_FEE = 0.002;
+const MIN_AMOUNT_TO_SEND = 0.001;
 
 export async function createAndSendRawTransaction({
     toAddress,
@@ -81,7 +83,7 @@ export async function createAndSendRawTransaction({
         };
     }
 
-    if (amount < 0.001) {
+    if (amount < MIN_AMOUNT_TO_SEND) {
         return {
             status: 400,
             value: 'The amount is smaller than the minimum accepted. Minimum amount: 0.001.',
@@ -293,7 +295,7 @@ export async function getTransactionHistory(address, pageSize = 5) {
             body: {
                 address,
                 pageNumber: 1,
-                pageSize
+                pageSize,
             },
             json: true, // Automatically stringifies the body to JSON
         };
@@ -427,6 +429,70 @@ export function getAddressAndMessage(tx) {
     }
     return transaction;
 }
+
+async function getSmallestUnspentInput({ unspentList }) {
+    if (!unspentList) {
+        return {
+            status: 400,
+            value: 'You must provide the unspent list.',
+        };
+    }
+
+    if (!unspentList.utxos) {
+        return {
+            status: 400,
+            value: 'You must provide the UTXOs unspent list.',
+        };
+    }
+
+    if (!unspentList.utxos.length === 0) {
+        return {
+            status: 400,
+            value: 'You must provide the UTXOs unspent list.',
+        };
+    }
+
+    const unspentAux = unspentList;
+
+    // get the smallest unspent to activate a transaction
+    unspentAux.utxos = [
+        _.minBy(
+            unspentList.utxos.filter((w) => w.value > MIN_AMOUNT_TO_SEND + MIN_FEE),
+            'value'
+        ),
+    ];
+    return unspentAux;
+}
+
+export async function activateRewards({ toAddress, unspentList, privateKey }) {
+    let minUnspentList = await getSmallestUnspentInput({ unspentList });
+
+    // Should return an ERROR if it has no unspent
+    if (minUnspentList.status && minUnspentList.status === 400) {
+        return minUnspentList;
+    }
+
+    let calculateUTXOAmountLessFee = 0;
+    let unlockedBalance = 0;
+
+    calculateUTXOAmountLessFee = minUnspentList.utxos[0].value - MIN_FEE;
+    unlockedBalance = minUnspentList.utxos[0].value;
+
+    const tx = await createAndSendRawTransaction({
+        toAddress,
+        fee: MIN_FEE,
+        amount: calculateUTXOAmountLessFee,
+        messageOpReturn: 'reward-activation',
+        unlockedBalance,
+        privateKey,
+        unspentList: minUnspentList,
+    });
+
+    console.log(`activation-tx`, tx);
+
+    return tx;
+}
+
 export async function sendTransaction(hex) {
     var options = {
         method: 'POST',
@@ -449,11 +515,9 @@ export async function sendTransaction(hex) {
     }
 }
 
-export async function calculateFee(listUnspent, messageOpReturn) {
-    let MIN_FEE = 0.002;
-
-    if (_.isUndefined(listUnspent)) return MIN_FEE;
-    let countUnspent = listUnspent.length;
+export async function calculateFee(unspentList, messageOpReturn) {
+    if (_.isUndefined(unspentList)) return MIN_FEE;
+    let countUnspent = unspentList.length;
 
     let newFee =
         (0.001 * (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length))) /

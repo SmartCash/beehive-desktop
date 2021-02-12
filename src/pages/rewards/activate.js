@@ -8,7 +8,14 @@ import Page from '../../components/Page';
 import SmartNodeRewardsRoi from '../../components/SmartNodeRewardsRoi';
 import { WalletContext } from '../../context/WalletContext';
 import { subtractFloats, sumFloats } from '../../lib/math';
-import { calculateFee, createAndSendRawTransaction, getRewards, getTxId, getUnspent } from '../../lib/sapi';
+import {
+    calculateFee,
+    createAndSendRawTransaction,
+    getRewards,
+    getTxId,
+    getSpendableInputs,
+    activateRewards,
+} from '../../lib/sapi';
 import './activate.css';
 
 function RewardsActivate() {
@@ -35,39 +42,36 @@ function RewardsActivate() {
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     const onSubmit = async (data) => {
-        setActivating(true);
-        setCountDownDate(Date.now() + 300000);
+        // setActivating(true);
+        // setCountDownDate(Date.now() + 300000);
 
-        let _unspents, _amount, _balance, transactionId;
+        let unspentList = await getSpendableInputs(address);
 
-        const activeRewards = async () => {
-            _unspents = await getUnspent(address);
-            console.log(_unspents);
-            _amount = Number(sumFloats(_unspents.utxos.map((utxo) => utxo.value)).toFixed(8));
-            console.log(_amount);
-            _balance = subtractFloats(_amount, await calculateFee(_unspents.utxos));
-            console.log(_balance);
-            transactionId = await SendTransaction(Number(_balance.toFixed(8)), data.privateKey);
-            console.log(transactionId);
-        };
+        let rewardsActivationResponse = await activateRewards({ toAddress: address, unspentList, privateKey });
 
-        activeRewards();
-        await sleep(60000 * 2.5);
-
-        activeRewards();
-        await sleep(60000 * 2.5);
-
-        let transaction = await getTxId(transactionId.txid);
-        let isActivated = transaction.vin.length === 1 && transaction.vout.length === 1;
-
-        if (isActivated === true) {
-            setIsActive(true);
-            setActivating(false);
+        if (rewardsActivationResponse && rewardsActivationResponse.status === 400) {
+            setError(rewardsActivationResponse.value);
+            return rewardsActivationResponse;
         }
-    };
 
-    const SendTransaction = (amount, _privateKey) => {
-        return createAndSendRawTransaction(address, amount, privateKey || _privateKey);
+        await sleep(10 * 1000);
+
+        const transactionResponse = await getTxId(rewardsActivationResponse.value);
+
+        if (!transactionResponse) {
+            return {
+                status: 400,
+                value: 'Error to broadcast the transaction',
+            };
+        }
+
+        setIsActive(true);
+        // setActivating(false);
+
+        return {
+            status: 200,
+            value: transactionResponse.txid,
+        };
     };
 
     if (rewardsError || balance < 1000) {
