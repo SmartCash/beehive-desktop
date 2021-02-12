@@ -1,0 +1,38 @@
+.page-new-chat {
+    flex: 1;
+    display: flex;
+}
+.page-new-chat .page-content {
+    margin: auto;
+}
+.page-new-chat .title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+}
+.page-new-chat .subtitle {
+    color: #fff;
+}
+.page-new-chat .address-form {
+    display: flex;
+}
+.page-new-chat .address-form input {
+    flex: 1;
+    height: 55px;
+    border: 0;
+    border-radius: 8px 0 0 8px;
+    padding: 20px;
+    font-size: 18px;
+    background: #0c0c0d;
+    color: #fff;
+    outline: 0;
+}
+.page-new-chat .address-form button {
+    border: 0;
+    background: var(--primary);
+    border-radius: 0 8px 8px 0;
+    font-weight: 700;
+    padding: 0 16px;
+    cursor: pointer;
+}
