@@ -8,14 +8,14 @@ function Wallet({ wallet, isCurrent }) {
     const { setWalletCurrent } = useContext(WalletContext);
     return (
         <div className={`wallet ${isCurrent && 'wallet-current'}`} role="button">
-            <div className="symbol">∑</div>
+            <div className="symbol" onClick={() => setWalletCurrent(wallet)}>
+                ∑
+            </div>
             <div className="content">
-                <p className="amount" onClick={() => setWalletCurrent(wallet)}>
-                    {wallet.balance.unlocked}
-                </p>
-                <span className="address" onClick={() => setWalletCurrent(wallet)}>
-                    {wallet.label || wallet.address}{' '}
-                </span>
+                <div onClick={() => setWalletCurrent(wallet)}>
+                    <p className="amount">{wallet.balance.unlocked}</p>
+                    <span className="address">{wallet.label || wallet.address} </span>
+                </div>
                 <button
                     className="btn copy"
                     title="Copy address to clipboard"

@@ -191,6 +191,9 @@ body {
 .wallet .content {
     padding: 0 0 0 15px;
     width: calc(100% - 50px);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 }
 .wallet .amount {
     padding: 0;
@@ -220,6 +223,9 @@ body {
     height: 14px;
     display: inline;
     padding: 1px 5px;
+}
+.wallet .btnCopy {
+    margin-left: 16px;
 }
 
 
