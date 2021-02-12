@@ -285,7 +285,7 @@ export async function getLockedBalance(address) {
     return Number(balance.toFixed(8));
 }
 
-export async function getTransactionHistory(address) {
+export async function getTransactionHistory(address, pageSize = 5) {
     try {
         var options = {
             method: 'POST',
@@ -293,7 +293,7 @@ export async function getTransactionHistory(address) {
             body: {
                 address,
                 pageNumber: 1,
-                pageSize: 5,
+                pageSize
             },
             json: true, // Automatically stringifies the body to JSON
         };
@@ -305,7 +305,7 @@ export async function getTransactionHistory(address) {
 
 export async function getTransactionHistoryGroupedByAddresses(address) {
     try {
-        return groupByAddress(await getTransactionHistory(address));
+        return groupByAddress(await getTransactionHistory(address, 50));
     } catch (err) {
         console.error(err);
     }
@@ -356,7 +356,10 @@ export function getOpReturnMessage(tx) {
 
 export function groupByAddress(txs) {
     try {
-        let parsedTransactions = txs.map((tx) => getAddressAndMessage(tx)).filter((f) => f !== null);
+        let parsedTransactions = txs
+            .map((tx) => getAddressAndMessage(tx))
+            .filter((f) => f !== null)
+            .sort((a, b) => (a.time > b.time ? 1 : -1));
 
         var grouped = _(parsedTransactions)
             .groupBy('toAddress')
