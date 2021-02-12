@@ -8,10 +8,12 @@ const store = new Store();
 let mainWindow;
 
 function createWindow() {
+
+    console.log(__dirname)
     mainWindow = new BrowserWindow({
         width: 1280,
         height: 768,
-        icon: __dirname + 'favicon.ico',
+        icon: __dirname + '/icon.png',
         autoHideMenuBar: true,
         webPreferences: {
             nodeIntegration: true,
