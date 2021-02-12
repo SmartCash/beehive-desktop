@@ -13,17 +13,17 @@ export function Chat() {
     const [error, setError] = useState();
     const [loading, setLoading] = useState();
     const [initialLoading, setInitialLoading] = useState();
-    const [_tx, setTx] = useState();
+    const [currentChatAddress, setCurrentChatAddress] = useState();
+    const [newChat, setNewChat] = useState(false);
 
     async function _getTransactionHistory() {
         setLoading(true);
         setError(null);
-        setHistory([]);
         await getTransactionHistoryGroupedByAddresses(walletCurrent)
             .then((data) => {
                 setHistory(data);
-                if (data?.length >= 0) {
-                    setTx(data[0]);
+                if (data.length > 0 && newChat === false && currentChatAddress === undefined) {
+                    setCurrentChatAddress(data[0].chatAddress);
                 }
             })
             .catch(() => setError('There is no chat for this wallet'))
@@ -33,41 +33,54 @@ export function Chat() {
             });
     }
 
-    const handleGetTransactions = () => {
+    function getChat() {
+        return history?.find((chat) => chat.chatAddress === currentChatAddress);
+    }
+
+    function handleSetCurrentChatAddress(chatAddress) {
+        setNewChat(false);
+        setCurrentChatAddress(chatAddress);
+    }
+
+    function handleSetNewChat() {
+        setNewChat(true);
+        setCurrentChatAddress(null);
+    }
+
+    useEffect(() => {
         setInitialLoading(true);
         _getTransactionHistory();
-        setTimeout(() => _getTransactionHistory(), 60000);
-    };
-
-    useEffect(handleGetTransactions, [walletCurrent]);
+        // setTimeout(() => _getTransactionHistory(), 60000);
+    }, [walletCurrent]);
 
     return (
         <Page className="page-chat">
             <div className="chat-wallets">
                 <div className="header">
                     <span className="title">Chats</span>
-                    <button onClick={() => setTx()}>Start chat</button>
+                    <button onClick={handleSetNewChat}>Start chat</button>
                 </div>
-                {initialLoading && <p className="error">Loading Conversations</p>}
+                {initialLoading && <p className="error">Loading conversations</p>}
                 {error && <p className="error">{error}</p>}
-                <Scrollbars>
-                    {history &&
-                        history?.map((tx, index) => {
+                {!initialLoading && (
+                    <Scrollbars>
+                        {history?.map((tx) => {
                             return (
                                 <div
-                                    className={`wallet ${tx.chatAddress === _tx?.chatAddress} ? 'active' : ''`}
-                                    key={index}
-                                    onClick={() => setTx(tx)}
+                                    className={`wallet ${tx.chatAddress === currentChatAddress ? 'active' : ''}`}
+                                    key={tx.chatAddress}
+                                    onClick={() => handleSetCurrentChatAddress(tx.chatAddress)}
                                 >
                                     <p className="address">{tx.chatAddress}</p>
-                                    <p className="lastMessage">Hello</p>
+                                    <p className="lastMessage">{tx.messages[tx.messages.length - 1].message}</p>
                                 </div>
                             );
                         })}
-                </Scrollbars>
+                    </Scrollbars>
+                )}
             </div>
-            {!initialLoading && _tx && <ChatMessages />}
-            {!initialLoading && !_tx && <NewChat />}
+            {!initialLoading && !newChat && currentChatAddress && <ChatMessages chat={getChat()} />}
+            {!initialLoading && newChat && <NewChat />}
         </Page>
     );
 }
