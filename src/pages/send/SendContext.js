@@ -128,6 +128,7 @@ export const SendProvider = ({ children }) => {
 
         // You must get the latest unspent from the NODE
         const unspent = await getSpendableInputs(walletCurrent);
+        console.log(unspent);
 
         createAndSendRawTransaction({
             toAddress: state.addressToSend,

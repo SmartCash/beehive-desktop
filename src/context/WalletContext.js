@@ -157,18 +157,21 @@ export const WalletProvider = ({ children }) => {
                     }
 
                     let rsaMessage = encryptTextWithReceiverRSAPublicKey(wallet.RSA.rsaPublicKey, 'Oie');
-                    console.log(`RSA encrypted Message with PUB_KEY`, rsaMessage);
                     let textMessage = decryptTextWithRSAPrivateKey(wallet.RSA.rsaPrivateKey, password, rsaMessage);
-                    console.log(`RSA DEcrypted Message with PRIV_KEY`, textMessage);
 
                     if (!CryptoJS.AES.decrypt(wallet.privateKey, password))
                         wallet.privateKey = CryptoJS.AES.encrypt(wallet.privateKey, password).toString();
-
-                    const balance = await _getBalance(wallet.address);
-                    if (balance) {
-                        wallet.balance = balance;
-                        wallet.unspent = await getSpendableInputs(wallet.address);
-                    }
+                    
+                        try {
+                            const balance = await _getBalance(wallet.address);
+                            if (balance) {
+                                wallet.balance = balance;
+                                wallet.unspent = await getSpendableInputs(wallet.address);
+                            }
+                        } catch (error) {
+                            return error;
+                        }
+                    
                 }
                 
                 dispatch({ type: 'updateWallets', payload: wallets });

@@ -12,6 +12,7 @@ function PasswordModal() {
 
     const handleDecryptWallets = async () => {
         const wallets = await decryptWallets(_password);
+        console.log(wallets);
         if (wallets && wallets.length > 0) setShowModal(false);
     };
     return (

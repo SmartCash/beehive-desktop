@@ -427,6 +427,7 @@ export function getAddressAndMessage(tx) {
     }
     return transaction;
 }
+
 export async function sendTransaction(hex) {
     var options = {
         method: 'POST',
