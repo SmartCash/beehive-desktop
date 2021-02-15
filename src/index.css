@@ -122,7 +122,7 @@ body {
 
 .wallets-list {
     width: 100%;
-    height: calc(100% - 140px);
+    height: calc(100% - 200px);
     background: rgba(12, 12, 13, 0.4);
 }
 

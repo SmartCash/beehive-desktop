@@ -1,4 +1,5 @@
 import { sumFloats } from './math';
+import * as CryptoJS from 'crypto-js';
 
 const smartCash = require('smartcashjs-lib');
 const request = require('request-promise');
@@ -8,6 +9,8 @@ const crypto = window.require('crypto');
 
 const LOCKED = 'pubkeyhashlocked';
 const OP_RETURN_DEFAULT = 'Sent from SmartHub.';
+const MIN_FEE = 0.002;
+const MIN_AMOUNT_TO_SEND = 0.001;
 
 export async function createAndSendRawTransaction({
     toAddress,
@@ -17,7 +20,9 @@ export async function createAndSendRawTransaction({
     unspentList,
     fee,
     unlockedBalance,
+    password
 }) {
+
     if (!toAddress) {
         return {
             status: 400,
@@ -36,6 +41,13 @@ export async function createAndSendRawTransaction({
         return {
             status: 400,
             value: 'You must provide the private key to sign the raw transaction.',
+        };
+    }
+
+    if (!password) {
+        return {
+            status: 400,
+            value: 'You must provide the password.',
         };
     }
 
@@ -81,52 +93,56 @@ export async function createAndSendRawTransaction({
         };
     }
 
-    if (amount < 0.001) {
+    if (amount < MIN_AMOUNT_TO_SEND) {
         return {
             status: 400,
             value: 'The amount is smaller than the minimum accepted. Minimum amount: 0.001.',
         };
     }
+    
 
-    let key = smartCash.ECPair.fromWIF(privateKey);
+    try {        
+        const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(privateKey, password));        
+        let decriptKey;
 
-    let fromAddress = key.getAddress().toString();
+        if(!decryptedWallet)
+            decriptKey = privateKey;
+        else
+            decriptKey = decryptedWallet;
 
-    let transaction = new smartCash.TransactionBuilder();
+        let key = smartCash.ECPair.fromWIF(decriptKey);        
+        let fromAddress = key.getAddress().toString();
+        let transaction = new smartCash.TransactionBuilder();
+        let change = unlockedBalance - amount - fee;
+        transaction.setLockTime(unspentList.blockHeight);
 
-    let change = unlockedBalance - amount - fee;
+        //SEND TO
+        transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
 
-    transaction.setLockTime(unspentList.blockHeight);
-
-    //SEND TO
-    transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
-
-    //OP RETURN
-    const dataScript = smartCash.script.compile([
-        smartCash.opcodes.OP_RETURN,
-        Buffer.from(messageOpReturn ? messageOpReturn : OP_RETURN_DEFAULT),
-    ]);
-    transaction.addOutput(dataScript, 0);
-
-    if (change >= fee) {
-        //Change TO
-        transaction.addOutput(fromAddress, parseFloat(smartCash.amount(change.toString()).toString()));
-    } else {
-        fee = change;
-    }
-
-    //Add unspent and sign them all
-    if (!_.isUndefined(unspentList.utxos) && unspentList.utxos.length > 0) {
-        unspentList.utxos.forEach((element) => {
-            transaction.addInput(element.txid, element.index);
-        });
-
-        for (let i = 0; i < unspentList.utxos.length; i += 1) {
-            transaction.sign(i, key);
+        if (messageOpReturn) {
+            //OP RETURN
+            const dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from(messageOpReturn)]);
+            transaction.addOutput(dataScript, 0);
         }
-    }
 
-    try {
+        if (change >= fee) {
+            //Change TO
+            transaction.addOutput(fromAddress, parseFloat(smartCash.amount(change.toString()).toString()));
+        } else {
+            fee = change;
+        }
+
+        //Add unspent and sign them all
+        if (!_.isUndefined(unspentList.utxos) && unspentList.utxos.length > 0) {
+            unspentList.utxos.forEach((element) => {
+                transaction.addInput(element.txid, element.index);
+            });
+
+            for (let i = 0; i < unspentList.utxos.length; i += 1) {
+                transaction.sign(i, key);
+            }
+        }
+   
         let signedTransaction = transaction.build().toHex();
         let tx = await sendTransaction(signedTransaction);
 
@@ -293,7 +309,7 @@ export async function getTransactionHistory(address, pageSize = 5) {
             body: {
                 address,
                 pageNumber: 1,
-                pageSize
+                pageSize,
             },
             json: true, // Automatically stringifies the body to JSON
         };
@@ -428,6 +444,68 @@ export function getAddressAndMessage(tx) {
     return transaction;
 }
 
+async function getSmallestUnspentInput({ unspentList }) {
+    if (!unspentList) {
+        return {
+            status: 400,
+            value: 'You must provide the unspent list.',
+        };
+    }
+
+    if (!unspentList.utxos) {
+        return {
+            status: 400,
+            value: 'You must provide the UTXOs unspent list.',
+        };
+    }
+
+    if (!unspentList.utxos.length === 0) {
+        return {
+            status: 400,
+            value: 'You must provide the UTXOs unspent list.',
+        };
+    }
+
+    const unspentAux = unspentList;
+
+    // get the smallest unspent to activate a transaction
+    unspentAux.utxos = [
+        _.minBy(
+            unspentList.utxos.filter((w) => w.value > MIN_AMOUNT_TO_SEND + MIN_FEE),
+            'value'
+        ),
+    ];
+    return unspentAux;
+}
+
+export async function activateRewards({ toAddress, unspentList, privateKey }) {
+    let minUnspentList = await getSmallestUnspentInput({ unspentList });
+
+    // Should return an ERROR if it has no unspent
+    if (minUnspentList.status && minUnspentList.status === 400) {
+        return minUnspentList;
+    }
+
+    let calculateUTXOAmountLessFee = 0;
+    let unlockedBalance = 0;
+
+    calculateUTXOAmountLessFee = minUnspentList.utxos[0].value - MIN_FEE;
+    unlockedBalance = minUnspentList.utxos[0].value;
+
+    const tx = await createAndSendRawTransaction({
+        toAddress,
+        fee: MIN_FEE,
+        amount: calculateUTXOAmountLessFee,
+        unlockedBalance,
+        privateKey,
+        unspentList: minUnspentList,
+    });
+
+    console.log(`activation-tx`, tx);
+
+    return tx;
+}
+
 export async function sendTransaction(hex) {
     var options = {
         method: 'POST',
@@ -450,11 +528,9 @@ export async function sendTransaction(hex) {
     }
 }
 
-export async function calculateFee(listUnspent, messageOpReturn) {
-    let MIN_FEE = 0.002;
-
-    if (_.isUndefined(listUnspent)) return MIN_FEE;
-    let countUnspent = listUnspent.length;
+export async function calculateFee(unspentList, messageOpReturn) {
+    if (_.isUndefined(unspentList)) return MIN_FEE;
+    let countUnspent = unspentList.length;
 
     let newFee =
         (0.001 * (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length))) /
