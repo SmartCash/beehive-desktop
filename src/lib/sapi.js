@@ -99,10 +99,10 @@ export async function createAndSendRawTransaction({
             value: 'The amount is smaller than the minimum accepted. Minimum amount: 0.001.',
         };
     }
-    
 
-    try {        
-        const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(privateKey, password));        
+
+    try {
+        const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(privateKey, password));
         let decriptKey;
 
         if(!decryptedWallet)
@@ -110,7 +110,7 @@ export async function createAndSendRawTransaction({
         else
             decriptKey = decryptedWallet;
 
-        let key = smartCash.ECPair.fromWIF(decriptKey);        
+        let key = smartCash.ECPair.fromWIF(decriptKey);
         let fromAddress = key.getAddress().toString();
         let transaction = new smartCash.TransactionBuilder();
         let change = unlockedBalance - amount - fee;
@@ -119,7 +119,7 @@ export async function createAndSendRawTransaction({
         //SEND TO
         transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
 
-        if (messageOpReturn) {
+        if (messageOpReturn && messageOpReturn.trim().length > 0) {
             //OP RETURN
             const dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from(messageOpReturn)]);
             transaction.addOutput(dataScript, 0);
@@ -142,7 +142,7 @@ export async function createAndSendRawTransaction({
                 transaction.sign(i, key);
             }
         }
-   
+
         let signedTransaction = transaction.build().toHex();
         let tx = await sendTransaction(signedTransaction);
 

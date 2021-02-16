@@ -42,8 +42,10 @@ function RewardsActivate() {
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     const onSubmit = async (data) => {
-        // setActivating(true);
-        // setCountDownDate(Date.now() + 300000);
+        const SLEEP_TIME = 60 * 1000;
+
+        setActivating(true);
+        setCountDownDate(Date.now() + SLEEP_TIME);
 
         let unspentList = await getSpendableInputs(address);
 
@@ -54,7 +56,7 @@ function RewardsActivate() {
             return rewardsActivationResponse;
         }
 
-        await sleep(10 * 1000);
+        await sleep(SLEEP_TIME);
 
         const transactionResponse = await getTxId(rewardsActivationResponse.value);
 
@@ -66,7 +68,7 @@ function RewardsActivate() {
         }
 
         setIsActive(true);
-        // setActivating(false);
+        setActivating(false);
 
         return {
             status: 200,
