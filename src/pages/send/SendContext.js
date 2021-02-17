@@ -89,7 +89,7 @@ export const SendProvider = ({ children }) => {
 
         if (state.netFee != undefined) {
             total = sumFloatsValues(value, state.netFee);
-        }
+        }   
 
         if (exceeds(total, balance.unlocked)) {
             dispatch({ type: 'setAmountToSendError', payload: 'Exceeds balance' });
@@ -154,7 +154,7 @@ export const SendProvider = ({ children }) => {
                     dispatch({ type: 'setTXID', payload: data?.value });
                     dispatch({ type: 'setTXIDError', payload: null });
                     getAndUpdateWalletsBallance();
-                }
+                }                
             })
             .catch((error) => dispatch({ type: 'setTXIDError', payload: error[0]?.message }))
             .finally(() => dispatch({ type: 'setTXIDLoading', payload: false }));
