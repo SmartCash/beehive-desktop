@@ -428,12 +428,17 @@ export function getAddressAndMessage(tx) {
             );
             if (outWithOpReturn) {
                 const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
+                
                 if (message) {
                     const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
                     const hexToUtf8 = convert('hex', 'utf8');
-                    const decodedMessage = hexToUtf8(message);
+                    const decodedMessage = hexToUtf8(message);                    
                     transaction.message = decodedMessage;
+                } else {
+                    return null;
                 }
+            } else {
+                return null;
             }
         }
         if (!transaction.toAddress) return null;
