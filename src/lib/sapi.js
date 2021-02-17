@@ -20,9 +20,8 @@ export async function createAndSendRawTransaction({
     unspentList,
     fee,
     unlockedBalance,
-    password
+    password,
 }) {
-
     if (!toAddress) {
         return {
             status: 400,
@@ -100,15 +99,12 @@ export async function createAndSendRawTransaction({
         };
     }
 
-
     try {
         const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(privateKey, password));
         let decriptKey;
 
-        if(!decryptedWallet)
-            decriptKey = privateKey;
-        else
-            decriptKey = decryptedWallet;
+        if (!decryptedWallet) decriptKey = privateKey;
+        else decriptKey = decryptedWallet;
 
         let key = smartCash.ECPair.fromWIF(decriptKey);
         let fromAddress = key.getAddress().toString();
@@ -528,17 +524,23 @@ export async function sendTransaction(hex) {
     }
 }
 
-export async function calculateFee(unspentList, messageOpReturn) {
-    if (_.isUndefined(unspentList)) return MIN_FEE;
-    let countUnspent = unspentList.length;
+export async function calculateFee(listUnspent, messageOpReturn) {
+    let MIN_FEE = 0.001;
+
+    if (_.isUndefined(listUnspent)) return MIN_FEE;
+    let countUnspent = listUnspent.length;
 
     let newFee =
-        (0.001 * (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length))) /
-        1024;
+        (0.001 *
+            roundUp(
+                (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length)) /
+                    1024
+            ),
+        1);
 
     if (newFee > MIN_FEE) MIN_FEE = newFee;
 
-    return roundUp(MIN_FEE, 5);
+    return MIN_FEE;
 }
 
 function roundUp(num, precision) {
