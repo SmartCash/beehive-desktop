@@ -9,7 +9,7 @@ const crypto = window.require('crypto');
 
 const LOCKED = 'pubkeyhashlocked';
 const OP_RETURN_DEFAULT = 'Sent from SmartHub.';
-const MIN_FEE = 0.002;
+const MIN_FEE = 0.001;
 const MIN_AMOUNT_TO_SEND = 0.001;
 
 export async function createAndSendRawTransaction({
@@ -381,7 +381,7 @@ export function groupByAddress(txs) {
                     messages: messages,
                 };
             })
-            .value();        
+            .value();
         return grouped;
     } catch (err) {
         console.error(err);
@@ -422,11 +422,11 @@ export function getAddressAndMessage(tx) {
             );
             if (outWithOpReturn) {
                 const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
-                
+
                 if (message) {
                     const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
                     const hexToUtf8 = convert('hex', 'utf8');
-                    const decodedMessage = hexToUtf8(message);                    
+                    const decodedMessage = hexToUtf8(message);
                     transaction.message = decodedMessage;
                 } else {
                     return null;
@@ -528,18 +528,19 @@ export async function sendTransaction(hex) {
 }
 
 export async function calculateFee(listUnspent, messageOpReturn) {
-    let MIN_FEE = 0.002;
-
-    if (_.isUndefined(listUnspent)) return MIN_FEE;
+    if (!listUnspent || listUnspent.length === 0) return MIN_FEE;
     let countUnspent = listUnspent.length;
-//  listUnspent needs to be between 2 and 5...now 0
-//  This needs to only be 0.5+ here \/
-    let newFee = 0.001 * Math.round(1+( (countUnspent * 148 + 2 * 34 + 10 + 9 +
-            (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length) ) / 1024));
+    //  listUnspent needs to be between 2 and 5...now 0
+    //  This needs to only be 0.5+ here \/
+    let newFee =
+        MIN_FEE *
+        Math.round(
+            1 +
+                (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length)) /
+                    1024
+        );
 
-    if (newFee > MIN_FEE) MIN_FEE = newFee;
-
-    return MIN_FEE;
+    return newFee;
 }
 
 function roundUp(num, precision) {
