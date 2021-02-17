@@ -8,7 +8,7 @@ import { ChatMessages } from './ChatMessages';
 import { NewChat } from './NewChat';
 
 export function Chat() {
-    const { walletCurrent } = useContext(WalletContext);
+    const { walletCurrent, wallets } = useContext(WalletContext);
     const [history, setHistory] = useState([]);
     const [error, setError] = useState();
     const [loading, setLoading] = useState();
@@ -79,7 +79,14 @@ export function Chat() {
                     </Scrollbars>
                 )}
             </div>
-            {!initialLoading && !newChat && currentChatAddress && <ChatMessages chat={getChat()} />}
+            {!initialLoading && !newChat && currentChatAddress && (
+                <ChatMessages
+                    chat={getChat()}
+                    chatAddress={currentChatAddress}
+                    walletCurrent={walletCurrent}
+                    wallet={wallets.find((w) => w.address === walletCurrent)}
+                />
+            )}
             {!initialLoading && newChat && <NewChat />}
         </Page>
     );

@@ -124,10 +124,10 @@ export const SendProvider = ({ children }) => {
     async function submitSendAmount() {
         dispatch({ type: 'setTXIDLoading', payload: true });
 
-        const { balance } = wallets.find((wallet) => wallet.address === walletCurrent);        
+        const { balance } = wallets.find((wallet) => wallet.address === walletCurrent);
 
         // You must get the latest unspent from the NODE
-        const unspent = await getSpendableInputs(walletCurrent);        
+        const unspent = await getSpendableInputs(walletCurrent);
 
         createAndSendRawTransaction({
             toAddress: state.addressToSend,
@@ -189,7 +189,7 @@ export const SendProvider = ({ children }) => {
     }
 
     function getPrivateKey() {
-        const wallet = wallets.find((wallet) => wallet.address === walletCurrent);        
+        const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
         return wallet?.privateKey;
     }
 
