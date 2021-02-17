@@ -8,7 +8,7 @@ import { ChatMessages } from './ChatMessages';
 import { NewChat } from './NewChat';
 
 export function Chat() {
-    const { walletCurrent } = useContext(WalletContext);
+    const { walletCurrent, wallets } = useContext(WalletContext);
     const [history, setHistory] = useState([]);
     const [error, setError] = useState();
     const [loading, setLoading] = useState();
@@ -65,21 +65,31 @@ export function Chat() {
                 {!initialLoading && (
                     <Scrollbars>
                         {history?.map((tx) => {
-                            return (
-                                <div
-                                    className={`wallet ${tx.chatAddress === currentChatAddress ? 'active' : ''}`}
-                                    key={tx.chatAddress}
-                                    onClick={() => handleSetCurrentChatAddress(tx.chatAddress)}
-                                >
-                                    <p className="address">{tx.chatAddress}</p>
-                                    <p className="lastMessage">{tx.messages[tx.messages.length - 1].message}</p>
-                                </div>
-                            );
+                            console.log(tx);
+                            if(tx.chatAddress !== 'undefined'){
+                                return (
+                                    <div
+                                        className={`wallet ${tx.chatAddress === currentChatAddress ? 'active' : ''}`}
+                                        key={tx.chatAddress}
+                                        onClick={() => handleSetCurrentChatAddress(tx.chatAddress)}
+                                    >
+                                        <p className="address">{tx.chatAddress}</p>
+                                        <p className="lastMessage">{tx.messages[tx.messages.length - 1].message != undefined ? tx.messages[tx.messages.length - 1].message.substring(0,30) : ''}</p>
+                                    </div>
+                                );
+                            }                           
                         })}
                     </Scrollbars>
                 )}
             </div>
-            {!initialLoading && !newChat && currentChatAddress && <ChatMessages chat={getChat()} />}
+            {!initialLoading && !newChat && currentChatAddress && (
+                <ChatMessages
+                    chat={getChat()}
+                    chatAddress={currentChatAddress}
+                    walletCurrent={walletCurrent}
+                    wallet={wallets.find((w) => w.address === walletCurrent)}
+                />
+            )}
             {!initialLoading && newChat && <NewChat />}
         </Page>
     );

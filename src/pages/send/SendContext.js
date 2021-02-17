@@ -5,12 +5,14 @@ import { subtractFloats, sumFloatsValues, exceeds } from '../../lib/math';
 import { calculateFee, createAndSendRawTransaction, getSpendableInputs } from '../../lib/sapi';
 import { isAddress } from '../../lib/smart';
 import Scrollbars from 'react-custom-scrollbars';
+import { getUTCNow } from '../../lib/dates';
 
 const initialValue = {
     amountToSend: 0,
     selectedFiat: 'smart',
     messageToSend: '',
     password: null,
+    listUnspent: null,
 };
 
 const sendReducer = (state, action) => {
@@ -20,6 +22,9 @@ const sendReducer = (state, action) => {
         }
         case 'setMessageToSend': {
             return { ...state, messageToSend: action.payload };
+        }
+        case 'setListUnspent': {
+            return { ...state, setListUnspent: action.payload };
         }
         case 'setPassword': {
             return { ...state, password: action.payload };
@@ -103,6 +108,10 @@ export const SendProvider = ({ children }) => {
         dispatch({ type: 'setAmountToSend', payload: value });
     };
 
+    const setListUnspent = (value) => {
+        dispatch({ type: 'setListUnspent', payload: value });
+    };
+
     const setAddressToSend = (value) => {
         dispatch({ type: 'setAddressToSend', payload: value });
         isAddress(value).catch(() => {
@@ -125,10 +134,10 @@ export const SendProvider = ({ children }) => {
     async function submitSendAmount() {
         dispatch({ type: 'setTXIDLoading', payload: true });
 
-        const { balance } = wallets.find((wallet) => wallet.address === walletCurrent);        
+        const { balance } = wallets.find((wallet) => wallet.address === walletCurrent);
 
         // You must get the latest unspent from the NODE
-        const unspent = await getSpendableInputs(walletCurrent);        
+        const unspent = await getSpendableInputs(walletCurrent);
 
         createAndSendRawTransaction({
             toAddress: state.addressToSend,
@@ -138,7 +147,7 @@ export const SendProvider = ({ children }) => {
             unspentList: unspent,
             fee: state.netFee,
             unlockedBalance: balance.unlocked,
-            password: state.password
+            password: state.password,
         })
             .then((data) => {
                 if (!data) {
@@ -182,14 +191,20 @@ export const SendProvider = ({ children }) => {
 
     async function calculateSendAmount(messageOpReturn) {
         const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
-        const fee = await calculateFee(wallet.unspent.utxos, messageOpReturn);
+
+        let spendableInputs = wallet?.unspent;
+        if (!wallet?.unspent?.utxos || wallet?.unspent?.utxos?.length === 0) {
+            spendableInputs = await getSpendableInputs(walletCurrent);
+        }
+
+        const fee = await calculateFee(spendableInputs.utxos, messageOpReturn);
 
         dispatch({ type: 'setAmountToSendError', payload: null });
         dispatch({ type: 'setNetFee', payload: fee });
     }
 
     function getPrivateKey() {
-        const wallet = wallets.find((wallet) => wallet.address === walletCurrent);        
+        const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
         return wallet?.privateKey;
     }
 
