@@ -528,7 +528,7 @@ export async function sendTransaction(hex) {
 }
 
 export async function calculateFee(listUnspent, messageOpReturn) {
-    let MIN_FEE = 0.001;
+    let MIN_FEE = 0.002;
 
     if (_.isUndefined(listUnspent)) return MIN_FEE;
     let countUnspent = listUnspent.length;
