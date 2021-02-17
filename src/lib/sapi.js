@@ -385,9 +385,7 @@ export function groupByAddress(txs) {
                     messages: messages,
                 };
             })
-            .value();
-
-        console.log(`grouped`, grouped);
+            .value();        
         return grouped;
     } catch (err) {
         console.error(err);
