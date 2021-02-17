@@ -532,14 +532,10 @@ export async function calculateFee(listUnspent, messageOpReturn) {
 
     if (_.isUndefined(listUnspent)) return MIN_FEE;
     let countUnspent = listUnspent.length;
-
-    let newFee =
-        (0.001 *
-            roundUp(
-                (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length)) /
-                    1024
-            ),
-        1);
+//  listUnspent needs to be between 2 and 5...now 0
+//  This needs to only be 0.5+ here \/
+    let newFee = 0.001 * Math.round(1+( (countUnspent * 148 + 2 * 34 + 10 + 9 +
+            (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length) ) / 1024));
 
     if (newFee > MIN_FEE) MIN_FEE = newFee;
 
