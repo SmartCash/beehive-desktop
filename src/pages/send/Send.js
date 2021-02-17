@@ -31,6 +31,7 @@ function SendComponent() {
         clearTxId,
         messageToSend,
         setMessageToSend,
+        onHandleChange,
         TXIDError,
     } = useContext(SendContext);
 
@@ -104,7 +105,7 @@ function SendComponent() {
                             id="addressTo"
                             placeholder="Insert address here"
                             autoComplete="off"
-                            type="text"
+                            type="text"                            
                             value={addressToSend}
                             onInput={(event) => setAddressToSend(event.target.value.trim())}
                         />

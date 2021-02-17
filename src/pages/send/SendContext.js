@@ -4,6 +4,7 @@ import { WalletContext } from '../../context/WalletContext';
 import { subtractFloats, sumFloatsValues, exceeds } from '../../lib/math';
 import { calculateFee, createAndSendRawTransaction, getSpendableInputs } from '../../lib/sapi';
 import { isAddress } from '../../lib/smart';
+import Scrollbars from 'react-custom-scrollbars';
 
 const initialValue = {
     amountToSend: 0,
@@ -140,8 +141,6 @@ export const SendProvider = ({ children }) => {
             password: state.password
         })
             .then((data) => {
-                dispatch({ type: 'clearState' });
-
                 if (!data) {
                     dispatch({ type: 'setTXIDError', payload: 'Something wrong with trying to send the transaction' });
                 }
@@ -151,6 +150,7 @@ export const SendProvider = ({ children }) => {
                 }
 
                 if (data && data.status === 200) {
+                    dispatch({ type: 'clearState' });
                     dispatch({ type: 'setTXID', payload: data?.value });
                     dispatch({ type: 'setTXIDError', payload: null });
                     getAndUpdateWalletsBallance();

@@ -20,7 +20,7 @@ export function Chat() {
         setLoading(true);
         setError(null);
         await getTransactionHistoryGroupedByAddresses(walletCurrent)
-            .then((data) => {
+            .then((data) => {                
                 setHistory(data);
                 if (data.length > 0 && newChat === false && currentChatAddress === undefined) {
                     setCurrentChatAddress(data[0].chatAddress);
