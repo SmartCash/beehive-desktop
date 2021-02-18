@@ -8,7 +8,7 @@ let getSapiUrl = require('./poolSapi');
 const crypto = window.require('crypto');
 
 const LOCKED = 'pubkeyhashlocked';
-const OP_RETURN_DEFAULT = 'Sent from SmartHub.';
+//const OP_RETURN_DEFAULT = 'Sent from SmartHub.';
 const MIN_FEE = 0.001;
 const MIN_AMOUNT_TO_SEND = 0.001;
 
@@ -534,13 +534,11 @@ export async function sendTransaction(hex) {
 export async function calculateFee(listUnspent, messageOpReturn) {
     if (!listUnspent || listUnspent.length === 0) return MIN_FEE;
     let countUnspent = listUnspent.length;
-    //  listUnspent needs to be between 2 and 5...now 0
-    //  This needs to only be 0.5+ here \/
+
     let newFee =
-        MIN_FEE *
-        Math.round(
-            1 +
-                (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : OP_RETURN_DEFAULT.length)) /
+        0.001 *
+        Math.round(1.27 +
+            (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : 0 /*OP_RETURN_DEFAULT.length*/)) /
                     1024
         );
 
