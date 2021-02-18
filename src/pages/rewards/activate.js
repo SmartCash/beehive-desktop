@@ -14,12 +14,15 @@ import {
     getRewards,
     getTxId,
     getSpendableInputs,
-    activateRewards,
+    activateRewards    
 } from '../../lib/sapi';
+import { SendContext } from '../send/SendContext';
 import './activate.css';
 
 function RewardsActivate() {
     const { wallets, walletCurrent: address } = useContext(WalletContext);
+    const { setPassword, password } = useContext(SendContext);
+    
     const [activating, setActivating] = useState(false);
     const [rewards, setRewards] = useState();
     const [isActive, setIsActive] = useState(false);
@@ -43,13 +46,19 @@ function RewardsActivate() {
 
     const onSubmit = async (data) => {
         const SLEEP_TIME = 60 * 1000;
+        console.log(password);
+
+        if (!password) {
+            setError('You must provide the password.');
+            return;
+        }
 
         setActivating(true);
         setCountDownDate(Date.now() + SLEEP_TIME);
 
         let unspentList = await getSpendableInputs(address);
 
-        let rewardsActivationResponse = await activateRewards({ toAddress: address, unspentList, privateKey });
+        let rewardsActivationResponse = await activateRewards({ toAddress: address, unspentList, privateKey, password });
 
         if (rewardsActivationResponse && rewardsActivationResponse.status === 400) {
             setError(rewardsActivationResponse.value);
@@ -137,14 +146,27 @@ function RewardsActivate() {
                 </div>
             )}
             {rewards && rewards.activated === 0 && isActive === false && (
-                <div className="wrapper">
-                    <p>
-                        The rewards is not activated for the address <span className="text-primary">{address}</span>
-                    </p>
-                    <form onSubmit={handleSubmit(onSubmit)} className="formGroup" autoComplete="off">
-                        <button type="submit">Activate Rewards</button>
-                    </form>
-                </div>
+                <form onSubmit={handleSubmit(onSubmit)} className="formGroup" autoComplete="off">
+                    <div className="wrapper">
+                        <p>The rewards is not activated for the address <span className="text-primary">{address}</span></p>
+
+                        <div className="form-control message">                            
+                            <input
+                                id="messageTo"
+                                placeholder="Insert your password here"
+                                autoComplete="off"
+                                type="password"
+                                value={password}
+                                onInput={(event) => {
+                                    setPassword(event.target.value);
+                                }}
+                            />
+                        </div>                                        
+                        
+                        <button type="submit">Activate Rewards</button>                    
+                    </div>
+                </form>
+              
             )}
             <SmartNodeRewardsRoi />
         </Page>

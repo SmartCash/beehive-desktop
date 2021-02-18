@@ -481,7 +481,7 @@ async function getSmallestUnspentInput({ unspentList }) {
     return unspentAux;
 }
 
-export async function activateRewards({ toAddress, unspentList, privateKey }) {
+export async function activateRewards({ toAddress, unspentList, privateKey, password }) {
     let minUnspentList = await getSmallestUnspentInput({ unspentList });
 
     // Should return an ERROR if it has no unspent
@@ -502,6 +502,7 @@ export async function activateRewards({ toAddress, unspentList, privateKey }) {
         unlockedBalance,
         privateKey,
         unspentList: minUnspentList,
+        password
     });
 
     console.log(`activation-tx`, tx);
