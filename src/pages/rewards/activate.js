@@ -16,12 +16,13 @@ import {
     getSpendableInputs,
     activateRewards    
 } from '../../lib/sapi';
-import { SendContext } from '../send/SendContext';
-import './activate.css';
 
-function RewardsActivate() {
+import './activate.css';
+import { ActivateContext, ActivateProvider } from './ActivateContext';
+
+function RewardsActivateComponent() {
     const { wallets, walletCurrent: address } = useContext(WalletContext);
-    const { setPassword, password } = useContext(SendContext);
+    const { setPassword, password, canSend, TXError, hasPassword} = useContext(ActivateContext);
     
     const [activating, setActivating] = useState(false);
     const [rewards, setRewards] = useState();
@@ -48,42 +49,41 @@ function RewardsActivate() {
         const SLEEP_TIME = 60 * 1000;
         console.log(password);
 
-        if (!password) {
-            setError('You must provide the password.');
-            return;
-        }
+        if (hasPassword()) {
+            setActivating(true);
+            setCountDownDate(Date.now() + SLEEP_TIME);
 
-        setActivating(true);
-        setCountDownDate(Date.now() + SLEEP_TIME);
+            let unspentList = await getSpendableInputs(address);
 
-        let unspentList = await getSpendableInputs(address);
+            let rewardsActivationResponse = await activateRewards({ toAddress: address, unspentList, privateKey, password });
 
-        let rewardsActivationResponse = await activateRewards({ toAddress: address, unspentList, privateKey, password });
+            if (rewardsActivationResponse && rewardsActivationResponse.status === 400) {
+                setError(rewardsActivationResponse.value);
+                return rewardsActivationResponse;
+            }
 
-        if (rewardsActivationResponse && rewardsActivationResponse.status === 400) {
-            setError(rewardsActivationResponse.value);
-            return rewardsActivationResponse;
-        }
+            await sleep(SLEEP_TIME);
 
-        await sleep(SLEEP_TIME);
+            const transactionResponse = await getTxId(rewardsActivationResponse.value);
 
-        const transactionResponse = await getTxId(rewardsActivationResponse.value);
+            if (!transactionResponse) {
+                return {
+                    status: 400,
+                    value: 'Error to broadcast the transaction',
+                };
+            }
 
-        if (!transactionResponse) {
+            setIsActive(true);
+            setActivating(false);
+
             return {
-                status: 400,
-                value: 'Error to broadcast the transaction',
+                status: 200,
+                value: transactionResponse.txid,
             };
-        }
-
-        setIsActive(true);
-        setActivating(false);
-
-        return {
-            status: 200,
-            value: transactionResponse.txid,
-        };
+        }        
     };
+
+    {TXError && <p className="SendError">{TXError}</p>}
 
     if (rewardsError || balance < 1000) {
         return (
@@ -163,7 +163,7 @@ function RewardsActivate() {
                             />
                         </div>                                        
                         
-                        <button type="submit">Activate Rewards</button>                    
+                        <button type="submit" disabled={!canSend()}>Activate Rewards</button>                    
                     </div>
                 </form>
               
@@ -173,4 +173,12 @@ function RewardsActivate() {
     );
 }
 
-export default RewardsActivate;
+//export default RewardsActivate;
+
+export function RewardsActivate() {
+    return (
+        <ActivateProvider>
+            <RewardsActivateComponent />
+        </ActivateProvider>
+    );
+}
