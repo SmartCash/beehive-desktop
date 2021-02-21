@@ -143,7 +143,7 @@ export async function createAndSendRawTransaction({
 
         if (messageOpReturn && messageOpReturn.trim().length > 0) {
             //OP RETURN
-            const dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from(messageOpReturn)]);
+            const dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from(messageOpReturn, 'utf8')]);
             transaction.addOutput(dataScript, 0);
         }
 
