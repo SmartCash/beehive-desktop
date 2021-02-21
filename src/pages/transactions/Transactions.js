@@ -44,41 +44,49 @@ function Transactions() {
                         tx.message = getOpReturnMessage(tx);
                         return (
                             <div className="transaction" key={index}>
-                                <p className="label">Direction</p>
-                                <p className="value">{tx.direction}</p>
-                                <p className="label">Is Locked?</p>
-                                <p className="value">{tx.isLocked}</p>
-                                <p className="label">Amount</p>
-                                <p className="value">{tx.amount}</p>
-                                <p className="label">Message</p>
-                                <p className="value">{tx.message}</p>
-                                <p className="label">Transaction Id</p>
-                                {tx.txid}
-                                &nbsp;
-                                <button
-                                    className="btn copy"
-                                    title="Copy address to clipboard"
-                                    onClick={() => electron.clipboard.writeText(tx.txid)}
-                                >
-                                    <IconCopy className="btnCopy" />
-                                </button>
-                                <p>
+                                <div className="wrapper">
+                                    <div>
+                                        <p className="label">Direction</p>
+                                        <p className="value">{tx.direction}</p>
+                                    </div>
+                                    <div>
+                                        <p className="label">Is Locked?</p>
+                                        <p className="value">{tx.isLocked}</p>
+                                    </div>
+                                    <div>
+                                        <p className="label">Amount</p>
+                                        <p className="value">{tx.amount}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="label">Transaction Id</p>
+                                    <p className="value">{tx.txid}</p>
                                     <button
-                                        className="value"
+                                        className="link"
+                                        title="Copy address to clipboard"
+                                        onClick={() => electron.clipboard.writeText(tx.txid)}
+                                    >
+                                        Copy
+                                    </button>
+                                    <button
+                                        className="link"
                                         onClick={() => electron.shell.openExternal(`https://insight.smartcash.cc/tx/${tx.txid}`)}
                                     >
-                                        Insight
+                                        Open in Insight
                                     </button>
-
-                                    <span className="spaceicon">|</span>
-
                                     <button
-                                        className="value"
+                                        className="link"
                                         onClick={() => electron.shell.openExternal(`http://explorer.smartcash.org/tx/${tx.txid}`)}
                                     >
-                                        Sapi Explorer
+                                        Open in Sapi Explorer
                                     </button>
-                                </p>
+                                </div>
+                                {tx.message && (
+                                    <div>
+                                        <p className="label">Message</p>
+                                        <p className="value">{tx.message}</p>
+                                    </div>
+                                )}
                             </div>
                         );
                     })}

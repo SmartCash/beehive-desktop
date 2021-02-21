@@ -22,11 +22,18 @@
     font-size: 16px;
 }
 
-.page-transactions .transaction button {
+.page-transactions .transaction button.link {
+    padding: 0;
+    color: #999999;
+    font-size: 11px;
     background: none;
     border: 0 !important;
     outline: 0 !important;
     cursor: pointer;
+}
+
+.page-transactions .transaction button.link ~ button.link {
+    margin-left: 25px;
 }
 
 .page-transactions .transaction .value a {
@@ -34,12 +41,21 @@
     font-size: inherit;
 }
 
-.page-transactions .transaction .value + .label {
+.page-transactions .transaction > div ~ div {
     margin-top: var(--spacer);
 }
 
 .page-transactions .transaction ~ .transaction {
     margin-top: var(--spacer);
+}
+
+.page-transactions .transaction .wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.page-transactions .transaction .wrapper > div ~ div {
+    margin-left: 32px;
 }
 
 .page-transactions .error {
