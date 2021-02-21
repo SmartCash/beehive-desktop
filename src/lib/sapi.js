@@ -1,16 +1,42 @@
 import { sumFloats } from './math';
 import * as CryptoJS from 'crypto-js';
-import * as poolSapi from './poolSapi';
 
 const smartCash = require('smartcashjs-lib');
 const request = require('request-promise');
 const _ = require('lodash');
 const crypto = window.require('crypto');
-
+const { ipcRenderer } = window.require('electron');
 const LOCKED = 'pubkeyhashlocked';
 //const OP_RETURN_DEFAULT = 'Sent from SmartHub.';
 const MIN_FEE = 0.001;
 const MIN_AMOUNT_TO_SEND = 0.001;
+
+const random = require('random');
+
+export async function getEnabledNodes() {
+    try {
+        const localServers = ipcRenderer.sendSync('getSapiServers');
+        if(localServers)
+            return JSON.parse(ipcRenderer.sendSync('getSapiServers'));
+
+        const nodes = await request.get(`https://sapi.smartcash.cc/v1/smartnode/check/ENABLED`, {
+            json: true,
+            cache: true,
+        });
+        const servers = nodes.map((node) => 'http://' + node.ip.replace(':9678', ':8080'));
+        ipcRenderer.send('setSapiServers', JSON.stringify(servers));
+        return JSON.parse(ipcRenderer.sendSync('getSapiServers'));
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function GetSapiUrl() {
+    const sapis = await getEnabledNodes();
+    const electedSapi = sapis[random.int(0, sapis.length - 1)];
+    console.log(`electedSapi`, electedSapi);
+    return electedSapi;
+}
 
 export async function createAndSendRawTransaction({
     toAddress,
@@ -20,9 +46,8 @@ export async function createAndSendRawTransaction({
     unspentList,
     fee,
     unlockedBalance,
-    password
+    password,
 }) {
-
     if (!toAddress) {
         return {
             status: 400,
@@ -100,15 +125,12 @@ export async function createAndSendRawTransaction({
         };
     }
 
-
     try {
         const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(privateKey, password));
         let decriptKey;
 
-        if(!decryptedWallet)
-            decriptKey = privateKey;
-        else
-            decriptKey = decryptedWallet;
+        if (!decryptedWallet) decriptKey = privateKey;
+        else decriptKey = decryptedWallet;
 
         let key = smartCash.ECPair.fromWIF(decriptKey);
         let fromAddress = key.getAddress().toString();
@@ -219,8 +241,7 @@ export function decryptTextWithRSAPrivateKey(rsaPrivateKey, passphrase, encrypte
 
 export async function getBalance(_address) {
     try {
-        
-        return await request.get(`${poolSapi.GetSapiUrl()}/v1/address/balance/${_address}`, {
+        return await request.get(`${await GetSapiUrl()}/v1/address/balance/${_address}`, {
             json: true,
         });
     } catch (err) {
@@ -230,7 +251,7 @@ export async function getBalance(_address) {
 
 export async function getTxId(_txId) {
     try {
-        return await request.get(`${poolSapi .GetSapiUrl()}/v1/transaction/check/${_txId}`, {
+        return await request.get(`${await GetSapiUrl()}/v1/transaction/check/${_txId}`, {
             json: true,
         });
     } catch (err) {
@@ -240,7 +261,7 @@ export async function getTxId(_txId) {
 
 export async function getRewards(_address) {
     try {
-        return await request.get(`${poolSapi.GetSapiUrl()}/v1/smartrewards/check/${_address}`, {
+        return await request.get(`${await GetSapiUrl()}/v1/smartrewards/check/${_address}`, {
             json: true,
         });
     } catch (err) {
@@ -259,7 +280,7 @@ export async function getUnspent(_address, uxtoType = UXTO_TYPE.ALL, updateLocal
 
     let options = {
         method: 'POST',
-        uri: `${poolSapi.GetSapiUrl()}/v1/address/unspent`,
+        uri: `${await GetSapiUrl()}/v1/address/unspent`,
         body: {
             address: _address,
             pageNumber: 1,
@@ -503,7 +524,7 @@ export async function activateRewards({ toAddress, unspentList, privateKey, pass
         unlockedBalance,
         privateKey,
         unspentList: minUnspentList,
-        password
+        password,
     });
 
     console.log(`activation-tx`, tx);
@@ -514,7 +535,7 @@ export async function activateRewards({ toAddress, unspentList, privateKey, pass
 export async function sendTransaction(hex) {
     var options = {
         method: 'POST',
-        uri: `${poolSapi.GetSapiUrl()}/v1/transaction/send`,
+        uri: `${await GetSapiUrl()}/v1/transaction/send`,
         body: {
             data: `${hex}`,
             instantpay: false,
@@ -539,8 +560,13 @@ export async function calculateFee(listUnspent, messageOpReturn) {
 
     let newFee =
         0.001 *
-        Math.round(1.27 +
-            (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? messageOpReturn.length : 0 /*OP_RETURN_DEFAULT.length*/)) /
+        Math.round(
+            1.27 +
+                (countUnspent * 148 +
+                    2 * 34 +
+                    10 +
+                    9 +
+                    (messageOpReturn ? messageOpReturn.length : 0)) /*OP_RETURN_DEFAULT.length*/ /
                     1024
         );
 
@@ -577,18 +603,17 @@ export function getSmartNodeRoi() {
 // }
 
 export async function getNodesUrl() {
-    try {        
+    try {
         var options = {
             method: 'GET',
-            uri: `https://sapi.smartcash.cc/v1/smartnode/check/ENABLED`,         
+            uri: `https://sapi.smartcash.cc/v1/smartnode/check/ENABLED`,
             json: true, // Automatically stringifies the body to JSON
         };
 
         let retorno;
-        await request.get(options).then((res) => retorno = res);
+        await request.get(options).then((res) => (retorno = res));
         console.log(retorno);
         return retorno;
-
     } catch (err) {
         console.error(err);
     }

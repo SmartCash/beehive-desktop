@@ -23,10 +23,10 @@ const initialState = {
 
 const _getBalance = async (address) => {
     const getBalanceFromSapi = async () => {
-        const balanceResponse = await getBalance(address);        
-        balanceResponse.balance.unlocked = balanceResponse.balance.unlocked + balanceResponse.unconfirmed.delta;        
+        const balanceResponse = await getBalance(address);
+        balanceResponse.balance.unlocked = balanceResponse.balance.unlocked + balanceResponse.unconfirmed.delta;
         return balanceResponse.balance;
-    };    
+    };
     let balance = {};
     try {
         balance = await getBalanceFromSapi();
@@ -48,7 +48,7 @@ const userReducer = (state, action) => {
         case 'setFiatList': {
             return { ...state, fiatList: action.payload };
         }
-        case 'setNodesList': {            
+        case 'setNodesList': {
             return { ...state, nodesList: action.payload };
         }
         case 'updateWallets': {
@@ -66,7 +66,7 @@ const userReducer = (state, action) => {
         case 'decryptError': {
             return { ...state, decryptError: action.payload };
         }
-        case 'updateWalletsBalance': {            
+        case 'updateWalletsBalance': {
             if (state.wallets === null) {
                 return state;
             }
@@ -122,12 +122,12 @@ export const WalletProvider = ({ children }) => {
     }
 
     async function loadFiats() {
-        dispatch({ type: 'setFiatList', payload: await getSupportedCurrencies() });        
+        dispatch({ type: 'setFiatList', payload: await getSupportedCurrencies() });
     }
 
-    async function loadNodes() {        
-        let nodes =  await getNodesUrl();        
-        dispatch({ type: 'setNodesList', payload: nodes});        
+    async function loadNodes() {
+        let nodes =  await getNodesUrl();
+        dispatch({ type: 'setNodesList', payload: nodes});
     }
 
     function updateBalance(balance) {
@@ -149,7 +149,7 @@ export const WalletProvider = ({ children }) => {
         const encryptedWallet = ipcRenderer.sendSync('getWalletData');
         let wallets = [];
         let decryptedWallet;
-        
+
         if (encryptedWallet) {
             try {
                 decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(encryptedWallet, password));
@@ -170,7 +170,7 @@ export const WalletProvider = ({ children }) => {
 
                     if (!CryptoJS.AES.decrypt(wallet.privateKey, password))
                         wallet.privateKey = CryptoJS.AES.encrypt(wallet.privateKey, password).toString();
-                    
+
                         try {
                             const balance = await _getBalance(wallet.address);
                             if (balance) {
@@ -180,9 +180,9 @@ export const WalletProvider = ({ children }) => {
                         } catch (error) {
                             return error;
                         }
-                    
+
                 }
-                
+
                 dispatch({ type: 'updateWallets', payload: wallets });
             }
         } else {
@@ -221,7 +221,7 @@ export const WalletProvider = ({ children }) => {
 
         if(state.nodesList.length === 0){
             loadNodes();
-        }        
+        }
 
         setInterval(() => {
             updateWalletsBalance();

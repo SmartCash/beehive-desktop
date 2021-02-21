@@ -8,8 +8,7 @@ const store = new Store();
 let mainWindow;
 
 function createWindow() {
-
-    console.log(__dirname)
+    console.log(__dirname);
     mainWindow = new BrowserWindow({
         width: 1280,
         height: 768,
@@ -52,4 +51,12 @@ ipcMain.on('setWalletData', (event, arg) => {
 
 ipcMain.on('getWalletData', (event) => {
     event.returnValue = store.get('wallets');
+});
+
+ipcMain.on('setSapiServers', (event, arg) => {
+    store.set('servers', `${arg}`);
+});
+
+ipcMain.on('getSapiServers', (event) => {
+    event.returnValue = store.get('servers');
 });
