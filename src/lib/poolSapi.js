@@ -1,3 +1,6 @@
+import React, { useContext, useEffect, useState } from 'react';
+import { WalletContext } from '../context/WalletContext';
+
 const random = require('random');
 
 let sapis = [
@@ -12,10 +15,13 @@ let sapis = [
     'http://167.86.88.138:8080',
 ];
 
-let sapiAddress = `https://sapi.smartcash.cc`;
 
-if (window.location.protocol === 'http:') {
-    sapiAddress = sapis[random.int(0, sapis.length - 1)];
+export function GetSapiUrl(){    
+    let sapiAddress = `https://sapi.smartcash.cc`;
+
+    if (window.location.protocol === 'http:') {
+        sapiAddress = sapis[random.int(0, sapis.length - 1)];
+    }
+    
+    return sapiAddress;
 }
-
-module.exports = () => sapiAddress;

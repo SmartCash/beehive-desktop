@@ -1,10 +1,10 @@
 import { sumFloats } from './math';
 import * as CryptoJS from 'crypto-js';
+import * as poolSapi from './poolSapi';
 
 const smartCash = require('smartcashjs-lib');
 const request = require('request-promise');
 const _ = require('lodash');
-let getSapiUrl = require('./poolSapi');
 const crypto = window.require('crypto');
 
 const LOCKED = 'pubkeyhashlocked';
@@ -219,7 +219,8 @@ export function decryptTextWithRSAPrivateKey(rsaPrivateKey, passphrase, encrypte
 
 export async function getBalance(_address) {
     try {
-        return await request.get(`${getSapiUrl()}/v1/address/balance/${_address}`, {
+        
+        return await request.get(`${poolSapi.GetSapiUrl()}/v1/address/balance/${_address}`, {
             json: true,
         });
     } catch (err) {
@@ -229,7 +230,7 @@ export async function getBalance(_address) {
 
 export async function getTxId(_txId) {
     try {
-        return await request.get(`${getSapiUrl()}/v1/transaction/check/${_txId}`, {
+        return await request.get(`${poolSapi .GetSapiUrl()}/v1/transaction/check/${_txId}`, {
             json: true,
         });
     } catch (err) {
@@ -239,7 +240,7 @@ export async function getTxId(_txId) {
 
 export async function getRewards(_address) {
     try {
-        return await request.get(`${getSapiUrl()}/v1/smartrewards/check/${_address}`, {
+        return await request.get(`${poolSapi.GetSapiUrl()}/v1/smartrewards/check/${_address}`, {
             json: true,
         });
     } catch (err) {
@@ -258,7 +259,7 @@ export async function getUnspent(_address, uxtoType = UXTO_TYPE.ALL, updateLocal
 
     let options = {
         method: 'POST',
-        uri: `${getSapiUrl()}/v1/address/unspent`,
+        uri: `${poolSapi.GetSapiUrl()}/v1/address/unspent`,
         body: {
             address: _address,
             pageNumber: 1,
@@ -513,7 +514,7 @@ export async function activateRewards({ toAddress, unspentList, privateKey, pass
 export async function sendTransaction(hex) {
     var options = {
         method: 'POST',
-        uri: `${getSapiUrl()}/v1/transaction/send`,
+        uri: `${poolSapi.GetSapiUrl()}/v1/transaction/send`,
         body: {
             data: `${hex}`,
             instantpay: false,
@@ -567,4 +568,28 @@ export function getSmartNodeRoi() {
         json: true,
     };
     return request.get(options);
+}
+
+// export async function getNodesUrl(){
+//     let node = await getNodes();
+//     console.log(node);
+//     return node.ip;
+// }
+
+export async function getNodesUrl() {
+    try {        
+        var options = {
+            method: 'GET',
+            uri: `https://sapi.smartcash.cc/v1/smartnode/check/ENABLED`,         
+            json: true, // Automatically stringifies the body to JSON
+        };
+
+        let retorno;
+        await request.get(options).then((res) => retorno = res);
+        console.log(retorno);
+        return retorno;
+
+    } catch (err) {
+        console.error(err);
+    }
 }

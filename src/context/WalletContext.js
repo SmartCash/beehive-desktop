@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import { getSupportedCurrencies } from '../lib/smart';
+import { getNodesUrl } from '../lib/sapi';
 import {
     getBalance,
     getSpendableInputs,
@@ -15,6 +16,7 @@ const initialState = {
     wallets: [],
     walletCurrent: '',
     fiatList: [],
+    nodesList: [],
     walletsBalance: {},
     password: null,
 };
@@ -24,7 +26,7 @@ const _getBalance = async (address) => {
         const balanceResponse = await getBalance(address);        
         balanceResponse.balance.unlocked = balanceResponse.balance.unlocked + balanceResponse.unconfirmed.delta;        
         return balanceResponse.balance;
-    };
+    };    
     let balance = {};
     try {
         balance = await getBalanceFromSapi();
@@ -46,6 +48,9 @@ const userReducer = (state, action) => {
         case 'setFiatList': {
             return { ...state, fiatList: action.payload };
         }
+        case 'setNodesList': {            
+            return { ...state, nodesList: action.payload };
+        }
         case 'updateWallets': {
             if (action.payload.length > 0) {
                 return { ...state, wallets: action.payload, walletCurrent: action.payload[0].address };
@@ -61,8 +66,7 @@ const userReducer = (state, action) => {
         case 'decryptError': {
             return { ...state, decryptError: action.payload };
         }
-        case 'updateWalletsBalance': {
-            //ToDo: Criar método com linha 40 a 42 para salvar wallets em arquivo local com balanco atualizado
+        case 'updateWalletsBalance': {            
             if (state.wallets === null) {
                 return state;
             }
@@ -118,7 +122,12 @@ export const WalletProvider = ({ children }) => {
     }
 
     async function loadFiats() {
-        dispatch({ type: 'setFiatList', payload: await getSupportedCurrencies() });
+        dispatch({ type: 'setFiatList', payload: await getSupportedCurrencies() });        
+    }
+
+    async function loadNodes() {        
+        let nodes =  await getNodesUrl();        
+        dispatch({ type: 'setNodesList', payload: nodes});        
     }
 
     function updateBalance(balance) {
@@ -209,6 +218,11 @@ export const WalletProvider = ({ children }) => {
         if (state.fiatList.length === 0) {
             loadFiats();
         }
+
+        if(state.nodesList.length === 0){
+            loadNodes();
+        }        
+
         setInterval(() => {
             updateWalletsBalance();
         }, 60000);

@@ -47,7 +47,6 @@ function RewardsActivateComponent() {
 
     const onSubmit = async (data) => {
         const SLEEP_TIME = 60 * 1000;
-        console.log(password);
 
         if (hasPassword()) {
             setActivating(true);
