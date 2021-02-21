@@ -149,7 +149,7 @@ function RewardsActivateComponent() {
                     <div className="wrapper">
                         <p>The rewards is not activated for the address <span className="text-primary">{address}</span></p>
 
-                        <div className="form-control message">                            
+                        <div className="form-not-activated">                            
                             <input
                                 id="messageTo"
                                 placeholder="Insert your password here"
@@ -160,9 +160,8 @@ function RewardsActivateComponent() {
                                     setPassword(event.target.value);
                                 }}
                             />
-                        </div>                                        
-                        
-                        <button type="submit" disabled={!canSend()}>Activate Rewards</button>                    
+                            <button type="submit" disabled={!canSend()}>Activate Rewards</button>
+                        </div>                                                            
                     </div>
                 </form>
               
