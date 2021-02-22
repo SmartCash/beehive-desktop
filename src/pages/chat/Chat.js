@@ -96,7 +96,11 @@ export function Chat() {
                 </div>
                 {error && <p className="error">{error}</p>}
                 <Scrollbars>
-                    {initialLoading && <p className="error">Loading conversations</p>}
+                    {initialLoading && (
+                        <p className="error">
+                            <img src="../../assets/images/loader.gif" />
+                        </p>
+                    )}
                     {history?.map((tx) => {
                         console.log(tx);
                         if (tx.chatAddress !== 'undefined') {
@@ -126,7 +130,11 @@ export function Chat() {
                     <p className="value">{getChat()?.chatAddress}</p>
                 </div>
                 <Scrollbars>
-                    {initialLoading && <p className="error">Loading conversations</p>}
+                    {initialLoading && (
+                        <p className="error">
+                            <img src="../../assets/images/loader.gif" />
+                        </p>
+                    )}
                     {!initialLoading &&
                         getChat()?.messages.map((m) => {
                             return (
