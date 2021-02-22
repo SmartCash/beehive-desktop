@@ -57,6 +57,10 @@ function Transactions() {
                                         <p className="label">Amount</p>
                                         <p className="value">{tx.amount}</p>
                                     </div>
+                                    <div>
+                                        <p className="label">Time</p>
+                                        <p className="value">{new Date(tx.time * 1000).toLocaleString()}</p>
+                                    </div>
                                 </div>
                                 <div>
                                     <p className="label">Transaction Id</p>
@@ -72,13 +76,13 @@ function Transactions() {
                                         className="link"
                                         onClick={() => electron.shell.openExternal(`https://insight.smartcash.cc/tx/${tx.txid}`)}
                                     >
-                                        Open in Insight
+                                        Open into Insight
                                     </button>
                                     <button
                                         className="link"
                                         onClick={() => electron.shell.openExternal(`http://explorer.smartcash.org/tx/${tx.txid}`)}
                                     >
-                                        Open in Sapi Explorer
+                                        Open into Sapi Explorer
                                     </button>
                                 </div>
                                 {tx.message && (
