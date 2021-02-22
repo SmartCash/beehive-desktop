@@ -11,7 +11,7 @@ import {
 } from '../../lib/sapi';
 import './Chat.css';
 import { NewChat } from './NewChat';
-
+import loader from '../../assets/images/loader.svg';
 export function Chat() {
     const { walletCurrent, wallets } = useContext(WalletContext);
     const [history, setHistory] = useState([]);
@@ -93,12 +93,13 @@ export function Chat() {
                 <div className="header">
                     <span className="title">Chats</span>
                     <button onClick={handleSetNewChat}>Start chat</button>
+                    <button onClick={() => _getTransactionHistory()}>Refresh</button>
                 </div>
                 {error && <p className="error">{error}</p>}
                 <Scrollbars>
                     {initialLoading && (
                         <p className="error">
-                            <img src="../../assets/images/loader.gif" />
+                            <img src={loader} alt={'loading...'} />
                         </p>
                     )}
                     {history?.map((tx) => {
@@ -132,7 +133,7 @@ export function Chat() {
                 <Scrollbars>
                     {initialLoading && (
                         <p className="error">
-                            <img src="../../assets/images/loader.gif" />
+                            <img src={loader} alt={'loading...'} />
                         </p>
                     )}
                     {!initialLoading &&
