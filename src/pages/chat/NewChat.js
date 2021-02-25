@@ -8,10 +8,15 @@ export function NewChat() {
                 <p className="title">New chat</p>
                 <p className="subtitle">Enter the wallet address to start a new chat</p>
                 <div className="address-form">
-                    <input autoFocus />
-                    <button>Request</button>
+                    <input autoFocus placeholder="Contact wallet address" />
+                </div>
+                <div className="address-form">
+                    <input autoFocus placeholder="Your password" />
+                </div>
+                <div className="address-form">
+                    <button>Invite</button>
                 </div>
             </div>
         </div>
-    )
+    );
 }

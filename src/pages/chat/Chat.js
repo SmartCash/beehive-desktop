@@ -40,13 +40,13 @@ function ChatComponent() {
     }, [history]);
 
     useEffect(() => {
-        clearState();        
+        clearState();
         _getTransactionHistory();
         clearInterval(timer);
         setTimer(setInterval(() => _getTransactionHistory(), 60000));
         return () => {
             clearInterval(timer);
-        }
+        };
     }, [walletCurrent]);
 
     return (
@@ -59,11 +59,6 @@ function ChatComponent() {
                 </div>
                 {error && <p className="error">{error}</p>}
                 <Scrollbars>
-                    {initialLoading && (
-                        <p className="error">
-                            <img src={loader} alt={'loading...'} />
-                        </p>
-                    )}
                     {history?.map((tx) => {
                         if (tx.chatAddress !== 'undefined') {
                             return (
@@ -82,48 +77,59 @@ function ChatComponent() {
                             );
                         }
                     })}
-                </Scrollbars>
-            </div>
-
-            <div className="chat-messages">
-                <input type="hidden" value={getChat()?.chatAddress} id="chatAddress" />
-                <div className="transaction chatAddress">
-                    <p className="label">Chat Address</p>
-                    <p className="value">{getChat()?.chatAddress}</p>
-                </div>
-                <Scrollbars>
                     {initialLoading && (
                         <p className="error">
                             <img src={loader} alt={'loading...'} />
                         </p>
                     )}
-                    {!initialLoading &&
-                        getChat()?.messages.map((m) => {
-                            return (
-                                <div className={`transaction message message-${m.direction}`} key={m.time}>
-                                    <p className="value">{m.message}</p>
-                                    <p className="label">{new Date(m.time * 1000).toLocaleString()}</p>
-                                </div>
-                            );
-                        })}
                 </Scrollbars>
-                <div className="send-wrapper">
-                    <textarea
-                        id="messageTo"
-                        className="send-input"
-                        placeholder="Type a message..."
-                        autoComplete="off"
-                        type="text"
-                        value={messageToSend}
-                        onInput={(event) => {
-                            setMessageToSend(event.target.value);
-                        }}
-                    />
-                    <button className="btn send-button" onClick={() => handleSubmitSendAmount(currentChatAddress, messageToSend)}>
-                        Send
-                    </button>
-                </div>
             </div>
+
+            {newChat === false && (
+                <div className="chat-messages">
+                    <input type="hidden" value={getChat()?.chatAddress} id="chatAddress" />
+                    <div className="transaction chatAddress">
+                        <p className="label">Chat Address</p>
+                        <p className="value">{getChat()?.chatAddress}</p>
+                    </div>
+                    <Scrollbars>
+                        {initialLoading && (
+                            <p className="error">
+                                <img src={loader} alt={'loading...'} />
+                            </p>
+                        )}
+                        {!initialLoading &&
+                            getChat()?.messages.map((m) => {
+                                return (
+                                    <div className={`transaction message message-${m.direction}`} key={m.time}>
+                                        <p className="value">{m.message}</p>
+                                        <p className="label">{new Date(m.time * 1000).toLocaleString()}</p>
+                                    </div>
+                                );
+                            })}
+                    </Scrollbars>
+                    <div className="send-wrapper">
+                        <textarea
+                            id="messageTo"
+                            className="send-input"
+                            placeholder="Type a message..."
+                            autoComplete="off"
+                            type="text"
+                            value={messageToSend}
+                            onInput={(event) => {
+                                setMessageToSend(event.target.value);
+                            }}
+                        />
+                        <button
+                            className="btn send-button"
+                            onClick={() => handleSubmitSendAmount(currentChatAddress, messageToSend)}
+                        >
+                            Send
+                        </button>
+                    </div>
+                </div>
+            )}
+            
             {!initialLoading && newChat && <NewChat />}
         </Page>
     );
