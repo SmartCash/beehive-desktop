@@ -2,89 +2,51 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import Page from '../../components/Page';
 import { WalletContext } from '../../context/WalletContext';
-import {
-    getTransactionHistoryGroupedByAddresses,
-    createAndSendRawTransaction,
-    getSpendableInputs,
-    getSpendableBalance,
-    calculateFee,
-} from '../../lib/sapi';
 import './Chat.css';
 import { NewChat } from './NewChat';
 import loader from '../../assets/images/loader.svg';
+import { ChatProvider, useChatState } from './Chat.context';
+import { useChatController } from './Chat.controller';
+
 export function Chat() {
-    const { walletCurrent, wallets } = useContext(WalletContext);
-    const [history, setHistory] = useState([]);
-    const [error, setError] = useState();
-    const [loading, setLoading] = useState();
-    const [initialLoading, setInitialLoading] = useState();
-    const [currentChatAddress, setCurrentChatAddress] = useState();
-    const [newChat, setNewChat] = useState(false);
-    const [messageToSend, setMessageToSend] = useState('');
+    return (
+        <ChatProvider>
+            <ChatComponent />
+        </ChatProvider>
+    );
+}
 
-    async function _getTransactionHistory() {
-        setLoading(true);
-        setInitialLoading(true);
-        setError(null);
-        await getTransactionHistoryGroupedByAddresses(walletCurrent)
-            .then((data) => {
-                setHistory(data);
-                if (data.length > 0 && newChat === false && currentChatAddress === undefined) {
-                    setCurrentChatAddress(data[0].chatAddress);
-                }
-            })
-            .catch(() => setError('There is no chat for this wallet'))
-            .finally(() => {
-                setLoading(false);
-                setInitialLoading(false);
-            });
-    }
+function ChatComponent() {
+    const [timer, setTimer] = useState();
+    const { walletCurrent } = useContext(WalletContext);
+    const { history, error, loading, initialLoading, currentChatAddress, newChat, messageToSend } = useChatState();
+    const {
+        _getTransactionHistory,
+        handleSetCurrentChatAddress,
+        handleSetNewChat,
+        handleSubmitSendAmount,
+        clearState,
+        setMessageToSend,
+    } = useChatController();
 
-    function getChat() {
+    const getChat = () => {
         return history?.find((chat) => chat.chatAddress === currentChatAddress);
-    }
-
-    function handleSetCurrentChatAddress(chatAddress) {
-        setNewChat(false);
-        setCurrentChatAddress(chatAddress);
-    }
-
-    function handleSetNewChat() {
-        setNewChat(true);
-        setCurrentChatAddress(null);
-    }
-
-    const handleSubmitSendAmount = async () => {
-        setLoading(true);
-        setInitialLoading(true);
-        setError(null);
-        const spendableInputs = await getSpendableInputs(walletCurrent);
-        const transaction = await createAndSendRawTransaction({
-            toAddress: currentChatAddress,
-            amount: 0.001,
-            fee: await calculateFee(spendableInputs.utxos, messageToSend),
-            messageOpReturn: messageToSend,
-            password: '123456',
-            unspentList: spendableInputs,
-            unlockedBalance: await getSpendableBalance(walletCurrent),
-            privateKey: wallets.find((w) => w.address === walletCurrent).privateKey,
-        });
-
-        if (transaction.status === 200) {
-            alert('Message sent!');
-            setMessageToSend('');
-        } else {
-            alert('Error');
-            setError('One error happened. Try again in a moment.');
-        }
-        _getTransactionHistory();
-        setLoading(false);
-        setInitialLoading(false);
     };
 
     useEffect(() => {
+        if (history && history.length > 0 && newChat === false && currentChatAddress === undefined) {
+            handleSetCurrentChatAddress(history[0].chatAddress);
+        }
+    }, [history]);
+
+    useEffect(() => {
+        clearState();        
         _getTransactionHistory();
-        setTimeout(() => _getTransactionHistory(), 10000);
+        clearInterval(timer);
+        setTimer(setInterval(() => _getTransactionHistory(), 60000));
+        return () => {
+            clearInterval(timer);
+        }
     }, [walletCurrent]);
 
     return (
@@ -103,7 +65,6 @@ export function Chat() {
                         </p>
                     )}
                     {history?.map((tx) => {
-                        console.log(tx);
                         if (tx.chatAddress !== 'undefined') {
                             return (
                                 <div
