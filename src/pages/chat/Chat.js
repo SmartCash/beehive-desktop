@@ -119,7 +119,7 @@ function ChatComponent() {
                             setMessageToSend(event.target.value);
                         }}
                     />
-                    <button className="btn send-button" onClick={() => handleSubmitSendAmount()}>
+                    <button className="btn send-button" onClick={() => handleSubmitSendAmount(currentChatAddress, messageToSend)}>
                         Send
                     </button>
                 </div>
