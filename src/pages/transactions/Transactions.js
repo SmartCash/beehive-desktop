@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import Page from '../../components/Page';
 import { WalletContext } from '../../context/WalletContext';
 import { getOpReturnMessage, getTransactionHistory, isLockedTransaction } from '../../lib/sapi';
+import loader from '../../assets/images/loader.svg';
 import './Transactions.css';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { ReactComponent as IconCopy } from '../../assets/images/copy.svg';
@@ -35,7 +36,11 @@ function Transactions() {
             <button onClick={() => _getTransactionHistory()} className="refreshBtn">
                 Refresh
             </button>
-            {loading && <p className="error">Loading Transactions</p>}
+            {loading &&  
+            <p className="loading">
+                                <img src={loader} alt={'loading...'} />
+                            </p>
+                            }
             {error && <p className="error">{error}</p>}
             {!error && history && (
                 <Scrollbars>

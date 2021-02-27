@@ -78,7 +78,7 @@ function ChatComponent() {
                         }
                     })}
                     {initialLoading && (
-                        <p className="error">
+                        <p className="loading">
                             <img src={loader} alt={'loading...'} />
                         </p>
                     )}
@@ -94,7 +94,7 @@ function ChatComponent() {
                     </div>
                     <Scrollbars>
                         {initialLoading && (
-                            <p className="error">
+                            <p className="loading">
                                 <img src={loader} alt={'loading...'} />
                             </p>
                         )}
