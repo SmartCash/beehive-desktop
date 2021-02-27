@@ -224,8 +224,10 @@ export const WalletProvider = ({ children }) => {
         }
 
         setInterval(() => {
-            updateWalletsBalance();
-        }, 60000);
+            //updateWalletsBalance();
+            getAndUpdateWalletsBallance();
+            console.log('entrou no timer');
+        }, 30000);
     }, []);
 
     const providerValue = {
