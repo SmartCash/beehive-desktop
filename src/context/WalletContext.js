@@ -222,12 +222,6 @@ export const WalletProvider = ({ children }) => {
         if(state.nodesList.length === 0){
             loadNodes();
         }
-
-        setInterval(() => {
-            //updateWalletsBalance();
-            getAndUpdateWalletsBallance();
-            console.log('entrou no timer');
-        }, 30000);
     }, []);
 
     const providerValue = {

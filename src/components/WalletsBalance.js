@@ -1,9 +1,19 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { WalletContext } from '../context/WalletContext';
 import { sumFloats } from '../lib/math';
 
 function WalletsBalance() {
-    const { wallets } = useContext(WalletContext);
+    const { wallets, getAndUpdateWalletsBallance } = useContext(WalletContext);
+    const [timer, setTimer] = useState();
+
+    useEffect(() => {
+        clearInterval(timer);
+        setTimer(
+            setInterval(() => {
+                getAndUpdateWalletsBallance();
+            }, 30000)
+        );
+    }, [wallets]);
 
     return (
         <div className="wallets-balance">
