@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import { getSupportedCurrencies } from '../lib/smart';
-import { getNodesUrl } from '../lib/sapi';
+
 import {
     getBalance,
     getSpendableInputs,
@@ -15,8 +15,7 @@ const { ipcRenderer } = window.require('electron');
 const initialState = {
     wallets: [],
     walletCurrent: '',
-    fiatList: [],
-    nodesList: [],
+    fiatList: [],    
     walletsBalance: {},
     password: null,
 };
@@ -47,10 +46,7 @@ const userReducer = (state, action) => {
         }
         case 'setFiatList': {
             return { ...state, fiatList: action.payload };
-        }
-        case 'setNodesList': {
-            return { ...state, nodesList: action.payload };
-        }
+        }    
         case 'updateWallets': {
             return { ...state, wallets: action.payload };
         }
@@ -120,12 +116,7 @@ export const WalletProvider = ({ children }) => {
 
     async function loadFiats() {
         dispatch({ type: 'setFiatList', payload: await getSupportedCurrencies() });
-    }
-
-    async function loadNodes() {
-        let nodes =  await getNodesUrl();
-        dispatch({ type: 'setNodesList', payload: nodes});
-    }
+    }  
 
     function updateBalance(balance) {
         dispatch({ type: 'updateBalance', payload: balance });
@@ -215,11 +206,7 @@ export const WalletProvider = ({ children }) => {
     useEffect(() => {
         if (state.fiatList.length === 0) {
             loadFiats();
-        }
-
-        if(state.nodesList.length === 0){
-            loadNodes();
-        }
+        }       
     }, []);
 
     const providerValue = {
