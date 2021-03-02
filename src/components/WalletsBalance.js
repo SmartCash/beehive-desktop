@@ -7,7 +7,7 @@ function WalletsBalance() {
 
     useEffect(() => {
         setTimeout(() => {
-            getAndUpdateWalletsBallance();
+            getAndUpdateWalletsBallance(false);
         }, 60000);
     }, [wallets]);
 

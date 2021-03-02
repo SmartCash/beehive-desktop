@@ -190,11 +190,15 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'updateWalletsBalance' });
     }
 
-    async function getAndUpdateWalletsBallance() {
+    async function getAndUpdateWalletsBallance(getUnspent) {
         const _wallets = await Promise.all(
             state.wallets.map(async (wallet) => {
                 wallet.balance = (await _getBalance(wallet.address)) || {};
-                wallet.unspent = (await getSpendableInputs(wallet.address)) || {};
+                
+                if(getUnspent){                    
+                    wallet.unspent = (await getSpendableInputs(wallet.address)) || {};
+                }
+                
                 return wallet;
             })
         );

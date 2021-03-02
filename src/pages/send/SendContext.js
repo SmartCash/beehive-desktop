@@ -162,7 +162,7 @@ export const SendProvider = ({ children }) => {
                     dispatch({ type: 'clearState' });
                     dispatch({ type: 'setTXID', payload: data?.value });
                     dispatch({ type: 'setTXIDError', payload: null });
-                    getAndUpdateWalletsBallance();
+                    getAndUpdateWalletsBallance(true);
                 }                
             })
             .catch((error) => dispatch({ type: 'setTXIDError', payload: error[0]?.message }))
