@@ -16,8 +16,7 @@ const random = require('random');
 export async function getEnabledNodes() {
     try {
         const localServers = ipcRenderer.sendSync('getSapiServers');
-        if(localServers)
-            return JSON.parse(ipcRenderer.sendSync('getSapiServers'));
+        if (localServers) return JSON.parse(ipcRenderer.sendSync('getSapiServers'));
 
         const nodes = await request.get(`https://sapi.smartcash.cc/v1/smartnode/check/ENABLED`, {
             json: true,
@@ -241,12 +240,37 @@ export function decryptTextWithRSAPrivateKey(rsaPrivateKey, passphrase, encrypte
 
 export async function getBalance(_address) {
     try {
-        return await request.get(`${await GetSapiUrl()}/v1/address/balance/${_address}`, {
+        const balanceResponse = await request.get(`${await GetSapiUrl()}/v1/address/balance/${_address}`, {
             json: true,
         });
+        balanceResponse.balance.unlocked = balanceResponse.balance.unlocked + balanceResponse.unconfirmed.delta;
+        return balanceResponse.balance;
     } catch (err) {
         console.error(err);
     }
+}
+
+export async function getBalances(addresses) {
+    let balances = [];
+
+    let options = {
+        method: 'POST',
+        uri: `${await GetSapiUrl()}/v1/address/balances`,
+        body: addresses,
+        json: true,
+    };
+
+    try {
+        balances = await request.post(options);
+
+        balances = balances.map((balanceResponse) => {
+            balanceResponse.balance.unlocked = balanceResponse.balance.unlocked + balanceResponse.unconfirmed.delta;
+            return balanceResponse;
+        });
+    } catch (err) {
+        balances = [];
+    }
+    return balances;
 }
 
 export async function getTxId(_txId) {

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { WalletContext } from '../context/WalletContext';
 import { sumFloats } from '../lib/math';
 
@@ -6,8 +6,8 @@ function WalletsBalance() {
     const { wallets, getAndUpdateWalletsBallance } = useContext(WalletContext);
 
     useEffect(() => {
-        setTimeout(() => {
-            getAndUpdateWalletsBallance(false);
+        setTimeout(async () => {
+            await getAndUpdateWalletsBallance({ wallets });
         }, 60000);
     }, [wallets]);
 

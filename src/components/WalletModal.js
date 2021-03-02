@@ -17,7 +17,7 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
 
     const handleAddWallet = async () => {
         const wallets = await decryptWallets(_password);
-        if (wallets && wallets.length > 0 || disableCloseButton) {
+        if ((wallets && wallets.length > 0) || disableCloseButton) {
             generatePDF([wallet], 'SmartCash_Address');
             const _wallet = {
                 privateKey: CryptoJS.AES.encrypt(wallet.privateKey, _password).toString(),
@@ -33,7 +33,7 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
 
     const handleImportPrivateKey = async () => {
         const wallets = await decryptWallets(_password);
-        if (wallets && wallets.length > 0 || disableCloseButton) {
+        if ((wallets && wallets.length > 0) || disableCloseButton) {
             isPK(privateKey)
                 .then(() => {
                     const _wallet = {

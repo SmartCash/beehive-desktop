@@ -1,13 +1,7 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import { getSupportedCurrencies } from '../lib/smart';
 
-import {
-    getBalance,
-    getSpendableInputs,
-    createRSAKeyPair,
-    encryptTextWithReceiverRSAPublicKey,
-    decryptTextWithRSAPrivateKey,
-} from '../lib/sapi';
+import { getBalance, getBalances, createRSAKeyPair } from '../lib/sapi';
 import * as CryptoJS from 'crypto-js';
 import generatePDF from '../lib/GeneratorPDF';
 const { ipcRenderer } = window.require('electron');
@@ -15,22 +9,17 @@ const { ipcRenderer } = window.require('electron');
 const initialState = {
     wallets: [],
     walletCurrent: '',
-    fiatList: [],    
+    fiatList: [],
     walletsBalance: {},
     password: null,
 };
 
-const _getBalance = async (address) => {
-    const getBalanceFromSapi = async () => {
-        const balanceResponse = await getBalance(address);
-        balanceResponse.balance.unlocked = balanceResponse.balance.unlocked + balanceResponse.unconfirmed.delta;
-        return balanceResponse.balance;
-    };
+const getBalanceFromSAPI = async (address) => {
     let balance = {};
     try {
-        balance = await getBalanceFromSapi();
+        balance = await getBalance(address);
     } catch {
-        balance = await getBalanceFromSapi();
+        balance = await getBalance(address);
     }
     return balance;
 };
@@ -46,7 +35,7 @@ const userReducer = (state, action) => {
         }
         case 'setFiatList': {
             return { ...state, fiatList: action.payload };
-        }    
+        }
         case 'updateWallets': {
             return { ...state, wallets: action.payload };
         }
@@ -94,13 +83,7 @@ export const WalletProvider = ({ children }) => {
             wallet.RSA = createRSAKeyPair(password);
         }
 
-        let rsaMessage = encryptTextWithReceiverRSAPublicKey(wallet.RSA.rsaPublicKey, 'Oie');
-        console.log(`RSA encrypted Message with PUB_KEY`, rsaMessage);
-        let textMessage = decryptTextWithRSAPrivateKey(wallet.RSA.rsaPrivateKey, password, rsaMessage);
-        console.log(`RSA DEcrypted Message with PRIV_KEY`, textMessage);
-
-        wallet.balance = await _getBalance(wallet.address);
-        wallet.unspent = await getSpendableInputs(wallet.address);
+        wallet.balance = await getBalanceFromSAPI(wallet.address);
 
         const _wallets = [...state.wallets, wallet];
 
@@ -116,7 +99,7 @@ export const WalletProvider = ({ children }) => {
 
     async function loadFiats() {
         dispatch({ type: 'setFiatList', payload: await getSupportedCurrencies() });
-    }  
+    }
 
     function updateBalance(balance) {
         dispatch({ type: 'updateBalance', payload: balance });
@@ -148,27 +131,15 @@ export const WalletProvider = ({ children }) => {
             if (decryptedWallet) {
                 wallets = JSON.parse(decryptedWallet);
 
+                await getAndUpdateWalletsBallance(wallets);
+
                 for (const wallet of wallets) {
                     if (!wallet.RSA) {
                         wallet.RSA = createRSAKeyPair(password);
                     }
 
-                    let rsaMessage = encryptTextWithReceiverRSAPublicKey(wallet.RSA.rsaPublicKey, 'Oie');
-                    let textMessage = decryptTextWithRSAPrivateKey(wallet.RSA.rsaPrivateKey, password, rsaMessage);
-
                     if (!CryptoJS.AES.decrypt(wallet.privateKey, password))
                         wallet.privateKey = CryptoJS.AES.encrypt(wallet.privateKey, password).toString();
-
-                        try {
-                            const balance = await _getBalance(wallet.address);
-                            if (balance) {
-                                wallet.balance = balance;
-                                wallet.unspent = await getSpendableInputs(wallet.address);
-                            }
-                        } catch (error) {
-                            return error;
-                        }
-
                 }
 
                 dispatch({ type: 'setWalletCurrent', payload: wallets[0].address });
@@ -190,15 +161,12 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'updateWalletsBalance' });
     }
 
-    async function getAndUpdateWalletsBallance(getUnspent) {
+    async function getAndUpdateWalletsBallance(wallets) {
+        const walletsAux = state.wallets ? state.wallets : wallets;
+        const balances = await getBalances(walletsAux.map((wallet) => wallet.address));
         const _wallets = await Promise.all(
-            state.wallets.map(async (wallet) => {
-                wallet.balance = (await _getBalance(wallet.address)) || {};
-                
-                if(getUnspent){                    
-                    wallet.unspent = (await getSpendableInputs(wallet.address)) || {};
-                }
-                
+            walletsAux.map(async (wallet) => {
+                wallet.balance = balances.find((balance) => balance.address === wallet.address);
                 return wallet;
             })
         );
@@ -210,7 +178,7 @@ export const WalletProvider = ({ children }) => {
     useEffect(() => {
         if (state.fiatList.length === 0) {
             loadFiats();
-        }       
+        }
     }, []);
 
     const providerValue = {
