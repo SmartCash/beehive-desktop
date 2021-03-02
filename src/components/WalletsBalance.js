@@ -4,15 +4,11 @@ import { sumFloats } from '../lib/math';
 
 function WalletsBalance() {
     const { wallets, getAndUpdateWalletsBallance } = useContext(WalletContext);
-    const [timer, setTimer] = useState();
 
     useEffect(() => {
-        clearInterval(timer);
-        setTimer(
-            setInterval(() => {
-                getAndUpdateWalletsBallance();
-            }, 30000)
-        );
+        setTimeout(() => {
+            getAndUpdateWalletsBallance();
+        }, 60000);
     }, [wallets]);
 
     return (
