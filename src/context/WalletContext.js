@@ -10,7 +10,6 @@ const initialState = {
     wallets: [],
     walletCurrent: '',
     fiatList: [],
-    walletsBalance: {},
     password: null,
 };
 
@@ -47,15 +46,6 @@ const userReducer = (state, action) => {
         }
         case 'decryptError': {
             return { ...state, decryptError: action.payload };
-        }
-        case 'updateWalletsBalance': {
-            if (state.wallets === null) {
-                return state;
-            }
-            const _wallets = state.wallets;
-            const _walletsBalance = _wallets.map((wallet) => wallet.balance || {});
-
-            return { ...state, walletsBalance: _walletsBalance };
         }
         default: {
             return state;
@@ -148,8 +138,6 @@ export const WalletProvider = ({ children }) => {
         } else {
             dispatch({ type: 'updateWallets', payload: wallets });
         }
-
-        updateWalletsBalance();
         return wallets;
     }
 
@@ -157,22 +145,18 @@ export const WalletProvider = ({ children }) => {
         generatePDF(state.wallets, 'MyWallets_SmartCash');
     }
 
-    function updateWalletsBalance() {
-        dispatch({ type: 'updateWalletsBalance' });
-    }
 
     async function getAndUpdateWalletsBallance(wallets) {
-        const walletsAux = state.wallets ? state.wallets : wallets;
-        const balances = await getBalances(walletsAux.map((wallet) => wallet.address));
+        const walletsAux = wallets  ? wallets : state.wallets;
+        const balances = await getBalances(walletsAux?.map((wallet) => wallet.address));
         const _wallets = await Promise.all(
             walletsAux.map(async (wallet) => {
-                wallet.balance = balances.find((balance) => balance.address === wallet.address);
+                wallet.balance = balances.find((balance) => balance.address === wallet.address).balance;
                 return wallet;
             })
         );
 
         dispatch({ type: 'updateWallets', payload: _wallets });
-        dispatch({ type: 'updateWalletsBalance' });
     }
 
     useEffect(() => {
@@ -186,7 +170,6 @@ export const WalletProvider = ({ children }) => {
         addWallet,
         setWalletCurrent,
         updateBalance,
-        updateWalletsBalance,
         decryptWallets,
         downloadWallets,
         getAndUpdateWalletsBallance,
