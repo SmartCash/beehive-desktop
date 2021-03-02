@@ -24,19 +24,18 @@ function Transactions() {
             .finally(() => setLoading(false));
     }
 
-    const handleGetTransactions = () => {
+    useEffect(() => {
         _getTransactionHistory();
-        setTimeout(() => _getTransactionHistory(), 60000);
-    };
-
-    useEffect(handleGetTransactions, [walletCurrent]);
+        const timer = setTimeout(() => _getTransactionHistory(), 60000);
+        return () => clearTimeout(timer);
+    }, [walletCurrent]);
 
     return (
         <Page className="page-transactions">
             <button onClick={() => _getTransactionHistory()} className="refreshBtn">
                 Refresh
             </button>
-            {loading &&  
+            {loading &&
             <p className="loading">
                                 <img src={loader} alt={'loading...'} />
                             </p>

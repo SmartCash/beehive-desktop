@@ -42,12 +42,9 @@ function ChatComponent() {
     useEffect(() => {
         clearState();
         _getTransactionHistory();
-        clearInterval(timer);
-        setTimer(setInterval(() => _getTransactionHistory(), 60000));
-        return () => {
-            clearInterval(timer);
-        };
-    }, [walletCurrent]);
+        const timer = setInterval(() => _getTransactionHistory(), 60000);
+        return () => clearInterval(timer);
+    }, [walletCurrent, timer]);
 
     return (
         <Page className="page-chat">

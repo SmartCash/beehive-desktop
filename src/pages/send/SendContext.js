@@ -4,8 +4,6 @@ import { WalletContext } from '../../context/WalletContext';
 import { subtractFloats, sumFloatsValues, exceeds } from '../../lib/math';
 import { calculateFee, createAndSendRawTransaction, getSpendableInputs } from '../../lib/sapi';
 import { isAddress } from '../../lib/smart';
-import Scrollbars from 'react-custom-scrollbars';
-import { getUTCNow } from '../../lib/dates';
 
 const initialValue = {
     amountToSend: 0,
@@ -87,14 +85,17 @@ export const SendProvider = ({ children }) => {
     };
     const currencyMask = createNumberMask(defaultMaskOptions);
 
-    const setAmountToSend = (value) => {
-        const { balance, unspent } = wallets.find((wallet) => wallet.address === walletCurrent);
+    const setAmountToSend = async (value) => {
+        const { balance } = wallets.find((wallet) => wallet.address === walletCurrent);
+
+         // You must get the latest unspent from the NODE
+         const unspent = await getSpendableInputs(walletCurrent);
 
         var total = 0;
 
         if (state.netFee != undefined) {
             total = sumFloatsValues(value, state.netFee);
-        }   
+        }
 
         if (exceeds(total, balance.unlocked)) {
             dispatch({ type: 'setAmountToSendError', payload: 'Exceeds balance' });
@@ -162,8 +163,8 @@ export const SendProvider = ({ children }) => {
                     dispatch({ type: 'clearState' });
                     dispatch({ type: 'setTXID', payload: data?.value });
                     dispatch({ type: 'setTXIDError', payload: null });
-                    getAndUpdateWalletsBallance(true);
-                }                
+                    getAndUpdateWalletsBallance(wallets);
+                }
             })
             .catch((error) => dispatch({ type: 'setTXIDError', payload: error[0]?.message }))
             .finally(() => dispatch({ type: 'setTXIDLoading', payload: false }));
