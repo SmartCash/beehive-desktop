@@ -52,9 +52,6 @@ const userReducer = (state, action) => {
             return { ...state, nodesList: action.payload };
         }
         case 'updateWallets': {
-            if (action.payload.length > 0) {
-                return { ...state, wallets: action.payload, walletCurrent: action.payload[0].address };
-            }
             return { ...state, wallets: action.payload };
         }
         case 'updateBalance': {
@@ -183,6 +180,7 @@ export const WalletProvider = ({ children }) => {
 
                 }
 
+                dispatch({ type: 'setWalletCurrent', payload: wallets[0].address });
                 dispatch({ type: 'updateWallets', payload: wallets });
             }
         } else {
