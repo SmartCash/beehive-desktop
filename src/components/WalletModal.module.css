@@ -125,3 +125,10 @@
     margin: 0 0 0 15px;
     white-space: nowrap;
 }
+
+.address-content p.loading {
+    display: block;
+    margin: 10px auto 0;
+    text-align: center;
+    width: 100%;
+}

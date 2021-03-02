@@ -1,18 +1,21 @@
 import React, { useContext, useState } from 'react';
 import ReactDOM from 'react-dom';
-import style from './WalletModal.module.css';
-import { WalletContext } from '../context/WalletContext';
+import loader from '../assets/images/loader.svg';
 import { ReactComponent as Logo } from '../assets/images/logo.svg';
+import { WalletContext } from '../context/WalletContext';
+import style from './WalletModal.module.css';
 
 function PasswordModal() {
     const { decryptWallets, decryptError } = useContext(WalletContext);
     const [showPassword, setShowPassword] = useState(false);
     const [_password, setPassword] = useState();
     const [showModal, setShowModal] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const handleDecryptWallets = async () => {
+        setLoading(true);
         const wallets = await decryptWallets(_password);
-        console.log(wallets);
+        setLoading(false);
         if (wallets && wallets.length > 0) setShowModal(false);
     };
     return (
@@ -32,22 +35,35 @@ function PasswordModal() {
                                 <p>Insert your password to decrypt all data stored in the SmartCash Hub.</p>
                                 <p>Your wallet can only be recovered with your password.</p>
                                 <p>Keep in mind that this password will not be stored on the SmartCash Hub.</p>
-                                <div className={style['password-wrapper']}>
-                                    <input
-                                        className="form-control"
-                                        placeholder="Insert your password"
-                                        onInput={(e) => setPassword(e.target.value)}
-                                        type={showPassword ? 'text' : 'password'}
-                                        autoFocus
-                                    />
-                                    <button type="button" className="showPK" onClick={() => setShowPassword(!showPassword)}>
-                                        {showPassword ? 'Hide' : 'Show'}
-                                    </button>
-                                </div>
-                                {decryptError && (
-                                    <p className="alert-error">Do not possible decrypt local data using this password.</p>
+                                {!loading && (
+                                    <React.Fragment>
+                                        <div className={style['password-wrapper']}>
+                                            <input
+                                                className="form-control"
+                                                placeholder="Insert your password"
+                                                onInput={(e) => setPassword(e.target.value)}
+                                                type={showPassword ? 'text' : 'password'}
+                                                autoFocus
+                                            />
+                                            <button
+                                                type="button"
+                                                className="showPK"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                            >
+                                                {showPassword ? 'Hide' : 'Show'}
+                                            </button>
+                                        </div>
+                                        {decryptError && (
+                                            <p className="alert-error">Do not possible decrypt local data using this password.</p>
+                                        )}
+                                        <button onClick={handleDecryptWallets}>Use password and/or recover wallet</button>
+                                    </React.Fragment>
                                 )}
-                                <button onClick={handleDecryptWallets}>Use password and/or recover wallet</button>
+                                {loading && (
+                                    <p className={style['loading']}>
+                                        <img src={loader} alt={'loading...'} />
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>
