@@ -6,8 +6,8 @@ function WalletsBalance() {
     const { wallets, getAndUpdateWalletsBallance } = useContext(WalletContext);
 
     useEffect(() => {
-        const timer =  setTimeout(async () => await getAndUpdateWalletsBallance({ wallets }), 60000);
-        return () => clearTimeout(timer);
+        const timer =  setInterval(async () => await getAndUpdateWalletsBallance(wallets), 60000);
+        return () => clearInterval(timer);
     }, [wallets]);
 
     return (
