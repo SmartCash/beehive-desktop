@@ -38,7 +38,7 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.currentChatAddress, payload: null });
     }
 
-    const handleSubmitSendAmount = async (currentChatAddress, messageToSend) => {
+    const handleSubmitSendAmount = async (currentChatAddress, messageToSend, password) => {
         chatDispatch({ type: ACTION_TYPE.loading, payload: true });
         chatDispatch({ type: ACTION_TYPE.initialLoading, payload: true });
         chatDispatch({ type: ACTION_TYPE.error, payload: null });
@@ -48,7 +48,7 @@ export const useChatController = () => {
             amount: 0.001,
             fee: await calculateFee(spendableInputs.utxos, messageToSend),
             messageOpReturn: messageToSend,
-            password: '123456',
+            password: password,
             unspentList: spendableInputs,
             unlockedBalance: await getSpendableBalance(walletCurrent),
             privateKey: wallets.find((w) => w.address === walletCurrent).privateKey,

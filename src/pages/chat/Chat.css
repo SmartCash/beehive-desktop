@@ -82,6 +82,16 @@
 .page-chat .send-wrapper {
     display: flex;
     flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.page-chat .send-wrapper .message-wrap {
+    flex: 1 1 100%;
+    margin-bottom: 8px;
+}
+
+.page-chat .send-wrapper .password-wrap {
+    flex: 1 1 auto;
 }
 
 .page-chat .send-input {
@@ -93,6 +103,8 @@
     border-radius: 4px;
     outline: 0;
     color: var(--primary);
+    width: 100%;
+    height: 100%;
 }
 
 .page-chat .send-button {
@@ -102,6 +114,7 @@
     padding: 0 16px;
     border-radius: 4px;
     margin-left: 8px;
+    height: 100%;
 }
 
 .page-chat .message-Sent {

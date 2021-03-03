@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import Page from '../../components/Page';
 import { WalletContext } from '../../context/WalletContext';
@@ -17,13 +17,13 @@ export function Chat() {
 }
 
 function ChatComponent() {
-    const [timer, setTimer] = useState();
+    const [password, setPassword] = useState('');
     const { walletCurrent } = useContext(WalletContext);
-    const { history, error, loading, initialLoading, currentChatAddress, newChat, messageToSend } = useChatState();
+    const { history, error, initialLoading, currentChatAddress, newChat, messageToSend } = useChatState();
+    const messagesRef = useRef();
     const {
         _getTransactionHistory,
         handleSetCurrentChatAddress,
-        handleSetNewChat,
         handleSubmitSendAmount,
         clearState,
         setMessageToSend,
@@ -44,7 +44,11 @@ function ChatComponent() {
         _getTransactionHistory();
         const timer = setInterval(() => _getTransactionHistory(), 60000);
         return () => clearInterval(timer);
-    }, [walletCurrent, timer]);
+    }, [walletCurrent]);
+
+    useEffect(() => {
+        console.log(messagesRef.current);
+    }, [messagesRef])
 
     return (
         <Page className="page-chat">
@@ -89,7 +93,7 @@ function ChatComponent() {
                         <p className="label">Chat Address</p>
                         <p className="value">{getChat()?.chatAddress}</p>
                     </div>
-                    <Scrollbars>
+                    <Scrollbars ref={messagesRef}>
                         {initialLoading && (
                             <p className="loading">
                                 <img src={loader} alt={'loading...'} />
@@ -106,23 +110,38 @@ function ChatComponent() {
                             })}
                     </Scrollbars>
                     <div className="send-wrapper">
-                        <textarea
-                            id="messageTo"
-                            className="send-input"
-                            placeholder="Type a message..."
-                            autoComplete="off"
-                            type="text"
-                            value={messageToSend}
-                            onInput={(event) => {
-                                setMessageToSend(event.target.value);
-                            }}
-                        />
-                        <button
-                            className="btn send-button"
-                            onClick={() => handleSubmitSendAmount(currentChatAddress, messageToSend)}
-                        >
-                            Send
-                        </button>
+                        <div className="message-wrap">
+                            <textarea
+                                id="messageTo"
+                                className="send-input"
+                                placeholder="Type a message..."
+                                autoComplete="off"
+                                type="text"
+                                value={messageToSend}
+                                onInput={(event) => {
+                                    setMessageToSend(event.target.value);
+                                }}
+                            />
+                        </div>
+                        <div className="password-wrap">
+                            <input
+                                placeholder="Insert your password"
+                                className="send-input"
+                                type="password"
+                                value={password}
+                                onInput={(event) => {
+                                    setPassword(event.target.value);
+                                }}
+                            />
+                        </div>
+                        <div className="">
+                            <button
+                                className="btn send-button"
+                                onClick={() => handleSubmitSendAmount(currentChatAddress, messageToSend, password)}
+                            >
+                                Send
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
