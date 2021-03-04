@@ -44,7 +44,7 @@ function Transactions() {
             {!error && history && (
                 <Scrollbars>
                     {history?.map((tx, index) => {
-                        tx.isLocked = isLockedTransaction(tx, walletCurrent) ? 1 : 0;
+                        tx.isLocked = isLockedTransaction(tx, walletCurrent) ? "Yes" : "No";
                         tx.message = getOpReturnMessage(tx);
                         return (
                             <div className="transaction" key={index}>
@@ -84,7 +84,7 @@ function Transactions() {
                                     </button>
                                     <button
                                         className="link"
-                                        onClick={() => electron.shell.openExternal(`http://explorer.smartcash.org/tx/${tx.txid}`)}
+                                        onClick={() => electron.shell.openExternal(`http://explorer.smartcash.cc/tx/${tx.txid}`)}
                                     >
                                         Open into Sapi Explorer
                                     </button>

@@ -74,7 +74,7 @@ function SendComponent() {
                             X
                         </button>
                         <p>Amount has been sent</p>
-                        <button onClick={() => electron.shell.openExternal(`http://explorer.smartcash.org/tx/${TXID}`)}>
+                        <button onClick={() => electron.shell.openExternal(`http://explorer.smartcash.cc/tx/${TXID}`)}>
                             {TXID}
                             <small>(click to view details)</small>
                         </button>
@@ -105,7 +105,7 @@ function SendComponent() {
                             id="addressTo"
                             placeholder="Insert address here"
                             autoComplete="off"
-                            type="text"                            
+                            type="text"
                             value={addressToSend}
                             onInput={(event) => setAddressToSend(event.target.value.trim())}
                         />
@@ -123,7 +123,7 @@ function SendComponent() {
                         />
                         {amountToSendError && <p className="amountToSendError">{amountToSendError}</p>}
                     </div>
-                    
+
                     {isSmartFiat() && (
                         <div className="form-control amount">
                             <button type="button" onClick={() => calculateSendAll(1)}>
