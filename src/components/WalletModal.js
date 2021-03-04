@@ -27,7 +27,7 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
             setCreateWallet(false);
             hide();
         } else {
-            setError('Do not possible decrypt local data using this password.');
+            setError('Wallet is not possible to decrypt using this password.');
         }
     };
 
@@ -45,7 +45,7 @@ function WalletModal({ isShowing, hide, disableCloseButton }) {
                 })
                 .catch(() => setError('Invalid Private Key'));
         } else {
-            setError('Do not possible decrypt local data using this password.');
+            setError('Wallet is not  possible to decrypt using this password.');
         }
     };
 

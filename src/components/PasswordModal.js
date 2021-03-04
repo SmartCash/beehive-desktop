@@ -54,9 +54,9 @@ function PasswordModal() {
                                             </button>
                                         </div>
                                         {decryptError && (
-                                            <p className="alert-error">Do not possible decrypt local data using this password.</p>
+                                            <p className="alert-error">Wallet is not possible decrypt using this password.</p>
                                         )}
-                                        <button onClick={handleDecryptWallets}>Use password and/or recover wallet</button>
+                                        <button onClick={handleDecryptWallets}>Open wallet using password above</button>
                                     </React.Fragment>
                                 )}
                                 {loading && (
