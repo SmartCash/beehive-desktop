@@ -14,7 +14,7 @@ import {
     getRewards,
     getTxId,
     getSpendableInputs,
-    activateRewards    
+    activateRewards,
 } from '../../lib/sapi';
 
 import './activate.css';
@@ -22,8 +22,8 @@ import { ActivateContext, ActivateProvider } from './ActivateContext';
 
 function RewardsActivateComponent() {
     const { wallets, walletCurrent: address } = useContext(WalletContext);
-    const { setPassword, password, canSend, TXError, hasPassword} = useContext(ActivateContext);
-    
+    const { setPassword, password, canSend, TXError, hasPassword } = useContext(ActivateContext);
+
     const [activating, setActivating] = useState(false);
     const [rewards, setRewards] = useState();
     const [isActive, setIsActive] = useState(false);
@@ -46,7 +46,7 @@ function RewardsActivateComponent() {
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     const onSubmit = async (data) => {
-        const SLEEP_TIME = 60 * 1000;
+        const SLEEP_TIME = 1000;
 
         if (hasPassword()) {
             setActivating(true);
@@ -71,7 +71,8 @@ function RewardsActivateComponent() {
                     value: 'Error to broadcast the transaction',
                 };
             }
-
+            rewards.activated = 1;
+            setRewards(rewards);
             setIsActive(true);
             setActivating(false);
 
@@ -79,10 +80,12 @@ function RewardsActivateComponent() {
                 status: 200,
                 value: transactionResponse.txid,
             };
-        }        
+        }
     };
 
-    {TXError && <p className="SendError">{TXError}</p>}
+    {
+        TXError && <p className="SendError">{TXError}</p>;
+    }
 
     if (rewardsError || balance < 1000) {
         return (
@@ -147,9 +150,11 @@ function RewardsActivateComponent() {
             {rewards && rewards.activated === 0 && isActive === false && (
                 <form onSubmit={handleSubmit(onSubmit)} className="formGroup" autoComplete="off">
                     <div className="wrapper">
-                        <p>The rewards is not activated for the address <span className="text-primary">{address}</span></p>
+                        <p>
+                            The rewards is not activated for the address <span className="text-primary">{address}</span>
+                        </p>
 
-                        <div className="form-not-activated">                            
+                        <div className="form-not-activated">
                             <input
                                 id="messageTo"
                                 placeholder="Insert your password here"
@@ -160,11 +165,12 @@ function RewardsActivateComponent() {
                                     setPassword(event.target.value);
                                 }}
                             />
-                            <button type="submit" disabled={!canSend()}>Activate Rewards</button>
-                        </div>                                                            
+                            <button type="submit" disabled={!canSend()}>
+                                Activate Rewards
+                            </button>
+                        </div>
                     </div>
                 </form>
-              
             )}
             <SmartNodeRewardsRoi />
         </Page>

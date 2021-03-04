@@ -142,7 +142,7 @@ export async function createAndSendRawTransaction({
 
         if (messageOpReturn && messageOpReturn.trim().length > 0) {
             //OP RETURN
-            const dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from(messageOpReturn, 'utf8')]);
+            const dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from('smart-chat: ' + messageOpReturn, 'utf8')]);
             transaction.addOutput(dataScript, 0);
         }
 
@@ -335,8 +335,8 @@ export async function getLockedInputs(address) {
     return await getUnspent(address, UXTO_TYPE.LOCKED);
 }
 
-export async function getSpendableBalance(address) {
-    const unspentList = await getUnspent(address, UXTO_TYPE.SPENDABLE);
+export async function getSpendableBalance(address, unspents) {
+    const unspentList = unspents ? unspents : await getUnspent(address, UXTO_TYPE.SPENDABLE);
     const balance = Number(sumFloats(unspentList.utxos.map((utxo) => utxo.value)).toFixed(8));
     return Number(balance.toFixed(8));
 }
@@ -405,7 +405,7 @@ export function getOpReturnMessage(tx) {
                     const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
                     const hexToUtf8 = convert('hex', 'utf8');
                     const decodedMessage = hexToUtf8(message);
-                    return decodedMessage;
+                    return decodedMessage.replace('smart-chat: ', '');
                 }
             }
         }
@@ -477,7 +477,7 @@ export function getAddressAndMessage(tx) {
                     const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
                     const hexToUtf8 = convert('hex', 'utf8');
                     const decodedMessage = hexToUtf8(message);
-                    transaction.message = decodedMessage;
+                    transaction.message = decodedMessage.replace('smart-chat: ', '');
                 } else {
                     return null;
                 }
@@ -602,19 +602,19 @@ function roundUp(num, precision) {
     return Math.ceil(num * precision) / precision;
 }
 
-export function getSmartRewardsRoi() {
+export async function getSmartRewardsRoi() {
     let options = {
         method: 'GET',
-        uri: `https://sapi.smartcash.cc/v1/smartrewards/roi`,
+        uri: `${await GetSapiUrl()}/v1/smartrewards/roi`,
         json: true,
     };
     return request.get(options);
 }
 
-export function getSmartNodeRoi() {
+export async function getSmartNodeRoi() {
     let options = {
         method: 'GET',
-        uri: `https://sapi.smartcash.cc/v1/smartnode/roi`,
+        uri: `${await GetSapiUrl()}/v1/smartnode/roi`,
         json: true,
     };
     return request.get(options);
@@ -630,7 +630,7 @@ export async function getNodesUrl() {
     try {
         var options = {
             method: 'GET',
-            uri: `https://sapi.smartcash.cc/v1/smartnode/check/ENABLED`,
+            uri: `https://${await GetSapiUrl()}/v1/smartnode/check/ENABLED`,
             json: true, // Automatically stringifies the body to JSON
         };
 

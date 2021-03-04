@@ -50,7 +50,7 @@ export const useChatController = () => {
             messageOpReturn: messageToSend,
             password: password,
             unspentList: spendableInputs,
-            unlockedBalance: await getSpendableBalance(walletCurrent),
+            unlockedBalance: await getSpendableBalance(walletCurrent, spendableInputs),
             privateKey: wallets.find((w) => w.address === walletCurrent).privateKey,
         });
 
