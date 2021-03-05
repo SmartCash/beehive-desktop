@@ -89,12 +89,6 @@ function Transactions() {
                                         Open into Sapi Explorer
                                     </button>
                                 </div>
-                                {tx.message && (
-                                    <div>
-                                        <p className="label">Message</p>
-                                        <p className="value">{tx.message}</p>
-                                    </div>
-                                )}
                             </div>
                         );
                     })}

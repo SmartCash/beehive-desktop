@@ -43,6 +43,7 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.initialLoading, payload: true });
         chatDispatch({ type: ACTION_TYPE.error, payload: null });
         const spendableInputs = await getSpendableInputs(walletCurrent);
+        console.log(spendableInputs);    
         const transaction = await createAndSendRawTransaction({
             toAddress: currentChatAddress,
             amount: 0.001,
@@ -54,6 +55,8 @@ export const useChatController = () => {
             privateKey: wallets.find((w) => w.address === walletCurrent).privateKey,
         });
 
+        console.log(transaction);
+
         if (transaction.status === 200) {
             chatDispatch({ type: ACTION_TYPE.messageToSend, payload: '' });
         } else {
@@ -62,6 +65,8 @@ export const useChatController = () => {
         _getTransactionHistory();
         chatDispatch({ type: ACTION_TYPE.loading, payload: false });
         chatDispatch({ type: ACTION_TYPE.initialLoading, payload: false });
+
+        chatDispatch({ type: ACTION_TYPE.newChat, payload: false });
     };
 
     function clearState() {

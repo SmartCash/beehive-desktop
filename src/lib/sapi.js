@@ -337,6 +337,7 @@ export async function getLockedInputs(address) {
 
 export async function getSpendableBalance(address, unspents) {
     const unspentList = unspents ? unspents : await getUnspent(address, UXTO_TYPE.SPENDABLE);
+    console.log(unspentList);
     const balance = Number(sumFloats(unspentList.utxos.map((utxo) => utxo.value)).toFixed(8));
     return Number(balance.toFixed(8));
 }
