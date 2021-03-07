@@ -202,3 +202,13 @@
     border-radius: var(--borderRadius);
     position: relative;
 }
+
+.thumb-vertical {
+    position: relative;
+    display: block;
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    border-radius: inherit;
+    background-color: var(--primary);
+ }

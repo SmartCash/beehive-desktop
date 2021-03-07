@@ -59,7 +59,7 @@ function ChatComponent() {
                     <button onClick={() => _getTransactionHistory()}>Refresh</button>
                 </div>
                 {error && <p className="error">{error}</p>}
-                <Scrollbars>
+                <Scrollbars renderThumbVertical={props => < div {...props} className="thumb-vertical"/>}>
                     {history?.map((tx) => {
                         if (tx.chatAddress !== 'undefined') {
                             return (
@@ -93,7 +93,7 @@ function ChatComponent() {
                         <p className="label">Chat Address</p>
                         <p className="value">{getChat()?.chatAddress}</p>
                     </div>
-                    <Scrollbars ref={messagesRef}>
+                    <Scrollbars ref={messagesRef} renderThumbVertical={props => < div {...props} className="thumb-vertical"/>}>
                         {initialLoading && (
                             <p className="loading">
                                 <img src={loader} alt={'loading...'} />

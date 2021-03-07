@@ -42,7 +42,7 @@ function Transactions() {
                             }
             {error && <p className="error">{error}</p>}
             {!error && history && (
-                <Scrollbars>
+                <Scrollbars renderThumbVertical={props => < div {...props} className="thumb-vertical"/>}>
                     {history?.map((tx, index) => {
                         tx.isLocked = isLockedTransaction(tx, walletCurrent) ? "Yes" : "No";
                         tx.message = getOpReturnMessage(tx);

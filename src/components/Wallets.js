@@ -36,7 +36,7 @@ function Wallets() {
                     <IconAdd />
                 </button>
             </div>
-            <Scrollbars>
+            <Scrollbars renderThumbVertical={props => < div {...props} className="thumb-vertical"/>}>
                 {wallets &&
                     wallets.map((wallet) => <Wallet wallet={wallet} key={wallet.address} isCurrent={isCurrent(wallet)} />)}
             </Scrollbars>

@@ -65,7 +65,7 @@ function SendComponent() {
 
     return (
         <Page className="page-send">
-            <Scrollbars>
+            <Scrollbars renderThumbVertical={props => < div {...props} className="thumb-vertical"/>}>
                 {TXIDError && <p className="SendError">{TXIDError}</p>}
 
                 {TXID && (
