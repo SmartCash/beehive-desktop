@@ -42,9 +42,10 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.loading, payload: true });
         chatDispatch({ type: ACTION_TYPE.initialLoading, payload: true });
         chatDispatch({ type: ACTION_TYPE.error, payload: null });
-        const spendableInputs = await getSpendableInputs(walletCurrent);
-        console.log(spendableInputs);    
-        const transaction = await createAndSendRawTransaction({
+
+        try {
+            const spendableInputs = await getSpendableInputs(walletCurrent);
+            const transaction = await createAndSendRawTransaction({
             toAddress: currentChatAddress,
             amount: 0.001,
             fee: await calculateFee(spendableInputs.utxos, messageToSend),
@@ -55,10 +56,10 @@ export const useChatController = () => {
             privateKey: wallets.find((w) => w.address === walletCurrent).privateKey,
         });
 
-        console.log(transaction);
-
         if (transaction.status === 200) {
             chatDispatch({ type: ACTION_TYPE.messageToSend, payload: '' });
+            chatDispatch({ type: ACTION_TYPE.success, payload: transaction.value});
+            chatDispatch({ type: ACTION_TYPE.error, payload: null });
         } else {
             chatDispatch({ type: ACTION_TYPE.error, payload: 'One error happened. Try again in a moment.' });
         }
@@ -67,15 +68,27 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.initialLoading, payload: false });
 
         chatDispatch({ type: ACTION_TYPE.newChat, payload: false });
+        } catch (error) {            
+            chatDispatch({ type: ACTION_TYPE.error, payload: 'One error happened. Try again in a moment.'  });
+        }        
     };
 
     function clearState() {
         chatDispatch({ type: ACTION_TYPE.clearState });
     }
 
+    function clearTXID() {
+        chatDispatch({ type: ACTION_TYPE.success, payload: ''});
+    }
+    
     function setMessageToSend(message) {
         chatDispatch({ type: ACTION_TYPE.messageToSend, payload: message });
     }
+
+    function setPasswordToSend(pass) {
+        console.log(pass);
+        chatDispatch({ type: ACTION_TYPE.password, payload: pass });
+    }  
 
     return {
         _getTransactionHistory,
@@ -83,6 +96,8 @@ export const useChatController = () => {
         handleSetNewChat,
         handleSubmitSendAmount,
         clearState,
+        clearTXID,
         setMessageToSend,
+        setPasswordToSend
     };
 };

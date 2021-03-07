@@ -11,6 +11,8 @@ const initialValue = {
     currentChatAddress: undefined,
     newChat: false,
     messageToSend: '',
+    password: '',
+    TXID: ''
 };
 
 const ACTION_TYPE = {
@@ -21,7 +23,9 @@ const ACTION_TYPE = {
     currentChatAddress: 'currentChatAddress',
     newChat: 'newChat',
     messageToSend: 'messageToSend',
-    clearState: 'clearState'
+    clearState: 'clearState',
+    clearTXID: 'clearTXID',
+    password: 'password'
 }
 
 function reducer(state, action) {
@@ -33,6 +37,9 @@ function reducer(state, action) {
         case ACTION_TYPE.error: {
             return { ...state, error: payload };
         }
+        case ACTION_TYPE.success: {
+            return { ...state, TXID: payload };
+        }
         case ACTION_TYPE.loading: {
             return { ...state, loading: payload };
         }
@@ -40,7 +47,6 @@ function reducer(state, action) {
             return { ...state, initialLoading: payload };
         }
         case ACTION_TYPE.currentChatAddress: {
-            console.log(payload);
             return { ...state, currentChatAddress: payload };
         }
         case ACTION_TYPE.newChat: {
@@ -49,8 +55,14 @@ function reducer(state, action) {
         case ACTION_TYPE.messageToSend: {
             return { ...state, messageToSend: payload };
         }
+        case ACTION_TYPE.password: {
+            return { ...state, password: payload };
+        }
         case ACTION_TYPE.clearState: {
             return initialValue;
+        }
+        case ACTION_TYPE.clearTXID: {
+            return { ...state, TXID: payload };
         }
         default: {
             throw new Error(`Unhandled action type: ${type}`);

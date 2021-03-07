@@ -5,7 +5,7 @@ import { WalletContext } from '../../context/WalletContext';
 import './Chat.css';
 import { NewChat } from './NewChat';
 import loader from '../../assets/images/loader.svg';
-import { ChatProvider, useChatState } from './Chat.context';
+import { ChatProvider, useChatState, clearTxId } from './Chat.context';
 import { useChatController } from './Chat.controller';
 
 export function Chat() {
@@ -17,20 +17,25 @@ export function Chat() {
 }
 
 function ChatComponent() {
-    const [password, setPassword] = useState('');
     const { walletCurrent } = useContext(WalletContext);
-    const { history, error, initialLoading, currentChatAddress, newChat, messageToSend } = useChatState();
+    const { history, error, initialLoading, currentChatAddress, newChat, messageToSend, password, TXID } = useChatState();
     const messagesRef = useRef();
     const {
         _getTransactionHistory,
         handleSetCurrentChatAddress,
         handleSubmitSendAmount,
         clearState,
+        clearTXID,
         setMessageToSend,
+        setPasswordToSend,
     } = useChatController();
 
     const getChat = () => {
         return history?.find((chat) => chat.chatAddress === currentChatAddress);
+    };
+
+    const canSend = () => {
+        return password !== '' && messageToSend !== ''
     };
 
     useEffect(() => {
@@ -88,6 +93,19 @@ function ChatComponent() {
 
             {newChat === false && (
                 <div className="chat-messages">
+                    {error && (<p className="ChatError">{error}</p>)}
+
+                    {TXID && (
+                         <div className="hasBeenSent">
+                         <button className="btnClose"  onClick={() => clearTXID()}>
+                             X
+                         </button>
+                         <p><strong>Message has been sent</strong></p>         
+                         <p>Transaction ID: <strong class="txID"> {TXID} </strong></p>
+                         <p>it may take up to a minute for your message to appear.</p>
+                     </div>
+                    )}                   
+                
                     <input type="hidden" value={getChat()?.chatAddress} id="chatAddress" />
                     <div className="transaction chatAddress">
                         <p className="label">Chat Address</p>
@@ -130,7 +148,7 @@ function ChatComponent() {
                                 type="password"
                                 value={password}
                                 onInput={(event) => {
-                                    setPassword(event.target.value);
+                                    setPasswordToSend(event.target.value);
                                 }}
                             />
                         </div>
@@ -138,6 +156,7 @@ function ChatComponent() {
                             <button
                                 className="btn send-button"
                                 onClick={() => handleSubmitSendAmount(currentChatAddress, messageToSend, password)}
+                                disabled={!canSend()}
                             >
                                 Send
                             </button>

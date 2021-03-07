@@ -235,7 +235,7 @@
 .page-chat .loading{
     margin:0 auto;
     text-align: center;
-    margin-top:200px
+    margin-top:100px
 }
 
 
@@ -249,3 +249,52 @@
     border-radius: inherit;
     background-color: var(--primary);
  }
+
+ 
+ .page-chat .hasBeenSent {
+    background: var(--primary);
+    padding: var(--spacer);
+    border-radius: var(--borderRadius);
+    color: #333;
+    margin-bottom: var(--spacer-lg);
+    position: relative;
+}
+.page-chat .hasBeenSent p {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    font-weight: 300;
+}
+.page-chat .hasBeenSent .btnClose {
+    border: 1px solid #333;
+    font-weight: 700;
+    position: absolute;
+    top: 0;
+    right: 20px;
+    border-radius: 100%;
+    font-size: 12px;
+    text-align: center;
+    padding: 6px 10px;
+}
+
+.page-chat .hasBeenSent button {
+    margin-top: 25px;
+    display: block;
+    color: #333;
+    border: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+}
+
+.txID{
+    font-size: 10px;
+}
+
+.page-chat .ChatError{
+    background-color:brown;
+    color: white;
+    padding:10px;
+    border-radius: var(--borderRadius);
+    position: relative;
+}
