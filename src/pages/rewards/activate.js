@@ -7,15 +7,7 @@ import SuperRewardsImage from '../../assets/images/super_rewards.png';
 import Page from '../../components/Page';
 import SmartNodeRewardsRoi from '../../components/SmartNodeRewardsRoi';
 import { WalletContext } from '../../context/WalletContext';
-import { subtractFloats, sumFloats } from '../../lib/math';
-import {
-    calculateFee,
-    createAndSendRawTransaction,
-    getRewards,
-    getTxId,
-    getSpendableInputs,
-    activateRewards,
-} from '../../lib/sapi';
+import { getRewards, getTxId, getSpendableInputs, activateRewards } from '../../lib/sapi';
 
 import './activate.css';
 import { ActivateContext, ActivateProvider } from './ActivateContext';
@@ -31,7 +23,7 @@ function RewardsActivateComponent() {
     const { privateKey, balance } = wallets.find((wallet) => wallet.address === address);
     const [countDownDate, setCountDownDate] = useState(0);
 
-    const { register, handleSubmit, errors, setError, setValue, formState } = useForm({
+    const { handleSubmit, setError } = useForm({
         mode: 'onChange',
     });
 
@@ -45,7 +37,7 @@ function RewardsActivateComponent() {
 
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    const onSubmit = async (data) => {
+    const onSubmit = async () => {
         const SLEEP_TIME = 1000;
 
         if (hasPassword()) {
@@ -72,6 +64,7 @@ function RewardsActivateComponent() {
                 };
             }
             rewards.activated = 1;
+            setCountDownDate(0);
             setRewards(rewards);
             setIsActive(true);
             setActivating(false);
@@ -87,7 +80,7 @@ function RewardsActivateComponent() {
         TXError && <p className="SendError">{TXError}</p>;
     }
 
-    if (rewardsError || balance < 1000) {
+    if (rewardsError || balance.unlocked < 1000) {
         return (
             <Page className="page-rewards">
                 <div className="wrapper">
