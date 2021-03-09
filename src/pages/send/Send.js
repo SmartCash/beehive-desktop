@@ -5,6 +5,7 @@ import { SendContext, SendProvider } from './SendContext';
 import MaskedInput from 'react-text-mask';
 import Scrollbars from 'react-custom-scrollbars';
 import { ReactComponent as IconCopy } from '../../assets/images/copy.svg';
+import { debounce } from 'lodash';
 const electron = window.require('electron');
 
 function SendComponent() {
@@ -34,6 +35,8 @@ function SendComponent() {
         onHandleChange,
         TXIDError,
     } = useContext(SendContext);
+
+    const setAmountToSendDebounced = debounce(value => setAmountToSend(value), 1500);
 
     if (walletCurrentBalance === 0) {
         return (
@@ -65,7 +68,7 @@ function SendComponent() {
 
     return (
         <Page className="page-send">
-            <Scrollbars renderThumbVertical={props => < div {...props} className="thumb-vertical"/>}>
+            <Scrollbars renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
                 {TXIDError && <p className="SendError">{TXIDError}</p>}
 
                 {TXID && (
@@ -118,7 +121,7 @@ function SendComponent() {
                             mask={currencyMask}
                             id="amount"
                             value={amountToSend}
-                            onInput={(event) => setAmountToSend(event.target.value)}
+                            onInput={(event) => setAmountToSendDebounced(event.target.value)}
                             autoComplete="off"
                         />
                         {amountToSendError && <p className="amountToSendError">{amountToSendError}</p>}
@@ -160,7 +163,6 @@ function SendComponent() {
                             }}
                         />
                     </div>
-
                 </div>
                 {netFee && (
                     <div className="transactionInfo">

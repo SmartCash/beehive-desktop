@@ -12,7 +12,7 @@ function Wallets() {
     const { isShowing, toggle } = useModal();
     const [disableCloseButton, setDisableCloseButton] = useState(false);
 
-    useEffect(() => {        
+    useEffect(() => {
         if (wallets && wallets.length === 0 && password) {
             setDisableCloseButton(true);
             toggle();

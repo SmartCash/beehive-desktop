@@ -86,27 +86,31 @@ export const SendProvider = ({ children }) => {
     const currencyMask = createNumberMask(defaultMaskOptions);
 
     const setAmountToSend = async (value) => {
+        dispatch({ type: 'setAmountToSend', payload: value });
+        dispatch({ type: 'setAmountToSendError', payload: '' });
+
         const { balance } = wallets.find((wallet) => wallet.address === walletCurrent);
 
-         // You must get the latest unspent from the NODE
-         const unspent = await getSpendableInputs(walletCurrent);
+        if (value < 0.001) {
+            dispatch({ type: 'setAmountToSendError', payload: 'The minimum amount to send is 0.001' });
+        }
+
+        // You must get the latest unspent from the NODE
+        const unspent = await getSpendableInputs(walletCurrent);
 
         var total = 0;
+        const fee = await calculateFee(unspent.utxos, state.messageToSend);
 
-        if (state.netFee != undefined) {
-            total = sumFloatsValues(value, state.netFee);
+        if (fee != undefined) {
+            total = sumFloatsValues(value, fee);
+            dispatch({ type: 'setNetFee', payload: fee || 0 })
         }
 
         if (exceeds(total, balance.unlocked)) {
             dispatch({ type: 'setAmountToSendError', payload: 'Exceeds balance' });
-        } else if (value < 0.001) {
-            dispatch({ type: 'setAmountToSendError', payload: 'The minimum amount to send is 0.001' });
         } else {
-            calculateFee(unspent.utxos, state.messageToSend).then((fee) => dispatch({ type: 'setNetFee', payload: fee || 0 }));
-
             dispatch({ type: 'setAmountToSendError', payload: null });
         }
-        dispatch({ type: 'setAmountToSend', payload: value });
     };
 
     const setListUnspent = (value) => {
@@ -182,7 +186,8 @@ export const SendProvider = ({ children }) => {
     async function calculateSendAll(percentage) {
         const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
         const balance = Number(wallet.balance.unlocked * percentage);
-        const fee = await calculateFee(wallet.unspent.utxos, state.messageToSend);
+        const unspent = await getSpendableInputs(walletCurrent);
+        const fee = await calculateFee(unspent.utxos, state.messageToSend);
         const amountToSend = subtractFloats(balance, fee);
 
         dispatch({ type: 'setAmountToSendError', payload: null });
