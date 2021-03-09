@@ -9,7 +9,7 @@
             "category": "public.app-category.finances"
         },
         "win": {
-            "icon": "build/icon.png"
+            "icon": "build/icon.svg"
         }
     },
     "main": "public/electron.js",

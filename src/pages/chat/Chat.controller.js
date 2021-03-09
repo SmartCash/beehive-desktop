@@ -86,7 +86,6 @@ export const useChatController = () => {
     }
 
     function setPasswordToSend(pass) {
-        console.log(pass);
         chatDispatch({ type: ACTION_TYPE.password, payload: pass });
     }  
 

@@ -121,6 +121,30 @@
     margin-left: auto;
 }
 
+.page-chat .message-Sent {
+    margin-left: auto;
+    background-color: #056162  !important;
+}
+
+.page-chat .message-Received  {
+    background-color: #5b5b5b  !important;
+}
+
+.page-chat .message-Received .value {
+    margin: 0 0 0;
+    padding: 0;
+    color: #fff !important;
+    font-size: 16px;
+}
+
+.page-chat .message-Sent .value {
+    margin: 0 0 0;
+    padding: 0;
+    color: #fff !important;
+    font-size: 16px;
+}
+
+
 .page-chat .message {
     width: 60%;
 }

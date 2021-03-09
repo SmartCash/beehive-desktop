@@ -122,7 +122,7 @@ function ChatComponent() {
                                 return (
                                     <div className={`transaction message message-${m.direction}`} key={m.time}>
                                         <p className="value">{m.message}</p>
-                                        <p className="label">{new Date(m.time * 1000).toLocaleString()}</p>
+                                        <p className="label">{m.direction} at {new Date(m.time * 1000).toLocaleString()}</p>
                                     </div>
                                 );
                             })}
