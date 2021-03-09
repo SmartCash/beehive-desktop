@@ -1,17 +1,18 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Page from '../../components/Page';
 import './Send.css';
 import { SendContext, SendProvider } from './SendContext';
 import MaskedInput from 'react-text-mask';
 import Scrollbars from 'react-custom-scrollbars';
 import { ReactComponent as IconCopy } from '../../assets/images/copy.svg';
-import { debounce } from 'lodash';
+import useDebounce from '../../hooks/useDebounce';
 const electron = window.require('electron');
 
 function SendComponent() {
     const {
         amountToSend,
         setAmountToSend,
+        checkAmounToSendError,
         amountToSendError,
         currencyMask,
         addressToSend,
@@ -36,7 +37,13 @@ function SendComponent() {
         TXIDError,
     } = useContext(SendContext);
 
-    const setAmountToSendDebounced = debounce(value => setAmountToSend(value), 1500);
+    const debouncedAmount = useDebounce(amountToSend, 1500);
+
+    useEffect(() => {
+        if (debouncedAmount) {
+            checkAmounToSendError(debouncedAmount);
+        }
+    }, [debouncedAmount]);
 
     if (walletCurrentBalance === 0) {
         return (
@@ -121,7 +128,7 @@ function SendComponent() {
                             mask={currencyMask}
                             id="amount"
                             value={amountToSend}
-                            onInput={(event) => setAmountToSendDebounced(event.target.value)}
+                            onInput={(event) => setAmountToSend(event.target.value)}
                             autoComplete="off"
                         />
                         {amountToSendError && <p className="amountToSendError">{amountToSendError}</p>}

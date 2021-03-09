@@ -85,8 +85,11 @@ export const SendProvider = ({ children }) => {
     };
     const currencyMask = createNumberMask(defaultMaskOptions);
 
-    const setAmountToSend = async (value) => {
+    const setAmountToSend = (value) => {
         dispatch({ type: 'setAmountToSend', payload: value });
+    };
+
+    const checkAmounToSendError = async (value) => {
         dispatch({ type: 'setAmountToSendError', payload: '' });
 
         const { balance } = wallets.find((wallet) => wallet.address === walletCurrent);
@@ -111,7 +114,7 @@ export const SendProvider = ({ children }) => {
         } else {
             dispatch({ type: 'setAmountToSendError', payload: null });
         }
-    };
+    }
 
     const setListUnspent = (value) => {
         dispatch({ type: 'setListUnspent', payload: value });
@@ -230,6 +233,7 @@ export const SendProvider = ({ children }) => {
         fiatList,
         currencyMask,
         setAmountToSend,
+        checkAmounToSendError,
         setAddressToSend,
         setMessageToSend,
         setPassword,
