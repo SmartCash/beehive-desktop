@@ -124,7 +124,16 @@ function RewardsActivateComponent() {
                             Rewards are already activated for this address <span className="text-primary">{address}</span>
                         </p>
                         <p>
-                            Balance Eligible: <span className="text-primary">{rewards.balance_eligible}</span>
+                            Balance Eligible:{' '}
+                            <span className="text-primary">
+                                {rewards.balance_eligible
+                                    .toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 4,
+                                    })
+                                    .replace('$', '∑')}
+                            </span>
                         </p>
                         <p>
                             Bonus level: <span className="text-primary">{rewards.bonus_level}</span>

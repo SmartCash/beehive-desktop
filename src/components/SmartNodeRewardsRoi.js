@@ -35,10 +35,28 @@ export default function SmartNodeRewardsRoi() {
                 <div className={style['wrapperColumn']}>
                     <h2>SmartNodes</h2>
                     <p>
-                        SmartNode Collateral <span className={style['text-primary']}>{nodeRoi['SmartNode Collateral']}</span>
+                        SmartNode Collateral{' '}
+                        <span className={style['text-primary']}>
+                            {nodeRoi['SmartNode Collateral']
+                                .toLocaleString('en-US', {
+                                    style: 'currency',
+                                    currency: 'USD',
+                                    minimumFractionDigits: 4,
+                                })
+                                .replace('$', '∑')}
+                        </span>
                     </p>
                     <p>
-                        Yearly Rewards <span className={style['text-primary']}>{nodeRoi['Yearly Rewards']}</span>
+                        Yearly Rewards{' '}
+                        <span className={style['text-primary']}>
+                            {nodeRoi['Yearly Rewards']
+                                .toLocaleString('en-US', {
+                                    style: 'currency',
+                                    currency: 'USD',
+                                    minimumFractionDigits: 4,
+                                })
+                                .replace('$', '∑')}
+                        </span>
                     </p>
                     <p>
                         Yearly Yield <span className={style['text-primary']}>{nodeRoi['Yearly Yield %']}%</span>

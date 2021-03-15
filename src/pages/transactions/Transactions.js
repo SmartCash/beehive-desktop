@@ -59,7 +59,15 @@ function Transactions() {
                                     </div>
                                     <div>
                                         <p className="label">Amount</p>
-                                        <p className="value">{tx.amount}</p>
+                                        <p className="value">
+                                            {tx.amount
+                                                .toLocaleString('en-US', {
+                                                    style: 'currency',
+                                                    currency: 'USD',
+                                                    minimumFractionDigits: 4,
+                                                })
+                                                .replace('$', '∑')}
+                                        </p>
                                     </div>
                                     <div>
                                         <p className="label">Time</p>
