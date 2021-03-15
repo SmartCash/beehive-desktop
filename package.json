@@ -55,7 +55,7 @@
         "react-start": "react-scripts start",
         "react-build": "react-scripts build -- --profile",
         "electron-build": "npm run react-build && electron-builder",
-        "electron-start": "concurrently -k --success first \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron --inspect=5858 .\""
+        "electron-start": "concurrently -k --success first \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron .\""
     },
     "eslintConfig": {
         "extends": "react-app"
