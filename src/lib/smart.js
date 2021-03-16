@@ -1,7 +1,7 @@
 const smartcash = require('smartcashjs-lib');
 const request = require('request-promise');
 const Mnemonic = require('./mnemonic/jsbip39');
-const bip38 = require('./mnemonic/bitcoinjs-bip38-2.0.2.js');
+const bitcoinjsBip38 = require('./mnemonic/bitcoinjs-bip38-2.0.2.js');
 const Levenshtein = require('./mnemonic/levenshtein');
 
 const DEFAULT_LANGUAGE = 'english';
@@ -31,6 +31,184 @@ const network = {
     wif: 0xbf,
 };
 
+export function importWords({ phrase, passphrase }) {
+    // Get the mnemonic phrase
+    var errorText = findPhraseErrors(phrase);
+    if (errorText) {
+        return Error(errorText);
+    }
+    // Calculate and display
+
+    seed = calcBip32RootKeyFromSeed(phrase, passphrase);
+    calcForDerivationPath();
+    // Show the word indexes
+    showWordIndexes({ phrase: phrase });
+}
+
+function showWordIndexes({ phrase }) {
+    var phrase = DOM.phrase.val();
+    var words = phraseToWordArray(phrase);
+    var wordIndexes = [];
+    for (var i = 0; i < words.length; i++) {
+        var word = words[i];
+        var wordIndex = WORDLISTS[DEFAULT_LANGUAGE].indexOf(word);
+        wordIndexes.push(wordIndex);
+    }
+    var wordIndexesStr = wordIndexes.join(', ');
+    return wordIndexesStr;
+}
+
+function calcForDerivationPath() {
+    // Get the derivation path
+    var derivationPath = getDerivationPath({ bip: BIP.BIP_44 });
+    var errorText = findDerivationPathErrors(derivationPath);
+    if (errorText) {
+        return Error(errorText);
+    }
+
+    return {
+        bip32ExtendedKey: calcBip32ExtendedKey(derivationPath),
+        BIP_44: displayBip44Info(),
+        BIP_32: displayBip32Info(),
+    };
+}
+
+function displayBip44Info() {
+    // Get the derivation path for the account
+    var purpose = 44;
+    var coin = 224;
+    var account = 0;
+    var path = 'm/';
+    path += purpose + "'/";
+    path += coin + "'/";
+    path += account + "'/";
+    // Calculate the account extended keys
+    var accountExtendedKey = calcBip32ExtendedKey(path);
+    var accountXprv = accountExtendedKey.toBase58();
+    var accountXpub = accountExtendedKey.neutered().toBase58();
+    // Display the extended keys
+    return {
+        accountXprv: accountXprv,
+        accountXpub: accountXpub,
+    };
+}
+
+function displayBip32Info() {
+    // Display the key
+
+    var rootKey = bip32RootKey.toBase58();
+    var xprvkeyB58 = 'NA';
+    if (!bip32ExtendedKey.isNeutered()) {
+        xprvkeyB58 = bip32ExtendedKey.toBase58();
+    }
+    var extendedPrivKey = xprvkeyB58;
+    var extendedPubKey = bip32ExtendedKey.neutered().toBase58();
+
+    return {
+        rootKey,
+        extendedPrivKey,
+        extendedPubKey,
+        addresses: getAddressesFromDerived(0, 10),
+    };
+}
+
+function getAddressesFromDerived(start, total) {
+    const addresses = [];
+    for (var i = 0; i < total; i++) {
+        var index = i + start;
+        addresses.push(new calcAddressesFromDerived({ index: index }));
+    }
+    return addresses;
+}
+
+function calcAddressesFromDerived({ index, useHardenedAddresses = false, useBip38 = false, bip38password = '' }) {
+    // derive HDkey for this row of the table
+    var key = 'NA';
+    if (useHardenedAddresses) {
+        key = bip32ExtendedKey.deriveHardened(index);
+    } else {
+        key = bip32ExtendedKey.derive(index);
+    }
+    // bip38 requires uncompressed keys
+    // see https://github.com/iancoleman/bip39/issues/140#issuecomment-352164035
+    var keyPair = key.keyPair;
+    var useUncompressed = useBip38;
+    if (useUncompressed) {
+        keyPair = new smartcash.ECPair(keyPair.d);
+    }
+    // get address
+    var address = keyPair.getAddress().toString();
+    // get privkey
+    var hasPrivkey = !key.isNeutered();
+    var privkey = 'NA';
+    if (hasPrivkey) {
+        privkey = keyPair.toWIF();
+        // BIP38 encode private key if required
+        if (useBip38) {
+            privkey = bitcoinjsBip38.encrypt(keyPair.d.toBuffer(), false, bip38password, function (p) {
+                console.log('Progressed ' + p.percent.toFixed(1) + '% for index ' + index);
+            });
+        }
+    }
+    // get pubkey
+    var pubkey = keyPair.getPublicKeyBuffer().toString('hex');
+    var indexText = getDerivationPath() + '/' + index;
+    if (useHardenedAddresses) {
+        indexText = indexText + "'";
+    }
+
+    return { indexText, address, pubkey, privkey };
+}
+
+function findDerivationPathErrors({ path, bip = BIP.BIP_44, hardened = false }) {
+    // TODO is not perfect but is better than nothing
+    // Inspired by
+    // https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#test-vectors
+    // and
+    // https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#extended-keys
+    var maxDepth = 255; // TODO verify this!!
+    var maxIndexValue = Math.pow(2, 31); // TODO verify this!!
+    if (path[0] != 'm') {
+        return "First character must be 'm'";
+    }
+    if (path.length > 1) {
+        if (path[1] != '/') {
+            return "Separator must be '/'";
+        }
+        var indexes = path.split('/');
+        if (indexes.length > maxDepth) {
+            return 'Derivation depth is ' + indexes.length + ', must be less than ' + maxDepth;
+        }
+        for (var depth = 1; depth < indexes.length; depth++) {
+            var index = indexes[depth];
+            var invalidChars = index.replace(/^[0-9]+'?$/g, '');
+            if (invalidChars.length > 0) {
+                return 'Invalid characters ' + invalidChars + ' found at depth ' + depth;
+            }
+            var indexValue = parseInt(index.replace("'", ''));
+            if (isNaN(depth)) {
+                return 'Invalid number at depth ' + depth;
+            }
+            if (indexValue > maxIndexValue) {
+                return 'Value of ' + indexValue + ' at depth ' + depth + ' must be less than ' + maxIndexValue;
+            }
+        }
+    }
+    // Check root key exists or else derivation path is useless!
+    if (!bip32RootKey) {
+        return 'No root key';
+    }
+    // Check no hardened derivation path when using xpub keys
+    var hardenedPath = path.indexOf("'") > -1;
+    var hardenedAddresses = bip === BIP.BIP_32 && hardened;
+    var hardened = hardenedPath || hardenedAddresses;
+    var isXpubkey = bip32RootKey.isNeutered();
+    if (hardened && isXpubkey) {
+        return 'Hardened derivation path is invalid with xpub key';
+    }
+    return false;
+}
+
 export function generateRandomWords() {
     // get the amount of entropy to use
     const numWords = parseInt(DEFAULT_NUMBER_OF_WORDS);
@@ -42,17 +220,6 @@ export function generateRandomWords() {
     const words = mnemonic.toMnemonic(data);
 
     return words;
-}
-
-export function isAddress(address) {
-    return new Promise((resolve, reject) => {
-        try {
-            smartcash.address.fromBase58Check(address);
-            resolve(address);
-        } catch (e) {
-            return reject(e);
-        }
-    });
 }
 
 function calcBip32RootKeyFromSeed(phrase, passphrase) {
@@ -158,6 +325,7 @@ function phraseToWordArray(phrase) {
     }
     return noBlanks;
 }
+
 function wordArrayToPhrase(words) {
     return words.join(' ');
 }
@@ -195,6 +363,17 @@ function getDerivationPath({ bip = BIP.BIP_44 }) {
     } else {
         console.log('Unknown derivation path');
     }
+}
+
+export function isAddress(address) {
+    return new Promise((resolve, reject) => {
+        try {
+            smartcash.address.fromBase58Check(address);
+            resolve(address);
+        } catch (e) {
+            return reject(e);
+        }
+    });
 }
 
 export function isPK(keyString) {
