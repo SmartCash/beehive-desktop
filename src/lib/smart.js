@@ -2,12 +2,23 @@ const smartcash = require('smartcashjs-lib');
 const request = require('request-promise');
 const Mnemonic = require('./mnemonic/jsbip39');
 const bip38 = require('./mnemonic/bitcoinjs-bip38-2.0.2.js');
-const WORDLISTS = require('./wordlist_english');
-const mnemonics = { english: new Mnemonic('english') };
-const mnemonic = mnemonics['english'];
+const Levenshtein = require('./mnemonic/levenshtein');
+
+const DEFAULT_LANGUAGE = 'english';
+
+const DEFAULT_NUMBER_OF_WORDS = 15;
+
+const WORDLISTS = require('./mnemonic/wordlist_english');
+const mnemonics = { english: new Mnemonic(DEFAULT_LANGUAGE) };
+const mnemonic = mnemonics[DEFAULT_LANGUAGE];
 const seed = null;
 const bip32RootKey = null;
 const bip32ExtendedKey = null;
+
+const BIP = {
+    BIP_32: 'BIP_32',
+    BIP_44: 'BIP_44',
+};
 
 const network = {
     messagePrefix: '\x18SmartCash Signed Message:\n',
@@ -22,7 +33,7 @@ const network = {
 
 export function generateRandomWords() {
     // get the amount of entropy to use
-    const numWords = parseInt(15);
+    const numWords = parseInt(DEFAULT_NUMBER_OF_WORDS);
     const strength = (numWords / 3) * 32;
     const buffer = new Uint8Array(strength / 8);
     // create secure entropy
@@ -53,6 +64,7 @@ function calcBip32RootKeyFromBase58(rootKeyBase58) {
     // try the network params as currently specified
     bip32RootKey = smartcash.HDNode.fromBase58(rootKeyBase58);
 }
+
 function calcBip32ExtendedKey(path) {
     // Check there's a root key to derive from
     if (!bip32RootKey) {
@@ -80,6 +92,7 @@ function calcBip32ExtendedKey(path) {
     }
     return extendedKey;
 }
+
 export function findPhraseErrors(phrase) {
     // Preprocess the words
     phrase = mnemonic.normalizeString(phrase);
@@ -91,8 +104,7 @@ export function findPhraseErrors(phrase) {
     // Check each word
     for (var i = 0; i < words.length; i++) {
         var word = words[i];
-        var language = getLanguage();
-        if (WORDLISTS[language].indexOf(word) == -1) {
+        if (WORDLISTS[DEFAULT_LANGUAGE].indexOf(word) == -1) {
             console.log('Finding closest match to ' + word);
             var nearestWord = findNearestWord(word);
             return word + ' not in wordlist, did you mean ' + nearestWord + '?';
@@ -106,6 +118,7 @@ export function findPhraseErrors(phrase) {
     }
     return false;
 }
+
 function validateRootKey(rootKeyBase58) {
     // try the network params as currently specified
     try {
@@ -115,23 +128,9 @@ function validateRootKey(rootKeyBase58) {
     }
     return '';
 }
-function getLanguage() {
-    var defaultLanguage = 'english';
-    // Try to get from existing phrase
-    var language = getLanguageFromPhrase();
-    // Try to get from url if not from phrase
-    if (language.length == 0) {
-        language = getLanguageFromUrl();
-    }
-    // Default to English if no other option
-    if (language.length == 0) {
-        language = defaultLanguage;
-    }
-    return language;
-}
+
 function findNearestWord(word) {
-    var language = getLanguage();
-    var words = WORDLISTS[language];
+    var words = WORDLISTS[DEFAULT_LANGUAGE];
     var minDistance = 99;
     var closestWord = words[0];
     for (var i = 0; i < words.length; i++) {
@@ -147,58 +146,7 @@ function findNearestWord(word) {
     }
     return closestWord;
 }
-function getLanguageFromPhrase(phrase) {
-    // Check if how many words from existing phrase match a language.
-    var language = '';
-    if (!phrase) {
-        phrase = DOM.phrase.val();
-    }
-    if (phrase.length > 0) {
-        var words = phraseToWordArray(phrase);
-        var languageMatches = {};
-        for (l in WORDLISTS) {
-            // Track how many words match in this language
-            languageMatches[l] = 0;
-            for (var i = 0; i < words.length; i++) {
-                var wordInLanguage = WORDLISTS[l].indexOf(words[i]) > -1;
-                if (wordInLanguage) {
-                    languageMatches[l]++;
-                }
-            }
-            // Find languages with most word matches.
-            // This is made difficult due to commonalities between Chinese
-            // simplified vs traditional.
-            var mostMatches = 0;
-            var mostMatchedLanguages = [];
-            for (var l in languageMatches) {
-                var numMatches = languageMatches[l];
-                if (numMatches > mostMatches) {
-                    mostMatches = numMatches;
-                    mostMatchedLanguages = [l];
-                } else if (numMatches == mostMatches) {
-                    mostMatchedLanguages.push(l);
-                }
-            }
-        }
-        if (mostMatchedLanguages.length > 0) {
-            // Use first language and warn if multiple detected
-            language = mostMatchedLanguages[0];
-            if (mostMatchedLanguages.length > 1) {
-                console.warn('Multiple possible languages');
-                console.warn(mostMatchedLanguages);
-            }
-        }
-    }
-    return language;
-}
-function setMnemonicLanguage() {
-    var language = getLanguage();
-    // Load the bip39 mnemonic generator for this language if required
-    if (!(language in mnemonics)) {
-        mnemonics[language] = new Mnemonic(language);
-    }
-    mnemonic = mnemonics[language];
-}
+
 function phraseToWordArray(phrase) {
     var words = phrase.split(/\s/g);
     var noBlanks = [];
@@ -211,13 +159,9 @@ function phraseToWordArray(phrase) {
     return noBlanks;
 }
 function wordArrayToPhrase(words) {
-    var phrase = words.join(' ');
-    var language = getLanguageFromPhrase(phrase);
-    if (language == 'japanese') {
-        phrase = words.join('\u3000');
-    }
-    return phrase;
+    return words.join(' ');
 }
+
 function uint8ArrayToHex(a) {
     var s = '';
     for (var i = 0; i < a.length; i++) {
@@ -230,36 +174,29 @@ function uint8ArrayToHex(a) {
     return s;
 }
 
-function getDerivationPath() {
-    if (bip44TabSelected()) {
-        var purpose = parseIntNoNaN(DOM.bip44purpose.val(), 44);
-        var coin = parseIntNoNaN(224);
-        var account = parseIntNoNaN(DOM.bip44account.val(), 0);
-        var change = parseIntNoNaN(DOM.bip44change.val(), 0);
+function getDerivationPath({ bip = BIP.BIP_44 }) {
+    if (bip === BIP.BIP_44) {
+        var purpose = 44;
+        var coin = 224;
+        var account = 0;
+        var change = 0;
         var path = 'm/';
         path += purpose + "'/";
         path += coin + "'/";
         path += account + "'/";
         path += change;
-        DOM.bip44path.val(path);
-        var derivationPath = DOM.bip44path.val();
+        var derivationPath = path;
         console.log('Using derivation path from BIP44 tab: ' + derivationPath);
         return derivationPath;
-    } else if (bip32TabSelected()) {
-        var derivationPath = DOM.bip32path.val();
+    } else if (bip === BIP.BIP_32) {
+        var derivationPath = 'm/0';
         console.log('Using derivation path from BIP32 tab: ' + derivationPath);
         return derivationPath;
     } else {
         console.log('Unknown derivation path');
     }
 }
-function parseIntNoNaN(val, defaultVal) {
-    var v = parseInt(val);
-    if (isNaN(v)) {
-        return defaultVal;
-    }
-    return v;
-}
+
 export function isPK(keyString) {
     return new Promise((resolve, reject) => {
         try {
