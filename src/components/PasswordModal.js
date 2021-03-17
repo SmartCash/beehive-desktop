@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import loader from '../assets/images/loader.svg';
 import { ReactComponent as Logo } from '../assets/images/logo.svg';
 import { WalletContext } from '../context/WalletContext';
-import style from './WalletModal.module.css';
+import style from './modal/modal.module.css';
 
 function PasswordModal() {
     const { decryptWallets, decryptError } = useContext(WalletContext);
