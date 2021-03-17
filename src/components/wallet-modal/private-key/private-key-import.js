@@ -1,5 +1,16 @@
-export function PrivateKeyImport() {
+import * as CryptoJS from 'crypto-js';
+import { isPK } from '../../../lib/smart';
+import { WalletContext } from '../../../context/WalletContext';
+import { createNewWalletKeyPair, getAddress } from '../../../lib/sapi';
+import React, { useContext, useState } from 'react';
+import style from '../wallet-modal.module.css';
+
+export function PrivateKeyImport({ hide, disableCloseButton, setCreateWallet }) {
+    const [wallet, setWallet] = useState();
     const [privateKey, setPrivateKey] = useState();
+    const [_password, setPassword] = useState();
+    const [error, setError] = useState('');
+    const { addWallet, decryptWallets } = useContext(WalletContext);
 
     const insertPrivateKey = (event) => setPrivateKey(event.target.value);
 
@@ -21,11 +32,17 @@ export function PrivateKeyImport() {
         }
     };
 
+    const handleCreateNewOne = () => {
+        setError('');
+        setCreateWallet(true);
+        setWallet(createNewWalletKeyPair());
+    };
+
     return (
         <div className={style['import-address']}>
             <h2>Import from Private Key</h2>
             <textarea onInput={insertPrivateKey} placeholder="Insert your private key here" rows={5} />
-            <input type="password" placeholder="Password" onInput={(event) => setPassword(event.target.value)} />
+            <input type="password" placeholder="Your password" onInput={(event) => setPassword(event.target.value)} />
             {error && <p>{error}</p>}
             <button onClick={handleImportPrivateKey}>Import</button>
             <button onClick={handleCreateNewOne}>Create new one</button>

@@ -1,31 +1,14 @@
-import * as CryptoJS from 'crypto-js';
-import React, { useContext, useState } from 'react';
-import { WalletContext } from '../../context/WalletContext';
-import generatePDF from '../../lib/GeneratorPDF';
-import { createNewWalletKeyPair, getAddress } from '../../lib/sapi';
-import { isPK } from '../../lib/smart';
+import React, { useState } from 'react';
 import { Modal } from '../modal/modal';
 import { PrivateKeyImport } from './private-key/private-key-import';
-import { PrivateKeyNew } from './private-key/private-key-new';
+import { PrivateKeyCreate } from './private-key/private-key-create';
 import style from './wallet-modal.module.css';
 
-export default function WalletModal({ isShowing, hide, disableCloseButton }) {
-    const [wallet, setWallet] = useState();
+export default function WalletModal({ isShowing, hide, disableCloseButton, wallet, setWallet }) {
     const [createWallet, setCreateWallet] = useState(false);
-    const { addWallet, decryptWallets } = useContext(WalletContext);
-
-    const [error, setError] = useState('');
-
-    const handleCreateNewOne = () => {
-        setError('');
-        setCreateWallet(true);
-        setWallet(createNewWalletKeyPair());
-    };
 
     const handleCloseModal = () => {
-        setError('');
         setCreateWallet(false);
-        setWallet(null);
         hide();
     };
 
@@ -33,8 +16,23 @@ export default function WalletModal({ isShowing, hide, disableCloseButton }) {
         isShowing && (
             <Modal title="New Wallet" onClose={handleCloseModal} showCloseButton={disableCloseButton}>
                 <div className={style['address-content']}>
-                    {!createWallet && <PrivateKeyImport />}
-                    {createWallet && <PrivateKeyNew />}
+                    {!createWallet && (
+                        <PrivateKeyImport
+                            hide={hide}
+                            disableCloseButton={disableCloseButton}
+                            setCreateWallet={setCreateWallet}
+                            wallet={wallet}
+                            setWallet={setWallet}
+                        />
+                    )}
+                    {createWallet && (
+                        <PrivateKeyCreate
+                            hide={hide}
+                            disableCloseButton={disableCloseButton}
+                            wallet={wallet}
+                            setWallet={setWallet}
+                        />
+                    )}
                 </div>
             </Modal>
         )
