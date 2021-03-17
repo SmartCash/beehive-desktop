@@ -5,8 +5,7 @@ import { createNewWalletKeyPair, getAddress } from '../../../lib/sapi';
 import React, { useContext, useState } from 'react';
 import style from '../wallet-modal.module.css';
 
-export function PrivateKeyImport({ hide, disableCloseButton, setCreateWallet }) {
-    const [wallet, setWallet] = useState();
+export function PrivateKeyImport({ hide, disableCloseButton, setCreateWallet, wallet, setWallet }) {
     const [privateKey, setPrivateKey] = useState();
     const [_password, setPassword] = useState();
     const [error, setError] = useState('');
@@ -39,13 +38,13 @@ export function PrivateKeyImport({ hide, disableCloseButton, setCreateWallet }) 
     };
 
     return (
-        <div className={style['import-address']}>
+        <div className={style.import_address}>
             <h2>Import from Private Key</h2>
             <textarea onInput={insertPrivateKey} placeholder="Insert your private key here" rows={5} />
             <input type="password" placeholder="Your password" onInput={(event) => setPassword(event.target.value)} />
             {error && <p>{error}</p>}
-            <button onClick={handleImportPrivateKey}>Import</button>
-            <button onClick={handleCreateNewOne}>Create new one</button>
+            <button className={style.btn} onClick={handleImportPrivateKey}>Import</button>
+            <button className={[style.btn, style.btn_outline].join(' ')} onClick={handleCreateNewOne}>Create new one</button>
         </div>
     );
 }

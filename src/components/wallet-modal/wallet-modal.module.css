@@ -8,7 +8,7 @@
     margin-top: 0;
 }
 
-.address-content button {
+.address-content .btn {
     background: var(--primary);
     border: 0;
     color: #333;
@@ -21,7 +21,17 @@
     cursor: pointer;
 }
 
-.address-content button:hover {
+.address-content .btn ~ .btn {
+    margin-left: 24px;
+}
+
+.address-content .btn_outline {
+    background: none;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+
+.address-content .btn:hover {
     background: var(--black);
     color: #fff
 }
@@ -30,13 +40,13 @@
     width: 100%;
 }
 
-.import-address {
+.import_address {
     width: 100%;
 }
 
 .new-address input,
-.import-address input,
-.import-address textarea {
+.import_address input,
+.import_address textarea {
     background: none;
     resize: none;
     width: 100%;
@@ -66,4 +76,31 @@
     margin: 10px auto 0;
     text-align: center;
     width: 100%;
+}
+
+.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 32px;
+}
+
+.tabs button {
+    border: 0;
+    flex: 1;
+    border-radius: 2px;
+    padding: 16px;
+    background-color: transparent;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    cursor: pointer;
+}
+
+.tabs button ~ button {
+    margin-left: 24px;
+}
+
+.tabs button.activated {
+    background-color: var(--primary);
+    color: var(--black);
 }

@@ -4,7 +4,7 @@ import generatePDF from '../../../lib/GeneratorPDF';
 import React, { useContext, useState } from 'react';
 import style from '../wallet-modal.module.css';
 
-export function PrivateKeyCreate({ hide, disableCloseButton, wallet }) {
+export function PrivateKeyCreate({ hide, disableCloseButton, setCreateWallet, wallet }) {
     const [_password, setPassword] = useState();
     const [error, setError] = useState('');
     const { addWallet, decryptWallets } = useContext(WalletContext);
@@ -37,8 +37,11 @@ export function PrivateKeyCreate({ hide, disableCloseButton, wallet }) {
                 <input type="password" placeholder="Your password" onInput={(event) => setPassword(event.target.value)} />
             </div>
             {error && <p>{error}</p>}
-            <button className="btn" onClick={handleAddWallet}>
+            <button className={style.btn} onClick={handleAddWallet}>
                 Use this one and save as PDF
+            </button>
+            <button className={[style.btn, style.btn_outline].join(' ')} onClick={() => setCreateWallet(false)}>
+                Back
             </button>
         </div>
     );
