@@ -19,15 +19,6 @@ const BIP = {
     BIP_44: 'BIP_44',
 };
 
-function generatePhrase() {
-    const mnemonic = new Mnemonic();
-    return mnemonic.toString();
-}
-
-function validatePhrase({ words }) {
-    return Mnemonic.isValid(words);
-}
-
 function getBIP32HDKeyPair({ words, passphrase }) {
     var mnemonic = new Mnemonic(words);
     const seed = mnemonic.toSeed(passphrase);
@@ -56,39 +47,6 @@ function getDerivationPaths() {
 function getBIP32ExtendedKey({ words, passphrase, derivationPath }) {
     let extendedKey = getBIP32HDKeyPair({ words: words, passphrase: passphrase });
     return extendedKey.derivePath(derivationPath);
-}
-
-function getFromDerivationPaths({ words, passphrase }) {
-    const bip44ExtendedKey = getBIP32ExtendedKey({
-        words: words,
-        passphrase: passphrase,
-        derivationPath: getDerivationPaths().BIP44DerivationPath,
-    });
-    const bip32ExtendedKey = getBIP32ExtendedKey({
-        words: words,
-        passphrase: passphrase,
-        derivationPath: getDerivationPaths().BIP32DerivationPath,
-    });
-    return {
-        BIP_44: {
-            bip44ExtendedKey: bip44ExtendedKey,
-            xPrivateKey: bip44ExtendedKey.toBase58(),
-            xPublicKey: bip44ExtendedKey.neutered().toBase58(),
-            addresses: getAddressesFromDerived({
-                extendedKey: bip44ExtendedKey,
-                derivationPath: getDerivationPaths().BIP44DerivationPath,
-            }),
-        },
-        BIP_32: {
-            bip32ExtendedKey: bip32ExtendedKey,
-            xPrivateKey: bip32ExtendedKey.toBase58(),
-            xPublicKey: bip32ExtendedKey.neutered().toBase58(),
-            addresses: getAddressesFromDerived({
-                extendedKey: bip32ExtendedKey,
-                derivationPath: getDerivationPaths().BIP32DerivationPath,
-            }),
-        },
-    };
 }
 
 function getAddressesFromDerived({ start = 0, total = 10, extendedKey, derivationPath }) {
@@ -147,6 +105,49 @@ function calcAddressesFromDerived({
 
     return { indexText, address, pubkey, privkey };
 }
+
+export function generatePhrase() {
+    const mnemonic = new Mnemonic();
+    return mnemonic.toString();
+}
+
+export function validatePhrase({ words }) {
+    return Mnemonic.isValid(words);
+}
+
+export function getFromDerivationPaths({ words, passphrase }) {
+    const bip44ExtendedKey = getBIP32ExtendedKey({
+        words: words,
+        passphrase: passphrase,
+        derivationPath: getDerivationPaths().BIP44DerivationPath,
+    });
+    const bip32ExtendedKey = getBIP32ExtendedKey({
+        words: words,
+        passphrase: passphrase,
+        derivationPath: getDerivationPaths().BIP32DerivationPath,
+    });
+    return {
+        BIP_44: {
+            bip44ExtendedKey: bip44ExtendedKey,
+            xPrivateKey: bip44ExtendedKey.toBase58(),
+            xPublicKey: bip44ExtendedKey.neutered().toBase58(),
+            addresses: getAddressesFromDerived({
+                extendedKey: bip44ExtendedKey,
+                derivationPath: getDerivationPaths().BIP44DerivationPath,
+            }),
+        },
+        BIP_32: {
+            bip32ExtendedKey: bip32ExtendedKey,
+            xPrivateKey: bip32ExtendedKey.toBase58(),
+            xPublicKey: bip32ExtendedKey.neutered().toBase58(),
+            addresses: getAddressesFromDerived({
+                extendedKey: bip32ExtendedKey,
+                derivationPath: getDerivationPaths().BIP32DerivationPath,
+            }),
+        },
+    };
+}
+
 /*
 // console.log(generatePhrase());
 console.log(validatePhrase({ words: TEST_PHRASE }));
