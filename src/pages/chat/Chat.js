@@ -24,6 +24,7 @@ function ChatComponent() {
         _getTransactionHistory,
         handleSetCurrentChatAddress,
         handleSubmitSendAmount,
+        handleSetNewChat,
         clearState,
         clearTXID,
         setMessageToSend,
@@ -60,7 +61,7 @@ function ChatComponent() {
             <div className="chat-wallets">
                 <div className="header">
                     <span className="title">Chats</span>
-                    {/* <button onClick={handleSetNewChat}>Start chat</button> */}
+                    {<button onClick={handleSetNewChat}>Start chat</button>}
                     <button onClick={() => _getTransactionHistory()}>Refresh</button>
                 </div>
                 {error && <p className="error">{error}</p>}
