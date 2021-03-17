@@ -46,7 +46,7 @@
         "react-text-mask": "~5.4.3",
         "request": "~2.88.0",
         "request-promise": "~4.2.5",
-        "smartcashjs-lib": "~3.3.6",
+        "smartcashjs-lib": "git+https://github.com/SmartCash/SmartCashjs-lib.git",
         "text-mask-addons": "~3.8.0"
     },
     "scripts": {
@@ -55,7 +55,7 @@
         "react-start": "react-scripts start",
         "react-build": "react-scripts build -- --profile",
         "electron-build": "npm run react-build && electron-builder",
-        "electron-start": "concurrently -k --success first \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron --inspect=5858 .\""
+        "electron-start": "concurrently -k --success first \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron .\""
     },
     "eslintConfig": {
         "extends": "react-app"

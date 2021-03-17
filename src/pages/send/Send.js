@@ -102,10 +102,28 @@ function SendComponent() {
                         </button>
                     </p>
                     <p>
-                        Balance <span>{walletCurrentBalance?.unlocked}</span>
+                        Balance{' '}
+                        <span>
+                            {walletCurrentBalance?.unlocked
+                                .toLocaleString('en-US', {
+                                    style: 'currency',
+                                    currency: 'USD',
+                                    minimumFractionDigits: 4,
+                                })
+                                .replace('$', '∑')}
+                        </span>
                     </p>
                     <p>
-                        Locked <span>{walletCurrentBalance?.locked}</span>
+                        Locked{' '}
+                        <span>
+                            {walletCurrentBalance?.locked
+                                .toLocaleString('en-US', {
+                                    style: 'currency',
+                                    currency: 'USD',
+                                    minimumFractionDigits: 4,
+                                })
+                                .replace('$', '∑')}
+                        </span>
                     </p>
                 </div>
                 <div className="form-group">
@@ -175,11 +193,27 @@ function SendComponent() {
                     <div className="transactionInfo">
                         <div>
                             <p className="label">Net fee</p>
-                            <p className="value">{netFee}</p>
+                            <p className="value">
+                                {netFee
+                                    .toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 4,
+                                    })
+                                    .replace('$', '∑')}
+                            </p>
                         </div>
                         <div>
                             <p className="label">Total in Smart</p>
-                            <p className="value">{totalInSmart.toFixed(8)}</p>
+                            <p className="value">
+                                {totalInSmart
+                                    .toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: 4,
+                                    })
+                                    .replace('$', '∑')}
+                            </p>
                         </div>
                     </div>
                 )}

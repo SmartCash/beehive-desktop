@@ -46,6 +46,7 @@ export async function createAndSendRawTransaction({
     fee,
     unlockedBalance,
     password,
+    isChat,
 }) {
     if (!toAddress) {
         return {
@@ -142,7 +143,10 @@ export async function createAndSendRawTransaction({
 
         if (messageOpReturn && messageOpReturn.trim().length > 0) {
             //OP RETURN
-            const dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from('smart-chat: ' + messageOpReturn, 'utf8')]);
+            const dataScript = smartCash.script.compile([
+                smartCash.opcodes.OP_RETURN,
+                Buffer.from('smart-chat: ' + messageOpReturn, 'utf8'),
+            ]);
             transaction.addOutput(dataScript, 0);
         }
 
@@ -165,7 +169,7 @@ export async function createAndSendRawTransaction({
         }
 
         let signedTransaction = transaction.build().toHex();
-        let tx = await sendTransaction(signedTransaction);
+        let tx = await sendTransaction(signedTransaction, isChat);
 
         if (tx.status === 400) {
             return {
@@ -337,7 +341,6 @@ export async function getLockedInputs(address) {
 
 export async function getSpendableBalance(address, unspents) {
     const unspentList = unspents ? unspents : await getUnspent(address, UXTO_TYPE.SPENDABLE);
-    console.log(unspentList);
     const balance = Number(sumFloats(unspentList.utxos.map((utxo) => utxo.value)).toFixed(8));
     return Number(balance.toFixed(8));
 }
@@ -349,6 +352,24 @@ export async function getLockedBalance(address) {
 }
 
 export async function getTransactionHistory(address, pageSize = 5) {
+    try {
+        var options = {
+            method: 'POST',
+            uri: `${await GetSapiUrl()}/v1/address/transactions`,
+            body: {
+                address,
+                pageNumber: 1,
+                pageSize,
+            },
+            json: true, // Automatically stringifies the body to JSON
+        };
+        return await request.post(options).then((res) => res.data);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export async function getChatTransactionHistory(address, pageSize = 5) {
     try {
         var options = {
             method: 'POST',
@@ -365,10 +386,65 @@ export async function getTransactionHistory(address, pageSize = 5) {
         console.error(err);
     }
 }
+export async function getTransactionHistoryFromMemoryPool(address) {
+    try {
+        const transactions = await request.get(
+            `https://sapi.smartcash.cc/v1/address/mempool/SX7SyErLpXjhsq3wAvqxLaE9FDZF5Dbokn`,
+            {
+                json: true,
+            }
+        );
+        const mappedTx = await Promise.all(
+            transactions.map(async (transaction) => {
+                const tx = await getTxId(transaction.txid);
+                tx.address = address;
+                tx.message = getOpReturnMessage(tx);
+                tx.direction = getTransactionDirection(tx, address);
+                tx.time = parseInt(new Date().getTime() / 1000);
+                return tx;
+            })
+        );
+        console.log(mappedTx);
+        return mappedTx;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+export function getTransactionDirection(tx, address) {
+    if (tx && tx.vin && tx.vin[0].coinbase) {
+        return 'Coinbase';
+    } else {
+        if (tx && tx.vin && tx.vin[0].scriptPubKey && tx.vin[0].scriptPubKey.addresses) {
+            if (tx.vin.some((vin) => vin?.scriptPubKey?.addresses?.includes(address))) return 'Sent';
+        }
+        return 'Received';
+    }
+}
 
 export async function getTransactionHistoryGroupedByAddresses(address) {
     try {
-        return groupByAddress(await getTransactionHistory(address, 50));
+        const history = await getChatTransactionHistory(address, 50);
+        /*
+        const memoryPool = await getTransactionHistoryFromMemoryPool(address);
+        const histories = [...history, ...memoryPool];
+        console.log(`memoryPool`, memoryPool);
+        console.log(`histories`, histories);*/
+
+        const mappedHistory = await Promise.all(
+            history.map(async (tx) => {
+                if (!tx.time) {
+                    tx.amount = 0;
+                    tx.blockhash = '';
+                    tx.address = address;
+                    tx.message = getOpReturnMessage(tx);
+                    tx.direction = getTransactionDirection(tx, address);
+                    tx.time = parseInt(new Date().getTime() / 1000);
+                }
+                return tx;
+            })
+        );
+        return groupByAddress([...new Set(mappedHistory)]);
     } catch (err) {
         console.error(err);
     }
@@ -423,6 +499,10 @@ export function groupByAddress(txs) {
             .map((tx) => getAddressAndMessage(tx))
             .filter((f) => f !== null)
             .sort((a, b) => (a.time > b.time ? 1 : -1));
+
+        let uniqueTransactions = _.uniq(parsedTransactions.map((t) => JSON.stringify(t)));
+
+        parsedTransactions = uniqueTransactions.map((t) => JSON.parse(t)).sort((a, b) => (a.time > b.time ? 1 : -1));
 
         var grouped = _(parsedTransactions)
             .groupBy('toAddress')
@@ -557,10 +637,12 @@ export async function activateRewards({ toAddress, unspentList, privateKey, pass
     return tx;
 }
 
-export async function sendTransaction(hex) {
+export async function sendTransaction(hex, isChat) {
+    //Chat needs the same NODE always to get MEM POOL transactions
+    const url = isChat ? 'https://sapi.smartcash.cc' : await GetSapiUrl();
     var options = {
         method: 'POST',
-        uri: `${await GetSapiUrl()}/v1/transaction/send`,
+        uri: `${url}/v1/transaction/send`,
         body: {
             data: `${hex}`,
             instantpay: false,
@@ -620,12 +702,6 @@ export async function getSmartNodeRoi() {
     };
     return request.get(options);
 }
-
-// export async function getNodesUrl(){
-//     let node = await getNodes();
-//     console.log(node);
-//     return node.ip;
-// }
 
 export async function getNodesUrl() {
     try {

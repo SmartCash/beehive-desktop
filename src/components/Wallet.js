@@ -13,7 +13,15 @@ function Wallet({ wallet, isCurrent }) {
             </div>
             <div className="content">
                 <div onClick={() => setWalletCurrent(wallet)}>
-                    <p className="amount">{wallet.balance.unlocked}</p>
+                    <p className="amount">
+                        {wallet.balance.unlocked
+                            .toLocaleString('en-US', {
+                                style: 'currency',
+                                currency: 'USD',
+                                minimumFractionDigits: 4,
+                            })
+                            .replace('$', '∑')}
+                    </p>
                     <span className="address">{wallet.label || wallet.address} </span>
                 </div>
                 <button
