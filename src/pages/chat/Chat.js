@@ -24,10 +24,12 @@ function ChatComponent() {
         _getTransactionHistory,
         handleSetCurrentChatAddress,
         handleSubmitSendAmount,
+        handleSetNewChat,
         clearState,
         clearTXID,
         setMessageToSend,
         setPasswordToSend,
+        generateMessage
     } = useChatController();
 
     const getChat = () => {
@@ -54,13 +56,14 @@ function ChatComponent() {
     useEffect(() => {
         console.log(messagesRef.current);
     }, [messagesRef])
+    
 
     return (
         <Page className="page-chat">
             <div className="chat-wallets">
                 <div className="header">
                     <span className="title">Chats</span>
-                    {/* <button onClick={handleSetNewChat}>Start chat</button> */}
+                    {<button onClick={handleSetNewChat}>Start chat</button>}
                     <button onClick={() => _getTransactionHistory()}>Refresh</button>
                 </div>
                 {error && <p className="error">{error}</p>}
@@ -75,9 +78,9 @@ function ChatComponent() {
                                 >
                                     <p className="address">{tx.chatAddress}</p>
                                     <p className="lastMessage">
-                                        {tx.messages[tx.messages.length - 1].message != undefined
-                                            ? tx.messages[tx.messages.length - 1].message.substring(0, 30)
-                                            : ''}
+                                        {
+                                            generateMessage(tx.messages)
+                                        }                                      
                                     </p>
                                 </div>
                             );
@@ -119,12 +122,22 @@ function ChatComponent() {
                         )}
                         {!initialLoading &&
                             getChat()?.messages.map((m) => {
-                                return (
-                                    <div className={`transaction message message-${m.direction}`} key={m.time}>
-                                        <p className="value">{m.message}</p>
-                                        <p className="label">{m.direction} at {new Date(m.time * 1000).toLocaleString()}</p>
-                                    </div>
-                                );
+                                if(getChat()?.messages.length == 1){
+                                    return (
+                                        <div className="accept">
+                                            <button className="acceptInvite">Accept invite</button>
+                                        </div>
+                                    );
+                                } else {
+                                    if(!m.message.includes('-----BEGIN PUBLIC KEY-----')){                                        
+                                        return (
+                                            <div className={`transaction message message-${m.direction}`} key={m.time}>
+                                                <p className="value">{m.message}</p>
+                                                <p className="label">{m.direction} at {new Date(m.time * 1000).toLocaleString()}</p>
+                                            </div>
+                                        );
+                                    } 
+                                }                                                          
                             })}
                     </Scrollbars>
                     <div className="send-wrapper">
