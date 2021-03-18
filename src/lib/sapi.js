@@ -404,7 +404,6 @@ export async function getTransactionHistoryFromMemoryPool(address) {
                 return tx;
             })
         );
-        console.log(mappedTx);
         return mappedTx;
     } catch (err) {
         console.error(err);

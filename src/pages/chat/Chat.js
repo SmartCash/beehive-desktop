@@ -18,17 +18,19 @@ export function Chat() {
 
 function ChatComponent() {
     const { walletCurrent } = useContext(WalletContext);
-    const { history, error, initialLoading, currentChatAddress, newChat, messageToSend, password, TXID } = useChatState();
+    const { history, error, initialLoading, currentChatAddress, newChat, messageToSend, password, TXID, passwordAcceptChat } = useChatState();
     const messagesRef = useRef();
     const {
         _getTransactionHistory,
         handleSetCurrentChatAddress,
         handleSubmitSendAmount,
         handleSetNewChat,
+        handleAcceptChat,
         clearState,
         clearTXID,
         setMessageToSend,
         setPasswordToSend,
+        setPasswordAcceptChat,
         generateMessage
     } = useChatController();
 
@@ -39,6 +41,14 @@ function ChatComponent() {
     const canSend = () => {
         return password !== '' && messageToSend !== ''
     };
+
+    const canSendAcceptChat = () => {
+        return passwordAcceptChat !== ''
+    };
+
+    const isAccept = () => {
+       return getChat()?.messages.length == 1;
+    }
 
     useEffect(() => {
         if (history && history.length > 0 && newChat === false && currentChatAddress === undefined) {
@@ -122,12 +132,29 @@ function ChatComponent() {
                         )}
                         {!initialLoading &&
                             getChat()?.messages.map((m) => {
-                                if(getChat()?.messages.length == 1){
-                                    return (
-                                        <div className="accept">
-                                            <button className="acceptInvite">Accept invite</button>
-                                        </div>
-                                    );
+                                if(isAccept()){
+                                    if(m.direction == 'Sent'){
+                                       return(
+                                        <div class="transaction chatAddress">This chat is not accept yet, please await to response.</div>
+                                       ) 
+                                    } else {
+                                        return (
+                                            <div className="accept">
+                                                <input placeholder="Insert your password"
+                                                        className="send-input"
+                                                        type="password"
+                                                        value={passwordAcceptChat} 
+                                                        onInput={(event) => {
+                                                            setPasswordAcceptChat(event.target.value);
+                                                        }}/>
+                                                <br /><br />
+                                                <button onClick={() => handleAcceptChat(m.toAddress, passwordAcceptChat)}                                                 
+                                                        className="acceptInvite"
+                                                        disabled={!canSendAcceptChat()}>Accept invite</button>
+                                            </div>
+                                        );
+                                    }
+                                   
                                 } else {
                                     if(!m.message.includes('-----BEGIN PUBLIC KEY-----')){                                        
                                         return (
@@ -140,41 +167,46 @@ function ChatComponent() {
                                 }                                                          
                             })}
                     </Scrollbars>
-                    <div className="send-wrapper">
-                        <div className="message-wrap">
-                            <textarea
-                                id="messageTo"
-                                className="send-input"
-                                placeholder="Type a message..."
-                                autoComplete="off"
-                                type="text"
-                                value={messageToSend}
-                                onInput={(event) => {
-                                    setMessageToSend(event.target.value);
-                                }}
-                            />
-                        </div>
-                        <div className="password-wrap">
-                            <input
-                                placeholder="Insert your password"
-                                className="send-input"
-                                type="password"
-                                value={password}
-                                onInput={(event) => {
-                                    setPasswordToSend(event.target.value);
-                                }}
-                            />
-                        </div>
-                        <div className="">
-                            <button
-                                className="btn send-button"
-                                onClick={() => handleSubmitSendAmount(currentChatAddress, messageToSend, password)}
-                                disabled={!canSend()}
-                            >
-                                Send
-                            </button>
-                        </div>
-                    </div>
+
+                    { isAccept() === false && (                                
+                        <div className="send-wrapper">
+                                <div className="message-wrap">
+                                    <textarea
+                                        id="messageTo"
+                                        className="send-input"
+                                        placeholder="Type a message..."
+                                        autoComplete="off"
+                                        type="text"
+                                        value={messageToSend}
+                                        onInput={(event) => {
+                                            setMessageToSend(event.target.value);
+                                        }}
+                                    />
+                                </div>
+                                <div className="password-wrap">
+                                    <input
+                                        placeholder="Insert your password"
+                                        className="send-input"
+                                        type="password"
+                                        value={password}
+                                        onInput={(event) => {
+                                            setPasswordToSend(event.target.value);
+                                        }}
+                                    />
+                                </div>
+                                <div className="">
+                                    <button
+                                        className="btn send-button"
+                                        onClick={() => handleSubmitSendAmount(currentChatAddress, messageToSend, password)}
+                                        disabled={!canSend()}
+                                    >
+                                        Send
+                                    </button>
+                                </div>
+                            </div>
+                        )                        
+                    }
+                   
                 </div>
             )}
 
