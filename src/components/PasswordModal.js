@@ -47,7 +47,7 @@ function PasswordModal() {
                                             />
                                             <button
                                                 type="button"
-                                                className="showPK"
+                                                className={style.btn}
                                                 onClick={() => setShowPassword(!showPassword)}
                                             >
                                                 {showPassword ? 'Hide' : 'Show'}
@@ -56,7 +56,7 @@ function PasswordModal() {
                                         {decryptError && (
                                             <p className="alert-error">Wallet is not possible decrypt using this password.</p>
                                         )}
-                                        <button onClick={handleDecryptWallets}>Open wallet using password above</button>
+                                        <button className={style.btn} onClick={handleDecryptWallets}>Open wallet using password above</button>
                                     </React.Fragment>
                                 )}
                                 {loading && (
