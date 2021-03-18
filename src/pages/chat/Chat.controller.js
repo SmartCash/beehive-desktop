@@ -18,7 +18,7 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.initialLoading, payload: true });
         chatDispatch({ type: ACTION_TYPE.error, payload: null });
         await getTransactionHistoryGroupedByAddresses(walletCurrent)
-            .then((data) => {
+            .then((data) => {               
                 chatDispatch({ type: ACTION_TYPE.history, payload: data });
             })
             .catch(() => chatDispatch({ type: ACTION_TYPE.error, payload: 'There is no chat for this wallet' }))
@@ -139,6 +139,18 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.passwordNewChat, payload: pass });
     }
 
+    function generateMessage(messages){
+        if(messages.length == 1){
+            return 'Accept invite pending'
+        } else {
+            if(messages[messages.length - 2].message != undefined){
+                messages[messages.length - 2].message.substring(0, 30)
+            } else {
+                return '';
+            }
+        }    
+    }
+
     return {
         _getTransactionHistory,
         handleSetCurrentChatAddress,
@@ -150,6 +162,7 @@ export const useChatController = () => {
         setMessageToSend,
         setPasswordToSend,
         setAddressNewChatToSend,
-        setPasswordNewChatToSend
+        setPasswordNewChatToSend,
+        generateMessage
     };
 };

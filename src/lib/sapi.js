@@ -433,14 +433,17 @@ export async function getTransactionHistoryGroupedByAddresses(address) {
 
         const mappedHistory = await Promise.all(
             history.map(async (tx) => {
-                if (!tx.time) {
+                var msg = getOpReturnMessage(tx);
+
+                if (!tx.time){
                     tx.amount = 0;
                     tx.blockhash = '';
                     tx.address = address;
-                    tx.message = getOpReturnMessage(tx);
+                    tx.message = msg;
                     tx.direction = getTransactionDirection(tx, address);
                     tx.time = parseInt(new Date().getTime() / 1000);
                 }
+                
                 return tx;
             })
         );

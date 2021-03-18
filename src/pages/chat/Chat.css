@@ -322,3 +322,19 @@
     border-radius: var(--borderRadius);
     position: relative;
 }
+
+
+.page-chat .acceptInvite {
+    background: var(--primary);
+    border: 0;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin:0 auto;
+    text-align: center;;
+}
+
+.page-chat .accept{
+    width: 100%;
+    text-align: center;
+}

@@ -22,7 +22,9 @@ export function NewChat() {
                 <p className="title">New chat</p>
                 <p className="subtitle">Enter the wallet address to start a new chat</p>
                 <div className="address-form">
-                    <input autoFocus placeholder="Contact wallet address"
+                    <textarea className="send-input"
+                        autoFocus rows="3" cols="10"
+                        placeholder="Contact wallet address"
                          value={addressNewChatToSend}
                          onInput={(event) => {
                              setAddressNewChatToSend(event.target.value);
@@ -30,8 +32,7 @@ export function NewChat() {
                           />
                 </div>
                 <div className="address-form">
-                    <input autoFocus
-                            placeholder="Insert your password"
+                    <input placeholder="Insert your password"
                             className="send-input"
                             type="password"
                             value={passwordNewChat} 

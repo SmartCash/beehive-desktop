@@ -29,6 +29,7 @@ function ChatComponent() {
         clearTXID,
         setMessageToSend,
         setPasswordToSend,
+        generateMessage
     } = useChatController();
 
     const getChat = () => {
@@ -55,6 +56,7 @@ function ChatComponent() {
     useEffect(() => {
         console.log(messagesRef.current);
     }, [messagesRef])
+    
 
     return (
         <Page className="page-chat">
@@ -76,9 +78,9 @@ function ChatComponent() {
                                 >
                                     <p className="address">{tx.chatAddress}</p>
                                     <p className="lastMessage">
-                                        {tx.messages[tx.messages.length - 1].message != undefined
-                                            ? tx.messages[tx.messages.length - 1].message.substring(0, 30)
-                                            : ''}
+                                        {
+                                            generateMessage(tx.messages)
+                                        }                                      
                                     </p>
                                 </div>
                             );
@@ -120,12 +122,22 @@ function ChatComponent() {
                         )}
                         {!initialLoading &&
                             getChat()?.messages.map((m) => {
-                                return (
-                                    <div className={`transaction message message-${m.direction}`} key={m.time}>
-                                        <p className="value">{m.message}</p>
-                                        <p className="label">{m.direction} at {new Date(m.time * 1000).toLocaleString()}</p>
-                                    </div>
-                                );
+                                if(getChat()?.messages.length == 1){
+                                    return (
+                                        <div className="accept">
+                                            <button className="acceptInvite">Accept invite</button>
+                                        </div>
+                                    );
+                                } else {
+                                    if(!m.message.includes('-----BEGIN PUBLIC KEY-----')){                                        
+                                        return (
+                                            <div className={`transaction message message-${m.direction}`} key={m.time}>
+                                                <p className="value">{m.message}</p>
+                                                <p className="label">{m.direction} at {new Date(m.time * 1000).toLocaleString()}</p>
+                                            </div>
+                                        );
+                                    } 
+                                }                                                          
                             })}
                     </Scrollbars>
                     <div className="send-wrapper">
