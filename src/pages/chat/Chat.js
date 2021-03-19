@@ -7,6 +7,8 @@ import { NewChat } from './NewChat';
 import loader from '../../assets/images/loader.svg';
 import { ChatProvider, useChatState, clearTxId } from './Chat.context';
 import { useChatController } from './Chat.controller';
+import _ from 'lodash';
+import { decryptTextWithRSAPrivateKey } from '../../lib/sapi';
 
 export function Chat() {
     return (
@@ -17,7 +19,7 @@ export function Chat() {
 }
 
 function ChatComponent() {
-    const { walletCurrent } = useContext(WalletContext);
+    const { walletCurrent, wallets } = useContext(WalletContext);
     const {
         history,
         error,
@@ -58,6 +60,28 @@ function ChatComponent() {
 
     const isAccept = () => {
         return getChat()?.messages.length == 1;
+    };
+
+    const parseMessage = (messageObject) => {
+        let jsonMessage = null;
+        let textMessage = null;
+        try {
+            jsonMessage = JSON.parse(messageObject.message);
+        } catch (e) {
+            textMessage = messageObject.message;
+        }
+        if (jsonMessage) {
+            const rsaKeyPair = wallets.find((w) => w.address === walletCurrent).RSA;
+
+            if (rsaKeyPair) {
+                if (messageObject.direction === 'Sent') {
+                    textMessage = decryptTextWithRSAPrivateKey(rsaKeyPair.rsaPrivateKey, '123456', jsonMessage.messageFromSender);
+                } else {
+                    textMessage = decryptTextWithRSAPrivateKey(rsaKeyPair.rsaPrivateKey, '123456', jsonMessage.messageToRecipient);
+                }
+            }
+        }
+        return textMessage;
     };
 
     useEffect(() => {
@@ -176,7 +200,7 @@ function ChatComponent() {
                                     if (!m.message.includes('-----BEGIN PUBLIC KEY-----')) {
                                         return (
                                             <div className={`transaction message message-${m.direction}`} key={m.time}>
-                                                <p className="value">{m.message}</p>
+                                                <p className="value">{parseMessage(m)}</p>
                                                 <p className="label">
                                                     {m.direction} at {new Date(m.time * 1000).toLocaleString()}
                                                 </p>
