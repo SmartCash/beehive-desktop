@@ -1,10 +1,10 @@
-const smartCash = require('smartcashjs-lib');
+const smartcash = require('smartcashjs-lib');
 const request = require('request-promise');
 
 export function isAddress(address) {
     return new Promise((resolve, reject) => {
         try {
-            smartCash.address.fromBase58Check(address);
+            smartcash.address.fromBase58Check(address);
             resolve(address);
         } catch (e) {
             return reject(e);
@@ -15,7 +15,7 @@ export function isAddress(address) {
 export function isPK(keyString) {
     return new Promise((resolve, reject) => {
         try {
-            smartCash.ECPair.fromWIF(keyString);
+            smartcash.ECPair.fromWIF(keyString);
             resolve(keyString);
         } catch (e) {
             return reject(e);
@@ -40,4 +40,3 @@ export function getCurrenciePrice(vs_currencies = 'usd,btc') {
     };
     return request.get(options);
 }
-
