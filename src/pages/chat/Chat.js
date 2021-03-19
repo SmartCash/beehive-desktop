@@ -74,10 +74,26 @@ function ChatComponent() {
             const rsaKeyPair = wallets.find((w) => w.address === walletCurrent).RSA;
 
             if (rsaKeyPair) {
-                if (messageObject.direction === 'Sent') {
-                    textMessage = decryptTextWithRSAPrivateKey(rsaKeyPair.rsaPrivateKey, '123456', jsonMessage.messageFromSender);
+                if (messageObject.direction === 'Sent' && messageObject.toAddress !== walletCurrent) {
+                    try {
+                        textMessage = decryptTextWithRSAPrivateKey(
+                            rsaKeyPair.rsaPrivateKey,
+                            '123456',
+                            jsonMessage.messageFromSender
+                        );
+                    } catch (error) {
+                        textMessage = error.message;
+                    }
                 } else {
-                    textMessage = decryptTextWithRSAPrivateKey(rsaKeyPair.rsaPrivateKey, '123456', jsonMessage.messageToRecipient);
+                    try {
+                        textMessage = decryptTextWithRSAPrivateKey(
+                            rsaKeyPair.rsaPrivateKey,
+                            '123456',
+                            jsonMessage.messageToRecipient
+                        );
+                    } catch (error) {
+                        textMessage = error.message;
+                    }
                 }
             }
         }
