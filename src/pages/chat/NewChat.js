@@ -6,14 +6,10 @@ import { useChatState } from './Chat.context';
 export function NewChat() {
     const { passwordNewChat, addressNewChatToSend } = useChatState();
 
-    const {
-        setAddressNewChatToSend,
-        setPasswordNewChatToSend,
-        handleSubmitSendNewChat
-    } = useChatController();
+    const { setAddressNewChatToSend, setPasswordNewChatToSend, handleSubmitSendNewChat } = useChatController();
 
     const canSendNewChat = () => {
-        return passwordNewChat !== '' && addressNewChatToSend !== ''
+        return passwordNewChat !== '' && addressNewChatToSend !== '';
     };
 
     return (
@@ -22,29 +18,35 @@ export function NewChat() {
                 <p className="title">New chat</p>
                 <p className="subtitle">Enter the wallet address to start a new chat</p>
                 <div className="address-form">
-                    <textarea className="send-input"
-                        autoFocus rows="3" cols="10"
+                    <textarea
+                        className="send-input"
+                        autoFocus
+                        rows="3"
+                        cols="10"
                         placeholder="Contact wallet address"
-                         value={addressNewChatToSend}
-                         onInput={(event) => {
-                             setAddressNewChatToSend(event.target.value);
-                         }}
-                          />
+                        value={addressNewChatToSend}
+                        onInput={(event) => {
+                            setAddressNewChatToSend(event.target.value);
+                        }}
+                    />
                 </div>
                 <div className="address-form">
-                    <input placeholder="Insert your password"
-                            className="send-input"
-                            type="password"
-                            value={passwordNewChat} 
-                            onInput={(event) => {
-                                setPasswordNewChatToSend(event.target.value);
-                            }}/>
+                    <input
+                        placeholder="Insert your password"
+                        className="send-input"
+                        type="password"
+                        value={passwordNewChat}
+                        onInput={(event) => {
+                            setPasswordNewChatToSend(event.target.value);
+                        }}
+                    />
                 </div>
                 <div className="address-form">
                     <button
                         className="btn send-button"
                         onClick={() => handleSubmitSendNewChat(addressNewChatToSend, passwordNewChat)}
-                        disabled={!canSendNewChat()}>
+                        disabled={!canSendNewChat()}
+                    >
                         Invite
                     </button>
                 </div>

@@ -18,7 +18,17 @@ export function Chat() {
 
 function ChatComponent() {
     const { walletCurrent } = useContext(WalletContext);
-    const { history, error, initialLoading, currentChatAddress, newChat, messageToSend, password, TXID, passwordAcceptChat } = useChatState();
+    const {
+        history,
+        error,
+        initialLoading,
+        currentChatAddress,
+        newChat,
+        messageToSend,
+        password,
+        TXID,
+        passwordAcceptChat,
+    } = useChatState();
     const messagesRef = useRef();
     const {
         _getTransactionHistory,
@@ -31,7 +41,7 @@ function ChatComponent() {
         setMessageToSend,
         setPasswordToSend,
         setPasswordAcceptChat,
-        generateMessage
+        generateMessage,
     } = useChatController();
 
     const getChat = () => {
@@ -39,16 +49,16 @@ function ChatComponent() {
     };
 
     const canSend = () => {
-        return password !== '' && messageToSend !== ''
+        return password !== '' && messageToSend !== '';
     };
 
     const canSendAcceptChat = () => {
-        return passwordAcceptChat !== ''
+        return passwordAcceptChat !== '';
     };
 
     const isAccept = () => {
-       return getChat()?.messages.length == 1;
-    }
+        return getChat()?.messages.length == 1;
+    };
 
     useEffect(() => {
         if (history && history.length > 0 && newChat === false && currentChatAddress === undefined) {
@@ -65,8 +75,7 @@ function ChatComponent() {
 
     useEffect(() => {
         console.log(messagesRef.current);
-    }, [messagesRef])
-    
+    }, [messagesRef]);
 
     return (
         <Page className="page-chat">
@@ -77,7 +86,7 @@ function ChatComponent() {
                     <button onClick={() => _getTransactionHistory()}>Refresh</button>
                 </div>
                 {error && <p className="error">{error}</p>}
-                <Scrollbars renderThumbVertical={props => < div {...props} className="thumb-vertical"/>}>
+                <Scrollbars renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
                     {history?.map((tx) => {
                         if (tx.chatAddress !== 'undefined') {
                             return (
@@ -87,11 +96,7 @@ function ChatComponent() {
                                     onClick={() => handleSetCurrentChatAddress(tx.chatAddress)}
                                 >
                                     <p className="address">{tx.chatAddress}</p>
-                                    <p className="lastMessage">
-                                        {
-                                            generateMessage(tx.messages)
-                                        }                                      
-                                    </p>
+                                    <p className="lastMessage">{generateMessage(tx.messages)}</p>
                                 </div>
                             );
                         }
@@ -106,25 +111,29 @@ function ChatComponent() {
 
             {newChat === false && (
                 <div className="chat-messages">
-                    {error && (<p className="ChatError">{error}</p>)}
+                    {error && <p className="ChatError">{error}</p>}
 
                     {TXID && (
-                         <div className="hasBeenSent">
-                         <button className="btnClose"  onClick={() => clearTXID()}>
-                             X
-                         </button>
-                         <p><strong>Message has been sent</strong></p>         
-                         <p>Transaction ID: <strong class="txID"> {TXID} </strong></p>
-                         <p>it may take up to a minute for your message to appear.</p>
-                     </div>
-                    )}                   
-                
+                        <div className="hasBeenSent">
+                            <button className="btnClose" onClick={() => clearTXID()}>
+                                X
+                            </button>
+                            <p>
+                                <strong>Message has been sent</strong>
+                            </p>
+                            <p>
+                                Transaction ID: <strong class="txID"> {TXID} </strong>
+                            </p>
+                            <p>it may take up to a minute for your message to appear.</p>
+                        </div>
+                    )}
+
                     <input type="hidden" value={getChat()?.chatAddress} id="chatAddress" />
                     <div className="transaction chatAddress">
                         <p className="label">Chat Address</p>
                         <p className="value">{getChat()?.chatAddress}</p>
                     </div>
-                    <Scrollbars ref={messagesRef} renderThumbVertical={props => < div {...props} className="thumb-vertical"/>}>
+                    <Scrollbars ref={messagesRef} renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
                         {initialLoading && (
                             <p className="loading">
                                 <img src={loader} alt={'loading...'} />
@@ -132,81 +141,98 @@ function ChatComponent() {
                         )}
                         {!initialLoading &&
                             getChat()?.messages.map((m) => {
-                                if(isAccept()){
-                                    if(m.direction == 'Sent'){
-                                       return(
-                                        <div class="transaction chatAddress">This chat is not accept yet, please await to response.</div>
-                                       ) 
+                                if (isAccept()) {
+                                    if (m.direction == 'Sent') {
+                                        return (
+                                            <div class="transaction chatAddress">
+                                                This chat is not accept yet, please await to response.
+                                            </div>
+                                        );
                                     } else {
                                         return (
                                             <div className="accept">
-                                                <input placeholder="Insert your password"
-                                                        className="send-input"
-                                                        type="password"
-                                                        value={passwordAcceptChat} 
-                                                        onInput={(event) => {
-                                                            setPasswordAcceptChat(event.target.value);
-                                                        }}/>
-                                                <br /><br />
-                                                <button onClick={() => handleAcceptChat(m.toAddress, passwordAcceptChat)}                                                 
-                                                        className="acceptInvite"
-                                                        disabled={!canSendAcceptChat()}>Accept invite</button>
+                                                <input
+                                                    placeholder="Insert your password"
+                                                    className="send-input"
+                                                    type="password"
+                                                    value={passwordAcceptChat}
+                                                    onInput={(event) => {
+                                                        setPasswordAcceptChat(event.target.value);
+                                                    }}
+                                                />
+                                                <br />
+                                                <br />
+                                                <button
+                                                    onClick={() => handleAcceptChat(m.toAddress, passwordAcceptChat)}
+                                                    className="acceptInvite"
+                                                    disabled={!canSendAcceptChat()}
+                                                >
+                                                    Accept invite
+                                                </button>
                                             </div>
                                         );
                                     }
-                                   
                                 } else {
-                                    if(!m.message.includes('-----BEGIN PUBLIC KEY-----')){                                        
+                                    if (!m.message.includes('-----BEGIN PUBLIC KEY-----')) {
                                         return (
                                             <div className={`transaction message message-${m.direction}`} key={m.time}>
                                                 <p className="value">{m.message}</p>
-                                                <p className="label">{m.direction} at {new Date(m.time * 1000).toLocaleString()}</p>
+                                                <p className="label">
+                                                    {m.direction} at {new Date(m.time * 1000).toLocaleString()}
+                                                </p>
                                             </div>
                                         );
-                                    } 
-                                }                                                          
+                                    }
+                                }
                             })}
                     </Scrollbars>
 
-                    { isAccept() === false && (                                
+                    {isAccept() === false && (
                         <div className="send-wrapper">
-                                <div className="message-wrap">
-                                    <textarea
-                                        id="messageTo"
-                                        className="send-input"
-                                        placeholder="Type a message..."
-                                        autoComplete="off"
-                                        type="text"
-                                        value={messageToSend}
-                                        onInput={(event) => {
-                                            setMessageToSend(event.target.value);
-                                        }}
-                                    />
-                                </div>
-                                <div className="password-wrap">
-                                    <input
-                                        placeholder="Insert your password"
-                                        className="send-input"
-                                        type="password"
-                                        value={password}
-                                        onInput={(event) => {
-                                            setPasswordToSend(event.target.value);
-                                        }}
-                                    />
-                                </div>
-                                <div className="">
-                                    <button
-                                        className="btn send-button"
-                                        onClick={() => handleSubmitSendAmount(currentChatAddress, messageToSend, password)}
-                                        disabled={!canSend()}
-                                    >
-                                        Send
-                                    </button>
-                                </div>
+                            <div className="message-wrap">
+                                <textarea
+                                    id="messageTo"
+                                    className="send-input"
+                                    placeholder="Type a message..."
+                                    autoComplete="off"
+                                    type="text"
+                                    value={messageToSend}
+                                    onInput={(event) => {
+                                        setMessageToSend(event.target.value);
+                                    }}
+                                />
                             </div>
-                        )                        
-                    }
-                   
+                            <div className="password-wrap">
+                                <input
+                                    placeholder="Insert your password"
+                                    className="send-input"
+                                    type="password"
+                                    value={password}
+                                    onInput={(event) => {
+                                        setPasswordToSend(event.target.value);
+                                    }}
+                                />
+                            </div>
+                            <div className="">
+                                <button
+                                    className="btn send-button"
+                                    onClick={() =>
+                                        handleSubmitSendAmount(
+                                            currentChatAddress,
+                                            messageToSend,
+                                            password,
+                                            (getChat()?.messages.find(
+                                                (m) => m.direction !== 'Sent' && m.message.includes('-----BEGIN PUBLIC KEY-----')
+                                            )).message
+                                        )
+                                    }
+                                    disabled={!canSend()}
+                                >
+                                    Send
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
 

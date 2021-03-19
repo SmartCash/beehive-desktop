@@ -47,6 +47,8 @@ export async function createAndSendRawTransaction({
     unlockedBalance,
     password,
     isChat,
+    rsaKeyPairFromSender,
+    rsaKeyPairFromRecipient,
 }) {
     if (!toAddress) {
         return {
@@ -142,11 +144,30 @@ export async function createAndSendRawTransaction({
         transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
 
         if (messageOpReturn && messageOpReturn.trim().length > 0) {
-            //OP RETURN
-            const dataScript = smartCash.script.compile([
-                smartCash.opcodes.OP_RETURN,
-                Buffer.from('smart-chat: ' + messageOpReturn, 'utf8'),
-            ]);
+            let dataScript = null;
+            if (isChat) {
+                dataScript = smartCash.script.compile([
+                    smartCash.opcodes.OP_RETURN,
+                    Buffer.from(
+                        'smart-chat: ' +
+                            JSON.stringify({
+                                messageFromSender: encryptTextWithRSAPublicKey(
+                                    rsaKeyPairFromSender.rsaPublicKey,
+                                    messageOpReturn
+                                ),
+                                messageToRecipient: encryptTextWithRSAPublicKey(
+                                    rsaKeyPairFromRecipient.rsaPublicKey,
+                                    messageOpReturn
+                                ),
+                            }),
+                        'utf8'
+                    ),
+                ]);
+            } else {
+                //OP RETURN
+                dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from(messageOpReturn, 'utf8')]);
+            }
+
             transaction.addOutput(dataScript, 0);
         }
 
@@ -228,7 +249,7 @@ export function createRSAKeyPair(password) {
 
 // We must encrypt a message with the receiver PUBLIC KEY so when this person receives it
 // They can decrypt with their Private Key
-export function encryptTextWithReceiverRSAPublicKey(rsaReceiverPublicKey, message) {
+export function encryptTextWithRSAPublicKey(rsaReceiverPublicKey, message) {
     var encMsg = crypto.publicEncrypt(rsaReceiverPublicKey, Buffer.from(message));
     return encMsg.toString('base64');
 }
@@ -434,7 +455,7 @@ export async function getTransactionHistoryGroupedByAddresses(address) {
             history.map(async (tx) => {
                 var msg = getOpReturnMessage(tx);
 
-                if (!tx.time){
+                if (!tx.time) {
                     tx.amount = 0;
                     tx.blockhash = '';
                     tx.address = address;
@@ -442,7 +463,7 @@ export async function getTransactionHistoryGroupedByAddresses(address) {
                     tx.direction = getTransactionDirection(tx, address);
                     tx.time = parseInt(new Date().getTime() / 1000);
                 }
-                
+
                 return tx;
             })
         );
