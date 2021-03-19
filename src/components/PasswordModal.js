@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import loader from '../assets/images/loader.svg';
 import { ReactComponent as Logo } from '../assets/images/logo.svg';
 import { WalletContext } from '../context/WalletContext';
-import style from './WalletModal.module.css';
+import style from './modal/modal.module.css';
 
 function PasswordModal() {
     const { decryptWallets, decryptError } = useContext(WalletContext);
@@ -47,7 +47,7 @@ function PasswordModal() {
                                             />
                                             <button
                                                 type="button"
-                                                className="showPK"
+                                                className={style.btn}
                                                 onClick={() => setShowPassword(!showPassword)}
                                             >
                                                 {showPassword ? 'Hide' : 'Show'}
@@ -56,7 +56,7 @@ function PasswordModal() {
                                         {decryptError && (
                                             <p className="alert-error">Wallet is not possible decrypt using this password.</p>
                                         )}
-                                        <button onClick={handleDecryptWallets}>Open wallet using password above</button>
+                                        <button className={style.btn} onClick={handleDecryptWallets}>Open wallet using password above</button>
                                     </React.Fragment>
                                 )}
                                 {loading && (

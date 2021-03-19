@@ -5,7 +5,7 @@ import { ReactComponent as IconAdd } from '../assets/images/add.svg';
 import { ReactComponent as IconDownload } from '../assets/images/download.svg';
 import { Scrollbars } from 'react-custom-scrollbars';
 import useModal from '../hooks/useModal';
-import WalletModal from './WalletModal';
+import WalletModal from './wallet-modal/wallet-modal';
 
 function Wallets() {
     const { wallets, walletCurrent, password, downloadWallets } = useContext(WalletContext);
