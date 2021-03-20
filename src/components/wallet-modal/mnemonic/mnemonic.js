@@ -3,30 +3,42 @@ import style from '../wallet-modal.module.css';
 import { generatePhrase, getFromDerivationPaths, validatePhrase } from '../../../lib/smart-mnemonic';
 import generatePDF from '../../../lib/GeneratorPDF';
 import { WalletContext } from '../../../context/WalletContext';
+import { createRSAKeyPair } from '../../../lib/sapi';
+import * as CryptoJS from 'crypto-js';
+const { ipcRenderer } = window.require('electron');
 
 export function Mnemonic({ hide }) {
     const [words, setWords] = useState('');
     const [passphrase, setPassphrase] = useState('');
     const [passphraseError, setPassphraseError] = useState('');
     const [accept, setAccept] = useState(false);
-    const { addWallet, decryptWallets } = useContext(WalletContext);
+    const { decryptWallets, wallets, updateWalletsFunc } = useContext(WalletContext);
 
     const handleGenerateRandomMnemonic = async (words, passphrase) => {
         const generatedWallets = getFromDerivationPaths({ words, passphrase });
 
-        const wallets = generatedWallets.BIP_44.addresses.map(_address => {
+        const walletsGenerated = generatedWallets.BIP_44.addresses.map(_address => {
             const { address, privkey } = _address;
             return {
                 address,
                 privateKey: privkey,
+                RSA: createRSAKeyPair(passphrase),
+                balance: {
+                    locked: 0,
+                    total: 0,
+                    unlocked: 0
+                }
             };
         });
 
-        generatePDF({ wallets, filename: `SmartCash_Address_${Date.now()}`, mnemonic: words, passphrase });
+        generatePDF({ wallets: walletsGenerated, filename: `SmartCash_Address_${Date.now()}`, mnemonic: words, passphrase });
 
-        for (let wallet of wallets) {
-            addWallet(wallet, passphrase, true);
-        }
+        const _wallets = [...wallets, ...walletsGenerated];
+
+        const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(_wallets), passphrase).toString();
+        await ipcRenderer.send('setWalletData', encryptedWallet);
+
+        updateWalletsFunc(_wallets);
 
         hide();
     };

@@ -86,7 +86,7 @@ export const WalletProvider = ({ children }) => {
         const _wallets = [...state.wallets, wallet];
 
         const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(_wallets), password).toString();
-        ipcRenderer.send('setWalletData', encryptedWallet);
+        await ipcRenderer.send('setWalletData', encryptedWallet);
 
         dispatch({ type: 'updateWallets', payload: _wallets });
     }
@@ -167,6 +167,10 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'updateWallets', payload: _wallets });
     }
 
+    function updateWalletsFunc(wallets) {
+        dispatch({ type: 'updateWallets', payload: wallets });
+    }
+
     useEffect(() => {
         if (state.fiatList.length === 0) {
             loadFiats();
@@ -181,6 +185,7 @@ export const WalletProvider = ({ children }) => {
         decryptWallets,
         downloadWallets,
         getAndUpdateWalletsBallance,
+        updateWalletsFunc
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;
