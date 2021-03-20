@@ -2,9 +2,11 @@ import QRious from 'qrious';
 import jsPDF from 'jspdf';
 import { saveAs } from 'file-saver';
 
-export default function generatePDF(wallets, filename) {
+export default function generatePDF({ wallets, filename, mnemonic, passphrase }) {
+
     const document = new jsPDF('p', 'pt', [794, 1123]);
-    const addDetails = (doc, wallet) => {
+
+    const addDetails = (doc, wallet, mnemonic, passphrase) => {
         const SmartCard = {
             localization: {
                 pdf: {
@@ -21,26 +23,6 @@ export default function generatePDF(wallets, filename) {
             },
         };
 
-        let qrAddress;
-        let qrPrivateKey;
-
-        if (wallet) {
-            qrAddress = new QRious({
-                background: '#ffffff',
-                foreground: 'black',
-                level: 'L',
-                size: '120',
-                value: wallet.address,
-            });
-
-            qrPrivateKey = new QRious({
-                background: '#ffffff',
-                foreground: 'black',
-                level: 'L',
-                size: '120',
-                value: wallet.privateKey,
-            });
-        }
 
         doc.setLineWidth(1);
         doc.addImage(
@@ -68,11 +50,61 @@ export default function generatePDF(wallets, filename) {
         doc.setFontSize(24);
         doc.text(SmartCard.localization.pdf.beCareful, 50, 230);
 
+        if (mnemonic) {
+            const qrMnemonic = new QRious({
+                background: '#ffffff',
+                foreground: 'black',
+                level: 'L',
+                size: '120',
+                value: mnemonic,
+            });
+
+            const qrPassphrase = new QRious({
+                background: '#ffffff',
+                foreground: 'black',
+                level: 'L',
+                size: '120',
+                value: passphrase,
+            });
+
+            doc.setFontStyle('bold');
+            doc.setFontSize(16);
+            doc.text('Mnemonic', 50, 300);
+            doc.text('Passphrase', 360, 300);
+
+            doc.line(340, 300, 340, 600);
+
+            doc.addImage(qrMnemonic.toDataURL('image/png'), 'PNG', 120, 390, 120, 120);
+            doc.addImage(qrPassphrase.toDataURL('image/png'), 'PNG', 400, 390, 120, 120);
+
+            doc.setFontStyle('normal');
+            doc.setFontSize(12);
+            doc.text(mnemonic, 60, 540, {maxWidth: 250});
+            doc.text(passphrase, 360, 540, {maxWidth: 250});
+        }
+
         if (wallet) {
+            const qrAddress = new QRious({
+                background: '#ffffff',
+                foreground: 'black',
+                level: 'L',
+                size: '120',
+                value: wallet.address,
+            });
+
+            const qrPrivateKey = new QRious({
+                background: '#ffffff',
+                foreground: 'black',
+                level: 'L',
+                size: '120',
+                value: wallet.privateKey,
+            });
+
+
             doc.setFontStyle('bold');
             doc.setFontSize(16);
             doc.text(SmartCard.localization.pdf.address, 50, 300);
-            doc.text(SmartCard.localization.pdf.privateKey, 350, 300);
+            doc.text(SmartCard.localization.pdf.privateKey, 360, 300);
             doc.line(340, 300, 340, 600);
             doc.setFontStyle('normal');
             doc.setFontSize(13);
@@ -88,10 +120,16 @@ export default function generatePDF(wallets, filename) {
             doc.addImage(qrPrivateKey.toDataURL('image/png'), 'PNG', 400, 390, 120, 120);
 
             doc.setFontStyle('normal');
+            doc.setFontSize(12);
             doc.text(wallet.address, 60, 540);
-            doc.text(wallet.privateKey, 350, 540);
+            doc.text(wallet.privateKey, 360, 540);
         }
     };
+
+    if (mnemonic) {
+        addDetails(document, null, mnemonic, passphrase);
+        document.addPage('p', 'pt', [794, 1123]);
+    }
 
     if (wallets) {
         wallets.forEach((wallet, index) => {

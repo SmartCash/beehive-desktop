@@ -12,7 +12,7 @@ export function PrivateKeyCreate({ hide, disableCloseButton, setCreateWallet, wa
     const handleAddWallet = async () => {
         const wallets = await decryptWallets(_password);
         if ((wallets && wallets.length > 0) || disableCloseButton) {
-            generatePDF([wallet], `SmartCash_Address_${Date.now()}`);
+            generatePDF({wallets: [wallet], filename: `SmartCash_Address_${Date.now()}`});
             const _wallet = {
                 privateKey: CryptoJS.AES.encrypt(wallet.privateKey, _password).toString(),
                 address: wallet.address,

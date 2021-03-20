@@ -149,7 +149,7 @@ export function getFromDerivationPaths({ words, passphrase }) {
 }
 
 /*
-// console.log(generatePhrase());
+console.log(generatePhrase());
 console.log(validatePhrase({ words: TEST_PHRASE }));
 console.log(getBIP32HDKeyPair({ words: TEST_PHRASE }));
 console.log(getDerivationPaths());

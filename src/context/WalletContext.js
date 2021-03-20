@@ -142,7 +142,7 @@ export const WalletProvider = ({ children }) => {
     }
 
     function downloadWallets() {
-        generatePDF(state.wallets, `MyWallets_SmartCash_${Date.now()}`);
+        generatePDF({wallets: state.wallets, filename: `MyWallets_SmartCash_${Date.now()}`});
     }
 
 
