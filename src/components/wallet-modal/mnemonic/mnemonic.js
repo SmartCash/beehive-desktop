@@ -3,70 +3,83 @@ import style from '../wallet-modal.module.css';
 import { generatePhrase, getFromDerivationPaths, validatePhrase } from '../../../lib/smart-mnemonic';
 import generatePDF from '../../../lib/GeneratorPDF';
 import { WalletContext } from '../../../context/WalletContext';
-import * as CryptoJS from 'crypto-js';
 
 export function Mnemonic({ hide }) {
     const [words, setWords] = useState('');
     const [passphrase, setPassphrase] = useState('');
     const [passphraseError, setPassphraseError] = useState('');
+    const [accept, setAccept] = useState(false);
     const { addWallet, decryptWallets } = useContext(WalletContext);
 
-    const handleGenerateRandomMnemonic = (words) => {
-        if (passphraseError) {
-            return;
-        }
-
-        words = words || generatePhrase();
-        const generatedWallets = getFromDerivationPaths({words, passphrase});
+    const handleGenerateRandomMnemonic = async (words, passphrase) => {
+        const generatedWallets = getFromDerivationPaths({ words, passphrase });
 
         const wallets = generatedWallets.BIP_44.addresses.map(_address => {
             const { address, privkey } = _address;
             return {
                 address,
-                privateKey: privkey
-            }
+                privateKey: privkey,
+            };
         });
 
         generatePDF({ wallets, filename: `SmartCash_Address_${Date.now()}`, mnemonic: words, passphrase });
 
-        wallets.forEach(wallet => {
-            const _wallet = {
-                privateKey: CryptoJS.AES.encrypt(wallet.privateKey, passphrase).toString(),
-                address: wallet.address,
-            };
-            addWallet(_wallet, passphrase);
-        });
+        for (let wallet of wallets) {
+            addWallet(wallet, passphrase, true);
+        }
 
         hide();
-    }
+    };
 
     const passphraseValidation = async (event) => {
+        setPassphrase(event.target?.value);
         const wallets = await decryptWallets(event.target?.value);
 
         if (!wallets) {
             setPassphraseError('Invalid passphrase');
-            return;
+        } else {
+            setPassphraseError('');
         }
+    };
 
-        setPassphraseError('');
-        setPassphrase(event.target?.value);
-    }
+    const buttonDisabled = () => !validatePhrase({ words }) || !passphrase || passphraseError || !accept;
 
     return (
         <div className={style.import_address}>
             <div>
-                <textarea placeholder="BIP39 Mnemonic" onChange={(event) => setWords(event.target?.value)} />
-                <p>{String(validatePhrase({ words }))}</p>
+                <div>
+                    <textarea
+                        placeholder='BIP39 Mnemonic'
+                        value={words}
+                        onChange={(event) => setWords(event.target?.value)}
+                    />
+                </div>
+                <div>
+                    <button
+                        className={[style.btn, style.btn_outline].join(' ')}
+                        onClick={() => setWords(generatePhrase())}
+                    >
+                        Generate
+                    </button>
+                </div>
+                <div>
+                    {words && !validatePhrase({ words }) && <p>Invalid mnemonic words</p>}
+                </div>
             </div>
             <div>
-                <textarea placeholder="Passphrase" onChange={passphraseValidation}/>
-                { passphraseError && <p>{passphraseError}</p>}
+                <textarea placeholder='Passphrase' onChange={passphraseValidation} />
+                {passphraseError && <p>{passphraseError}</p>}
             </div>
-            <button className={style.btn} onClick={() => handleGenerateRandomMnemonic(words)}>Import from mnemonic</button>
-
-            <p>Or</p>
-
-            <button className={[style.btn, style.btn_outline].join(' ')} onClick={() => handleGenerateRandomMnemonic(null)}>Generate a random mnemonic</button>
+            <div className={style.accept}>
+                <input id="accept" type='checkbox' onChange={(event) => setAccept(event.target.checked)} />
+                <label htmlFor='accept'>I confirm that I have stored my mnemonic</label>
+            </div>
+            <button
+                disabled={buttonDisabled()} className={style.btn}
+                onClick={() => handleGenerateRandomMnemonic(words, passphrase)}
+            >
+                Import
+            </button>
         </div>
     );
 }

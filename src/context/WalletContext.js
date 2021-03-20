@@ -58,7 +58,7 @@ export const WalletContext = createContext(initialState);
 export const WalletProvider = ({ children }) => {
     const [state, dispatch] = useReducer(userReducer, initialState);
 
-    async function addWallet(wallet, password) {
+    async function addWallet(wallet, password, emptyBalance = false) {
         const exists = state.wallets.find((_wallet) => _wallet.address === wallet.address);
 
         if (exists) {
@@ -73,7 +73,15 @@ export const WalletProvider = ({ children }) => {
             wallet.RSA = createRSAKeyPair(password);
         }
 
-        wallet.balance = await getBalanceFromSAPI(wallet.address);
+        if (!emptyBalance) {
+            wallet.balance = await getBalanceFromSAPI(wallet.address);
+        } else {
+            wallet.balance = {
+                locked: 0,
+                total: 0,
+                unlocked: 0
+            }
+        }
 
         const _wallets = [...state.wallets, wallet];
 

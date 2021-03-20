@@ -21,6 +21,10 @@
     cursor: pointer;
 }
 
+.address-content .btn:disabled {
+    opacity: .5;
+}
+
 .address-content .btn ~ .btn {
     margin-left: 24px;
 }
@@ -103,4 +107,13 @@
 .tabs button.activated {
     background-color: var(--primary);
     color: var(--black);
+}
+
+.accept {
+    display: flex;
+    align-items: center;
+}
+
+.accept input {
+    width: 14px;
 }
