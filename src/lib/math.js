@@ -52,4 +52,4 @@ exports.min = (collection) => {
 
 exports.exceeds = (amount1, amount2) => {
     return toSatoshi(amount1) > toSatoshi(amount2);
-}
+};

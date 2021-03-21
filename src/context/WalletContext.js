@@ -79,8 +79,8 @@ export const WalletProvider = ({ children }) => {
             wallet.balance = {
                 locked: 0,
                 total: 0,
-                unlocked: 0
-            }
+                unlocked: 0,
+            };
         }
 
         const _wallets = [...state.wallets, wallet];
@@ -150,12 +150,11 @@ export const WalletProvider = ({ children }) => {
     }
 
     function downloadWallets() {
-        generatePDF({wallets: state.wallets, filename: `MyWallets_SmartCash_${Date.now()}`});
+        generatePDF({ wallets: state.wallets, filename: `MyWallets_SmartCash_${Date.now()}` });
     }
 
-
     async function getAndUpdateWalletsBallance(wallets) {
-        const walletsAux = wallets  ? wallets : state.wallets;
+        const walletsAux = wallets ? wallets : state.wallets;
         const balances = await getBalances(walletsAux?.map((wallet) => wallet.address));
         const _wallets = await Promise.all(
             walletsAux.map(async (wallet) => {
@@ -185,7 +184,7 @@ export const WalletProvider = ({ children }) => {
         decryptWallets,
         downloadWallets,
         getAndUpdateWalletsBallance,
-        updateWalletsFunc
+        updateWalletsFunc,
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;

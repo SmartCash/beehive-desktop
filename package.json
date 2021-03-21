@@ -20,6 +20,8 @@
         "@testing-library/user-event": "~7.2.1",
         "big.js": "~5.2.2",
         "bip38": "^3.1.1",
+        "bip65": "^1.0.3",
+        "bip68": "^1.0.4",
         "bitcore-mnemonic": "^8.25.7",
         "cross-env": "~6.0.3",
         "crypto-js": "~4.0.0",
@@ -58,7 +60,9 @@
         "react-start": "react-scripts start",
         "react-build": "react-scripts build -- --profile",
         "electron-build": "npm run react-build && electron-builder",
-        "electron-start": "concurrently -k --success first \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron .\""
+        "electron-start": "concurrently -k --success first \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron .\"",
+        "format": "prettier --write src/*.js src/**/*.js src/**/**/*.js src/**/**/**/*.js src/**/**/**/**/*.js",
+        "check": "prettier --check src/*.js src/**/*.js src/**/**/*.js src/**/**/**/*.js src/**/**/**/**/*.js"
     },
     "eslintConfig": {
         "extends": "react-app"
@@ -80,6 +84,7 @@
         "electron": "~10.1.1",
         "electron-builder": "~22.8.0",
         "electron-react-devtools": "^0.5.3",
+        "prettier": "2.2.1",
         "wait-on": "~4.0.2"
     }
 }

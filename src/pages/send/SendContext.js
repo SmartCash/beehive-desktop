@@ -106,7 +106,7 @@ export const SendProvider = ({ children }) => {
 
         if (fee != undefined) {
             total = sumFloatsValues(value, fee);
-            dispatch({ type: 'setNetFee', payload: fee || 0 })
+            dispatch({ type: 'setNetFee', payload: fee || 0 });
         }
 
         if (exceeds(total, balance.unlocked)) {
@@ -114,7 +114,7 @@ export const SendProvider = ({ children }) => {
         } else {
             dispatch({ type: 'setAmountToSendError', payload: null });
         }
-    }
+    };
 
     const setListUnspent = (value) => {
         dispatch({ type: 'setListUnspent', payload: value });

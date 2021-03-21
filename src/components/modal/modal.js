@@ -26,9 +26,7 @@ function ModalContent(props) {
                             </button>
                         )}
                     </div>
-                    <div className={style['modal-body']}>
-                        {props.children}
-                    </div>
+                    <div className={style['modal-body']}>{props.children}</div>
                 </div>
             </div>
         </>

@@ -17,7 +17,7 @@ export function Mnemonic({ hide }) {
     const handleGenerateRandomMnemonic = async (words, passphrase) => {
         const generatedWallets = getFromDerivationPaths({ words, passphrase });
 
-        const walletsGenerated = generatedWallets.BIP_44.addresses.map(_address => {
+        const walletsGenerated = generatedWallets.BIP_44.addresses.map((_address) => {
             const { address, privkey } = _address;
             return {
                 address,
@@ -26,8 +26,8 @@ export function Mnemonic({ hide }) {
                 balance: {
                     locked: 0,
                     total: 0,
-                    unlocked: 0
-                }
+                    unlocked: 0,
+                },
             };
         });
 
@@ -60,34 +60,26 @@ export function Mnemonic({ hide }) {
         <div className={style.import_address}>
             <div>
                 <div>
-                    <textarea
-                        placeholder='BIP39 Mnemonic'
-                        value={words}
-                        onChange={(event) => setWords(event.target?.value)}
-                    />
+                    <textarea placeholder="BIP39 Mnemonic" value={words} onChange={(event) => setWords(event.target?.value)} />
                 </div>
                 <div>
-                    <button
-                        className={[style.btn, style.btn_outline].join(' ')}
-                        onClick={() => setWords(generatePhrase())}
-                    >
+                    <button className={[style.btn, style.btn_outline].join(' ')} onClick={() => setWords(generatePhrase())}>
                         Generate
                     </button>
                 </div>
-                <div>
-                    {words && !validatePhrase({ words }) && <p>Invalid mnemonic words</p>}
-                </div>
+                <div>{words && !validatePhrase({ words }) && <p>Invalid mnemonic words</p>}</div>
             </div>
             <div>
-                <textarea placeholder='Passphrase' onChange={passphraseValidation} />
+                <textarea placeholder="Passphrase" onChange={passphraseValidation} />
                 {passphraseError && <p>{passphraseError}</p>}
             </div>
             <div className={style.accept}>
-                <input id="accept" type='checkbox' onChange={(event) => setAccept(event.target.checked)} />
-                <label htmlFor='accept'>I confirm that I have stored my mnemonic</label>
+                <input id="accept" type="checkbox" onChange={(event) => setAccept(event.target.checked)} />
+                <label htmlFor="accept">I confirm that I have stored my mnemonic</label>
             </div>
             <button
-                disabled={buttonDisabled()} className={style.btn}
+                disabled={buttonDisabled()}
+                className={style.btn}
                 onClick={() => handleGenerateRandomMnemonic(words, passphrase)}
             >
                 Import

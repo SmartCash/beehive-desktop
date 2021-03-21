@@ -2,6 +2,7 @@ import { sumFloats } from './math';
 import * as CryptoJS from 'crypto-js';
 
 const smartCash = require('smartcashjs-lib');
+const bip65 = require('bip65');
 const request = require('request-promise');
 const _ = require('lodash');
 const crypto = window.require('crypto');
@@ -49,6 +50,7 @@ export async function createAndSendRawTransaction({
     isChat,
     rsaKeyPairFromSender,
     rsaKeyPairFromRecipient,
+    locked,
 }) {
     if (!toAddress) {
         return {
@@ -171,6 +173,11 @@ export async function createAndSendRawTransaction({
             transaction.addOutput(dataScript, 0);
         }
 
+        if (locked) {
+            const lockTime = bip65.encode({ utc: utcNow() - 3600 * 3 });
+            const redeemScript = cltvBasicTemplate(smartCash.ECPair.fromWIF(privateKey), 5);
+        }
+
         if (change >= fee) {
             //Change TO
             transaction.addOutput(fromAddress, parseFloat(smartCash.amount(change.toString()).toString()));
@@ -209,6 +216,21 @@ export async function createAndSendRawTransaction({
             value: err.message,
         };
     }
+}
+
+function cltvBasicTemplate(ecPair, lockTime) {
+    return smartCash.script.fromASM(
+        `${smartCash.script.number.encode(lockTime).toString('hex')}
+        OP_CHECKLOCKTIMEVERIFY
+        OP_DROP
+        OP_DUP
+        OP_HASH160
+        ${smartCash.crypto.hash160(ecPair.publicKey).toString('hex')}
+        OP_EQUALVERIFY
+        OP_CHECKSIG`
+            .trim()
+            .replace(/\s+/g, ' ')
+    );
 }
 
 export function getAddress(privateKey) {

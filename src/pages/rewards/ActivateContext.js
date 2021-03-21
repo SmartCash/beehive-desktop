@@ -3,7 +3,7 @@ import { WalletContext } from '../../context/WalletContext';
 
 const initialValue = {
     password: '',
-    TXError: ''
+    TXError: '',
 };
 
 const sendReducer = (state, action) => {
@@ -18,7 +18,7 @@ const sendReducer = (state, action) => {
             return state;
         }
     }
-}
+};
 
 export const ActivateContext = createContext(initialValue);
 
@@ -26,15 +26,15 @@ export const ActivateProvider = ({ children }) => {
     const [state, dispatch] = useReducer(sendReducer, initialValue);
     const { wallets } = useContext(WalletContext);
 
-    const setPassword = (value) => {        
+    const setPassword = (value) => {
         dispatch({ type: 'setPassword', payload: value });
     };
 
-    function canSend() {        
+    function canSend() {
         return state.password !== '';
     }
 
-    function hasPassword(){
+    function hasPassword() {
         return state.password;
     }
 
@@ -42,7 +42,7 @@ export const ActivateProvider = ({ children }) => {
         ...state,
         setPassword,
         canSend,
-        hasPassword
+        hasPassword,
     };
 
     return <ActivateContext.Provider value={providerValue}>{children}</ActivateContext.Provider>;

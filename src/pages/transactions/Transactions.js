@@ -5,7 +5,6 @@ import { getOpReturnMessage, getTransactionHistory, isLockedTransaction } from '
 import loader from '../../assets/images/loader.svg';
 import './Transactions.css';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { ReactComponent as IconCopy } from '../../assets/images/copy.svg';
 const electron = window.require('electron');
 
 function Transactions() {
@@ -35,16 +34,16 @@ function Transactions() {
             <button onClick={() => _getTransactionHistory()} className="refreshBtn">
                 Refresh
             </button>
-            {loading &&
-            <p className="loading">
-                                <img src={loader} alt={'loading...'} />
-                            </p>
-                            }
+            {loading && (
+                <p className="loading">
+                    <img src={loader} alt={'loading...'} />
+                </p>
+            )}
             {error && <p className="error">{error}</p>}
             {!error && history && (
-                <Scrollbars renderThumbVertical={props => < div {...props} className="thumb-vertical"/>}>
+                <Scrollbars renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
                     {history?.map((tx, index) => {
-                        tx.isLocked = isLockedTransaction(tx, walletCurrent) ? "Yes" : "No";
+                        tx.isLocked = isLockedTransaction(tx, walletCurrent) ? 'Yes' : 'No';
                         tx.message = getOpReturnMessage(tx);
                         return (
                             <div className="transaction" key={index}>

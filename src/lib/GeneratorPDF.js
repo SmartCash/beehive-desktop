@@ -3,7 +3,6 @@ import jsPDF from 'jspdf';
 import { saveAs } from 'file-saver';
 
 export default function generatePDF({ wallets, filename, mnemonic, passphrase }) {
-
     const document = new jsPDF('p', 'pt', [794, 1123]);
 
     const addDetails = (doc, wallet, mnemonic, passphrase) => {
@@ -22,7 +21,6 @@ export default function generatePDF({ wallets, filename, mnemonic, passphrase })
                 },
             },
         };
-
 
         doc.setLineWidth(1);
         doc.addImage(
@@ -79,8 +77,8 @@ export default function generatePDF({ wallets, filename, mnemonic, passphrase })
 
             doc.setFontStyle('normal');
             doc.setFontSize(12);
-            doc.text(mnemonic, 60, 540, {maxWidth: 250});
-            doc.text(passphrase, 360, 540, {maxWidth: 250});
+            doc.text(mnemonic, 60, 540, { maxWidth: 250 });
+            doc.text(passphrase, 360, 540, { maxWidth: 250 });
         }
 
         if (wallet) {
@@ -99,7 +97,6 @@ export default function generatePDF({ wallets, filename, mnemonic, passphrase })
                 size: '120',
                 value: wallet.privateKey,
             });
-
 
             doc.setFontStyle('bold');
             doc.setFontSize(16);
