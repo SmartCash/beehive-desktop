@@ -80,7 +80,7 @@ function RewardsActivateComponent() {
         TXError && <p className="SendError">{TXError}</p>;
     }
 
-    if (rewardsError || balance.unlocked < 1000) {
+    if (rewardsError || balance.unlocked < 999) {
         return (
             <Page className="page-rewards">
                 <div className="wrapper">
@@ -139,10 +139,10 @@ function RewardsActivateComponent() {
                             Bonus level: <span className="text-primary">{rewards.bonus_level}</span>
                         </p>
                         <div>
-                            {rewards.activated && rewards.balance_eligible > 1000 && rewards.balance_eligible < 1000000 && (
+                            {rewards.activated && rewards.balance_eligible > 999 && rewards.balance_eligible < 999999 && (
                                 <img src={SmartRewardsImage} className="rewardsImg" />
                             )}
-                            {rewards.activated && rewards.balance_eligible >= 1000000 && (
+                            {rewards.activated && rewards.balance_eligible >= 999999 && (
                                 <img src={SuperRewardsImage} className="rewardsImg" />
                             )}
                         </div>
