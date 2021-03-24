@@ -13,6 +13,24 @@ const MIN_AMOUNT_TO_SEND = 0.001;
 
 const random = require('random');
 
+const ping = (url, timeout = 2000) => {
+    return new Promise((resolve, reject) => {
+      const urlRule = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]');
+      if (!urlRule.test(url)) reject('invalid url');
+      try {
+        fetch(url)
+          .then(() => resolve(true))
+          .catch(() => resolve(false));
+        setTimeout(() => {
+          resolve(false);
+        }, timeout);
+      } catch (e) {
+        reject(e);
+      }
+    });
+  };
+
+
 export async function getEnabledNodes() {
     try {
         const localServers = ipcRenderer.sendSync('getSapiServers');
@@ -30,10 +48,19 @@ export async function getEnabledNodes() {
     }
 }
 
-export async function GetSapiUrl() {
-    const sapis = await getEnabledNodes();
-    const electedSapi = sapis[random.int(0, sapis.length - 1)];
-    console.log(`electedSapi`, electedSapi);
+export async function GetSapiUrl() {    
+    var sapis = await getEnabledNodes();
+    return getEnabledNode(sapis);
+}
+
+async function getEnabledNode(sapis){
+    var electedSapi = sapis[random.int(0, sapis.length - 1)];    
+    const res = await ping(electedSapi);
+    
+    if(!res){
+        return await getEnabledNode(sapis);
+    }    
+    
     return electedSapi;
 }
 
