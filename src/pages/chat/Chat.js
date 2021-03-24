@@ -7,7 +7,6 @@ import { NewChat } from './NewChat';
 import loader from '../../assets/images/loader.svg';
 import { ChatProvider, useChatState } from './Chat.context';
 import { useChatController } from './Chat.controller';
-import _ from 'lodash';
 import { sapi } from 'smartcashjs-lib/src/index';
 
 export function Chat() {
