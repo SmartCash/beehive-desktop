@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { WalletContext } from '../context/WalletContext';
-import { sumFloats } from '../lib/math';
+import { math } from 'smartcashjs-lib/src/index';
 
 function WalletsBalance() {
     const { wallets, getAndUpdateWalletsBallance } = useContext(WalletContext);
@@ -14,7 +14,8 @@ function WalletsBalance() {
         <div className="wallets-balance">
             <p className="amount">
                 Balance:{' '}
-                {sumFloats(wallets.map((wallet) => Number(wallet.balance.unlocked)))
+                {math
+                    .sumFloats(wallets.map((wallet) => Number(wallet.balance.unlocked)))
                     .toLocaleString('en-US', {
                         style: 'currency',
                         currency: 'USD',
@@ -24,7 +25,8 @@ function WalletsBalance() {
             </p>
             <p className="fiat">
                 Locked:{' '}
-                {sumFloats(wallets.map((wallet) => Number(wallet.balance.locked)))
+                {math
+                    .sumFloats(wallets.map((wallet) => Number(wallet.balance.locked)))
                     .toLocaleString('en-US', {
                         style: 'currency',
                         currency: 'USD',

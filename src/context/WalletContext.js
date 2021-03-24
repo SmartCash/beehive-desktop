@@ -1,7 +1,6 @@
 import React, { createContext, useEffect, useReducer } from 'react';
-import { getSupportedCurrencies } from '../lib/smart';
 
-import { getBalance, getBalances, createRSAKeyPair } from '../lib/sapi';
+import { sapi } from 'smartcashjs-lib/src/index';
 import * as CryptoJS from 'crypto-js';
 import generatePDF from '../lib/GeneratorPDF';
 const { ipcRenderer } = window.require('electron');
@@ -16,9 +15,9 @@ const initialState = {
 const getBalanceFromSAPI = async (address) => {
     let balance = {};
     try {
-        balance = await getBalance(address);
+        balance = await sapi.getBalance(address);
     } catch {
-        balance = await getBalance(address);
+        balance = await sapi.getBalance(address);
     }
     return balance;
 };
@@ -70,7 +69,7 @@ export const WalletProvider = ({ children }) => {
         }
 
         if (!wallet.RSA) {
-            wallet.RSA = createRSAKeyPair(password);
+            wallet.RSA = sapi.createRSAKeyPair(password);
         }
 
         if (!emptyBalance) {
@@ -96,7 +95,7 @@ export const WalletProvider = ({ children }) => {
     }
 
     async function loadFiats() {
-        dispatch({ type: 'setFiatList', payload: await getSupportedCurrencies() });
+        dispatch({ type: 'setFiatList', payload: await sapi.getSupportedCurrencies() });
     }
 
     function updateBalance(balance) {
@@ -133,7 +132,7 @@ export const WalletProvider = ({ children }) => {
 
                 for (const wallet of wallets) {
                     if (!wallet.RSA) {
-                        wallet.RSA = createRSAKeyPair(password);
+                        wallet.RSA = sapi.createRSAKeyPair(password);
                     }
 
                     if (!CryptoJS.AES.decrypt(wallet.privateKey, password))
@@ -155,12 +154,12 @@ export const WalletProvider = ({ children }) => {
 
     async function getAndUpdateWalletsBallance(wallets) {
         const walletsAux = wallets ? wallets : state.wallets;
-        const balances = await getBalances(walletsAux?.map((wallet) => wallet.address));
+        const balances = await sapi.getBalances(walletsAux?.map((wallet) => wallet.address));
         const _wallets = await Promise.all(
             walletsAux.map(async (wallet) => {
                 wallet.balance = balances.find((balance) => balance.address === wallet.address).balance;
                 return wallet;
-            })
+            }),
         );
 
         dispatch({ type: 'updateWallets', payload: _wallets });

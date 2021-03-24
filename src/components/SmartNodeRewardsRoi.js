@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getSmartRewardsRoi, getSmartNodeRoi } from '../lib/sapi';
 import style from './SmartNodeRewardsRoi.module.css';
+import { sapi } from 'smartcashjs-lib/src/index';
 
 export default function SmartNodeRewardsRoi() {
     const [nodeRoi, setNodeRoi] = useState();
@@ -8,8 +8,8 @@ export default function SmartNodeRewardsRoi() {
 
     useEffect(() => {
         const getROIs = async () => {
-            setNodeRoi(await getSmartNodeRoi());
-            setRewardsRoi(await getSmartRewardsRoi());
+            setNodeRoi(await sapi.getSmartNodeRoi());
+            setRewardsRoi(await sapi.getSmartRewardsRoi());
         };
         getROIs();
     }, []);

@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import { WalletContext } from '../../context/WalletContext';
-import { subtractFloats, sumFloatsValues, exceeds } from '../../lib/math';
-import { calculateFee, createAndSendRawTransaction, getSpendableInputs } from '../../lib/sapi';
-import { isAddress } from '../../lib/smart';
+import { sapi, check, math } from 'smartcashjs-lib/src/index';
 
 const initialValue = {
     amountToSend: 0,
@@ -99,18 +97,18 @@ export const SendProvider = ({ children }) => {
         }
 
         // You must get the latest unspent from the NODE
-        const unspent = await getSpendableInputs(walletCurrent);
+        const unspent = await sapi.getSpendableInputs(walletCurrent);
 
         var total = 0;
-        const fee = await calculateFee(unspent.utxos, state.messageToSend);
+        const fee = await sapi.calculateFee(unspent.utxos, state.messageToSend);
 
         if (fee != undefined) {
-            total = sumFloatsValues(value, fee);
+            total = math.sumFloatsValues(value, fee);
             dispatch({ type: 'setNetFee', payload: fee || 0 });
         }
 
-        if (exceeds(total, balance.unlocked)) {
-            dispatch({ type: 'setAmountToSendError', payload: 'Exceeds balance' });
+        if (math.exceeds(total, balance.unlocked)) {
+            dispatch({ type: 'setAmountToSendError', payload: 'math.exceeds balance' });
         } else {
             dispatch({ type: 'setAmountToSendError', payload: null });
         }
@@ -122,7 +120,7 @@ export const SendProvider = ({ children }) => {
 
     const setAddressToSend = (value) => {
         dispatch({ type: 'setAddressToSend', payload: value });
-        isAddress(value).catch(() => {
+        check.isAddress(value).catch(() => {
             dispatch({ type: 'setAddressToSendError', payload: true });
         });
     };
@@ -145,9 +143,9 @@ export const SendProvider = ({ children }) => {
         const { balance } = wallets.find((wallet) => wallet.address === walletCurrent);
 
         // You must get the latest unspent from the NODE
-        const unspent = await getSpendableInputs(walletCurrent);
+        const unspent = await sapi.getSpendableInputs(walletCurrent);
 
-        createAndSendRawTransaction({
+        sapi.createAndSendRawTransaction({
             toAddress: state.addressToSend,
             amount: Number(Number(state.amountToSend).toFixed(8)),
             privateKey: getPrivateKey(),
@@ -189,9 +187,9 @@ export const SendProvider = ({ children }) => {
     async function calculateSendAll(percentage) {
         const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
         const balance = Number(wallet.balance.unlocked * percentage);
-        const unspent = await getSpendableInputs(walletCurrent);
-        const fee = await calculateFee(unspent.utxos, state.messageToSend);
-        const amountToSend = subtractFloats(balance, fee);
+        const unspent = await sapi.getSpendableInputs(walletCurrent);
+        const fee = await sapi.calculateFee(unspent.utxos, state.messageToSend);
+        const amountToSend = math.subtractFloats(balance, fee);
 
         dispatch({ type: 'setAmountToSendError', payload: null });
         dispatch({ type: 'setNetFee', payload: fee });
@@ -203,10 +201,10 @@ export const SendProvider = ({ children }) => {
 
         let spendableInputs = wallet?.unspent;
         if (!wallet?.unspent?.utxos || wallet?.unspent?.utxos?.length === 0) {
-            spendableInputs = await getSpendableInputs(walletCurrent);
+            spendableInputs = await sapi.getSpendableInputs(walletCurrent);
         }
 
-        const fee = await calculateFee(spendableInputs.utxos, messageOpReturn);
+        const fee = await sapi.calculateFee(spendableInputs.utxos, messageOpReturn);
 
         dispatch({ type: 'setAmountToSendError', payload: null });
         dispatch({ type: 'setNetFee', payload: fee });
@@ -221,7 +219,7 @@ export const SendProvider = ({ children }) => {
         return state.amountToSendError === null && state.addressToSendError === false && !state.TXIDLoading;
     }
 
-    const totalInSmart = sumFloatsValues(state.amountToSend, state.netFee);
+    const totalInSmart = math.sumFloatsValues(state.amountToSend, state.netFee);
 
     const clearTxId = () => dispatch({ type: 'setTXID', payload: null });
 

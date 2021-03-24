@@ -1,9 +1,8 @@
 import React, { useContext, useState } from 'react';
 import style from '../wallet-modal.module.css';
-import { generatePhrase, getFromDerivationPaths, validatePhrase } from '../../../lib/smart-mnemonic';
+import { mnemonic, sapi } from 'smartcashjs-lib/src/index';
 import generatePDF from '../../../lib/GeneratorPDF';
 import { WalletContext } from '../../../context/WalletContext';
-import { createRSAKeyPair } from '../../../lib/sapi';
 import * as CryptoJS from 'crypto-js';
 const { ipcRenderer } = window.require('electron');
 
@@ -15,14 +14,14 @@ export function Mnemonic({ hide }) {
     const { decryptWallets, wallets, updateWalletsFunc } = useContext(WalletContext);
 
     const handleGenerateRandomMnemonic = async (words, passphrase) => {
-        const generatedWallets = getFromDerivationPaths({ words, passphrase });
+        const generatedWallets = mnemonic.getFromDerivationPaths({ words, passphrase });
 
         const walletsGenerated = generatedWallets.BIP_44.addresses.map((_address) => {
             const { address, privkey } = _address;
             return {
                 address,
                 privateKey: privkey,
-                RSA: createRSAKeyPair(passphrase),
+                RSA: sapi.createRSAKeyPair(passphrase),
                 balance: {
                     locked: 0,
                     total: 0,
@@ -54,7 +53,7 @@ export function Mnemonic({ hide }) {
         }
     };
 
-    const buttonDisabled = () => !validatePhrase({ words }) || !passphrase || passphraseError || !accept;
+    const buttonDisabled = () => !mnemonic.validatePhrase({ words }) || !passphrase || passphraseError || !accept;
 
     return (
         <div className={style.import_address}>
@@ -63,11 +62,14 @@ export function Mnemonic({ hide }) {
                     <textarea placeholder="BIP39 Mnemonic" value={words} onChange={(event) => setWords(event.target?.value)} />
                 </div>
                 <div>
-                    <button className={[style.btn, style.btn_outline].join(' ')} onClick={() => setWords(generatePhrase())}>
+                    <button
+                        className={[style.btn, style.btn_outline].join(' ')}
+                        onClick={() => setWords(mnemonic.generatePhrase())}
+                    >
                         Generate
                     </button>
                 </div>
-                <div>{words && !validatePhrase({ words }) && <p>Invalid mnemonic words</p>}</div>
+                <div>{words && !mnemonic.validatePhrase({ words }) && <p>Invalid mnemonic words</p>}</div>
             </div>
             <div>
                 <textarea placeholder="Passphrase" onChange={passphraseValidation} />

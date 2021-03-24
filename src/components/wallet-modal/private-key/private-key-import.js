@@ -1,7 +1,6 @@
 import * as CryptoJS from 'crypto-js';
-import { isPK } from '../../../lib/smart';
 import { WalletContext } from '../../../context/WalletContext';
-import { createNewWalletKeyPair, getAddress } from '../../../lib/sapi';
+import { sapi, check } from 'smartcashjs-lib/src/index';
 import React, { useContext, useState } from 'react';
 import style from '../wallet-modal.module.css';
 
@@ -16,11 +15,11 @@ export function PrivateKeyImport({ hide, disableCloseButton, setCreateWallet, wa
     const handleImportPrivateKey = async () => {
         const wallets = await decryptWallets(_password);
         if ((wallets && wallets.length > 0) || disableCloseButton) {
-            isPK(privateKey)
+            check.isPK(privateKey)
                 .then(() => {
                     const _wallet = {
                         privateKey: CryptoJS.AES.encrypt(privateKey, _password).toString(),
-                        address: getAddress(privateKey),
+                        address: sapi.getAddress(privateKey),
                     };
                     addWallet(_wallet, _password);
                     hide();
@@ -34,7 +33,7 @@ export function PrivateKeyImport({ hide, disableCloseButton, setCreateWallet, wa
     const handleCreateNewOne = () => {
         setError('');
         setCreateWallet(true);
-        setWallet(createNewWalletKeyPair());
+        setWallet(sapi.createNewWalletKeyPair());
     };
 
     return (

@@ -3,7 +3,9 @@ import Page from '../../components/Page';
 import './Receive.css';
 import QRious from 'qrious';
 import { WalletContext } from '../../context/WalletContext';
-import { getCurrenciePrice } from '../../lib/smart';
+
+import { sapi } from 'smartcashjs-lib/src/index';
+
 import { Scrollbars } from 'react-custom-scrollbars';
 import { saveAs } from 'file-saver';
 import { ReactComponent as IconDownload } from '../../assets/images/fileDownload.svg';
@@ -26,7 +28,7 @@ function Receive() {
         const { value } = e.target;
         if (value) {
             setFiatSelected(value);
-            await getCurrenciePrice(value).then((res) => setRate(res.smartcash[`${value}`]));
+            await sapi.getCurrenciePrice(value).then((res) => setRate(res.smartcash[`${value}`]));
         }
     };
 
@@ -64,7 +66,7 @@ function Receive() {
                             title="Copy QRCode to clipboard"
                             onClick={() => {
                                 electron.clipboard.writeImage(
-                                    electron.nativeImage.createFromDataURL(qrAddress.toDataURL('image/png'))
+                                    electron.nativeImage.createFromDataURL(qrAddress.toDataURL('image/png')),
                                 );
                             }}
                         >

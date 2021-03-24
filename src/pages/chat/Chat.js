@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import Page from '../../components/Page';
 import { WalletContext } from '../../context/WalletContext';
 import './Chat.css';
 import { NewChat } from './NewChat';
 import loader from '../../assets/images/loader.svg';
-import { ChatProvider, useChatState, clearTxId } from './Chat.context';
+import { ChatProvider, useChatState } from './Chat.context';
 import { useChatController } from './Chat.controller';
 import _ from 'lodash';
-import { decryptTextWithRSAPrivateKey } from '../../lib/sapi';
+import { sapi } from 'smartcashjs-lib/src/index';
 
 export function Chat() {
     return (
@@ -76,20 +76,20 @@ function ChatComponent() {
             if (rsaKeyPair) {
                 if (messageObject.direction === 'Sent' && messageObject.toAddress !== walletCurrent) {
                     try {
-                        textMessage = decryptTextWithRSAPrivateKey(
+                        textMessage = sapi.decryptTextWithRSAPrivateKey(
                             rsaKeyPair.rsaPrivateKey,
                             '123456',
-                            jsonMessage.messageFromSender
+                            jsonMessage.messageFromSender,
                         );
                     } catch (error) {
                         textMessage = error.message;
                     }
                 } else {
                     try {
-                        textMessage = decryptTextWithRSAPrivateKey(
+                        textMessage = sapi.decryptTextWithRSAPrivateKey(
                             rsaKeyPair.rsaPrivateKey,
                             '123456',
-                            jsonMessage.messageToRecipient
+                            jsonMessage.messageToRecipient,
                         );
                     } catch (error) {
                         textMessage = error.message;
@@ -262,8 +262,8 @@ function ChatComponent() {
                                             messageToSend,
                                             password,
                                             (getChat()?.messages.find(
-                                                (m) => m.direction !== 'Sent' && m.message.includes('-----BEGIN PUBLIC KEY-----')
-                                            )).message
+                                                (m) => m.direction !== 'Sent' && m.message.includes('-----BEGIN PUBLIC KEY-----'),
+                                            )).message,
                                         )
                                     }
                                     disabled={!canSend()}

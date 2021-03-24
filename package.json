@@ -51,7 +51,7 @@
         "react-text-mask": "~5.4.3",
         "request": "~2.88.0",
         "request-promise": "~4.2.5",
-        "smartcashjs-lib": "git+https://github.com/SmartCash/SmartCashjs-lib.git",
+        "smartcashjs-lib": "git+https://github.com/SmartCash/smartcashjs-lib-2021.git",
         "text-mask-addons": "~3.8.0"
     },
     "scripts": {

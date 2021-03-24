@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Page from '../../components/Page';
 import { WalletContext } from '../../context/WalletContext';
-import { getOpReturnMessage, getTransactionHistory, isLockedTransaction } from '../../lib/sapi';
+import { sapi } from 'smartcashjs-lib/src/index';
 import loader from '../../assets/images/loader.svg';
 import './Transactions.css';
 import { Scrollbars } from 'react-custom-scrollbars';
@@ -17,21 +17,21 @@ function Transactions() {
         setLoading(true);
         setError(null);
         setHistory([]);
-        await getTransactionHistory(walletCurrent)
+        await sapi.getTransactionHistory(walletCurrent)
             .then((data) => setHistory(data))
             .catch(() => setError('There is no transactions for this wallet'))
             .finally(() => setLoading(false));
     }
 
     useEffect(() => {
-        _getTransactionHistory();
-        const timer = setTimeout(() => _getTransactionHistory(), 60000);
+        sapi.getTransactionHistory();
+        const timer = setTimeout(() => sapi.getTransactionHistory(), 60000);
         return () => clearTimeout(timer);
     }, [walletCurrent]);
 
     return (
         <Page className="page-transactions">
-            <button onClick={() => _getTransactionHistory()} className="refreshBtn">
+            <button onClick={() => sapi.getTransactionHistory()} className="refreshBtn">
                 Refresh
             </button>
             {loading && (
@@ -43,8 +43,8 @@ function Transactions() {
             {!error && history && (
                 <Scrollbars renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
                     {history?.map((tx, index) => {
-                        tx.isLocked = isLockedTransaction(tx, walletCurrent) ? 'Yes' : 'No';
-                        tx.message = getOpReturnMessage(tx);
+                        tx.isLocked = sapi.isLockedTransaction(tx, walletCurrent) ? 'Yes' : 'No';
+                        tx.message = sapi.getOpReturnMessage(tx);
                         return (
                             <div className="transaction" key={index}>
                                 <div className="wrapper">

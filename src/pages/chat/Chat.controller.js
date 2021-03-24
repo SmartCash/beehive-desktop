@@ -1,11 +1,5 @@
 import { useContext } from 'react';
-import {
-    getTransactionHistoryGroupedByAddresses,
-    createAndSendRawTransaction,
-    getSpendableInputs,
-    getSpendableBalance,
-    calculateFee,
-} from '../../lib/sapi';
+import { sapi } from 'smartcashjs-lib/src/index';
 import { WalletContext } from '../../context/WalletContext';
 import { useChatDispatch, ACTION_TYPE } from './Chat.context';
 
@@ -17,7 +11,8 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.loading, payload: true });
         chatDispatch({ type: ACTION_TYPE.initialLoading, payload: true });
         chatDispatch({ type: ACTION_TYPE.error, payload: null });
-        await getTransactionHistoryGroupedByAddresses(walletCurrent)
+        await sapi
+            .getTransactionHistoryGroupedByAddresses(walletCurrent)
             .then((data) => {
                 chatDispatch({ type: ACTION_TYPE.history, payload: data });
             })
@@ -44,15 +39,15 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.error, payload: null });
 
         try {
-            const spendableInputs = await getSpendableInputs(walletCurrent);
-            const transaction = await createAndSendRawTransaction({
+            const spendableInputs = await sapi.getSpendableInputs(walletCurrent);
+            const transaction = await sapi.createAndSendRawTransaction({
                 toAddress: currentChatAddress,
                 amount: 0.001,
-                fee: await calculateFee(spendableInputs.utxos, messageToSend),
+                fee: await sapi.calculateFee(spendableInputs.utxos, messageToSend),
                 messageOpReturn: messageToSend,
                 password: password,
                 unspentList: spendableInputs,
-                unlockedBalance: await getSpendableBalance(walletCurrent, spendableInputs),
+                unlockedBalance: await sapi.getSpendableBalance(walletCurrent, spendableInputs),
                 privateKey: wallets.find((w) => w.address === walletCurrent).privateKey,
                 isChat: true,
                 rsaKeyPairFromSender: wallets.find((w) => w.address === walletCurrent).RSA,
@@ -82,17 +77,17 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.error, payload: null });
 
         try {
-            const spendableInputs = await getSpendableInputs(walletCurrent);
+            const spendableInputs = await sapi.getSpendableInputs(walletCurrent);
             var messageToSend = wallets.find((w) => w.address === walletCurrent).RSA.rsaPublicKey;
 
-            const transaction = await createAndSendRawTransaction({
+            const transaction = await sapi.createAndSendRawTransaction({
                 toAddress: addressNewChatToSend,
                 amount: 0.001,
-                fee: await calculateFee(spendableInputs.utxos, messageToSend),
+                fee: await sapi.calculateFee(spendableInputs.utxos, messageToSend),
                 messageOpReturn: messageToSend,
                 password: passwordNewChat,
                 unspentList: spendableInputs,
-                unlockedBalance: await getSpendableBalance(walletCurrent, spendableInputs),
+                unlockedBalance: await sapi.getSpendableBalance(walletCurrent, spendableInputs),
                 privateKey: wallets.find((w) => w.address === walletCurrent).privateKey,
                 isChat: true,
             });
@@ -123,17 +118,17 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.error, payload: null });
 
         try {
-            const spendableInputs = await getSpendableInputs(walletCurrent);
+            const spendableInputs = await sapi.getSpendableInputs(walletCurrent);
             var messageToSend = wallets.find((w) => w.address === walletCurrent).RSA.rsaPublicKey;
 
-            const transaction = await createAndSendRawTransaction({
+            const transaction = await sapi.createAndSendRawTransaction({
                 toAddress: addressToSend,
                 amount: 0.001,
-                fee: await calculateFee(spendableInputs.utxos, messageToSend),
+                fee: await sapi.calculateFee(spendableInputs.utxos, messageToSend),
                 messageOpReturn: messageToSend,
                 password: passwordAcceptChat,
                 unspentList: spendableInputs,
-                unlockedBalance: await getSpendableBalance(walletCurrent, spendableInputs),
+                unlockedBalance: await sapi.getSpendableBalance(walletCurrent, spendableInputs),
                 privateKey: wallets.find((w) => w.address === walletCurrent).privateKey,
                 isChat: true,
             });

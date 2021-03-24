@@ -7,7 +7,7 @@ import SuperRewardsImage from '../../assets/images/super_rewards.png';
 import Page from '../../components/Page';
 import SmartNodeRewardsRoi from '../../components/SmartNodeRewardsRoi';
 import { WalletContext } from '../../context/WalletContext';
-import { getRewards, getTxId, getSpendableInputs, activateRewards } from '../../lib/sapi';
+import { sapi } from 'smartcashjs-lib/src/index';
 
 import './activate.css';
 import { ActivateContext, ActivateProvider } from './ActivateContext';
@@ -30,7 +30,7 @@ function RewardsActivateComponent() {
     useEffect(() => {
         setRewards(null);
         setRewardsError(false);
-        getRewards(address)
+        sapi.getRewards(address)
             .then((data) => setRewards(data))
             .catch(() => setRewardsError(true));
     }, [address]);
@@ -44,9 +44,9 @@ function RewardsActivateComponent() {
             setActivating(true);
             setCountDownDate(Date.now() + SLEEP_TIME);
 
-            let unspentList = await getSpendableInputs(address);
+            let unspentList = await sapi.getSpendableInputs(address);
 
-            let rewardsActivationResponse = await activateRewards({ toAddress: address, unspentList, privateKey, password });
+            let rewardsActivationResponse = await sapi.activateRewards({ toAddress: address, unspentList, privateKey, password });
 
             if (rewardsActivationResponse && rewardsActivationResponse.status === 400) {
                 setError(rewardsActivationResponse.value);
@@ -55,7 +55,7 @@ function RewardsActivateComponent() {
 
             await sleep(SLEEP_TIME);
 
-            const transactionResponse = await getTxId(rewardsActivationResponse.value);
+            const transactionResponse = await sapi.getTxId(rewardsActivationResponse.value);
 
             if (!transactionResponse) {
                 return {
