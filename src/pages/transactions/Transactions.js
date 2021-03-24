@@ -24,14 +24,14 @@ function Transactions() {
     }
 
     useEffect(() => {
-        sapi.getTransactionHistory();
-        const timer = setTimeout(() => sapi.getTransactionHistory(), 60000);
+        _getTransactionHistory();
+        const timer = setTimeout(() => _getTransactionHistory(), 60000);
         return () => clearTimeout(timer);
     }, [walletCurrent]);
 
     return (
         <Page className="page-transactions">
-            <button onClick={() => sapi.getTransactionHistory()} className="refreshBtn">
+            <button onClick={() => _getTransactionHistory()} className="refreshBtn">
                 Refresh
             </button>
             {loading && (
