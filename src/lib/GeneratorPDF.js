@@ -32,19 +32,19 @@ export default function generatePDF({ wallets, filename, mnemonic, passphrase })
             56.58
         );
         doc.setTextColor('#000000');
-        doc.setFontStyle('bold');
+        doc.setFont('helvetica', 'bold');
         doc.setFontSize(24);
         doc.text(SmartCard.localization.pdf.smartcash, 110, 100);
 
-        doc.setFontStyle('normal');
+        doc.setFont('helvetica', 'normal');
         doc.setFontSize(16);
         doc.text(SmartCard.localization.pdf.hereIsYour, 110, 120);
 
-        doc.setFontStyle('bold');
+        doc.setFont('helvetica', 'bold');
         doc.setFontSize(32);
         doc.text(SmartCard.localization.pdf.cardDetails, 50, 200);
 
-        doc.setFontStyle('normal');
+        doc.setFont('helvetica', 'normal');
         doc.setFontSize(24);
         doc.text(SmartCard.localization.pdf.beCareful, 50, 230);
 
@@ -65,7 +65,7 @@ export default function generatePDF({ wallets, filename, mnemonic, passphrase })
                 value: passphrase,
             });
 
-            doc.setFontStyle('bold');
+            doc.setFont('helvetica', 'bold');
             doc.setFontSize(16);
             doc.text('Mnemonic', 50, 300);
             doc.text('Passphrase', 360, 300);
@@ -75,7 +75,7 @@ export default function generatePDF({ wallets, filename, mnemonic, passphrase })
             doc.addImage(qrMnemonic.toDataURL('image/png'), 'PNG', 120, 390, 120, 120);
             doc.addImage(qrPassphrase.toDataURL('image/png'), 'PNG', 400, 390, 120, 120);
 
-            doc.setFontStyle('normal');
+            doc.setFont('helvetica', 'normal');
             doc.setFontSize(12);
             doc.text(mnemonic, 60, 540, { maxWidth: 250 });
             doc.text(passphrase, 360, 540, { maxWidth: 250 });
@@ -98,25 +98,25 @@ export default function generatePDF({ wallets, filename, mnemonic, passphrase })
                 value: wallet.privateKey,
             });
 
-            doc.setFontStyle('bold');
+            doc.setFont('helvetica', 'bold');
             doc.setFontSize(16);
             doc.text(SmartCard.localization.pdf.address, 50, 300);
             doc.text(SmartCard.localization.pdf.privateKey, 360, 300);
             doc.line(340, 300, 340, 600);
-            doc.setFontStyle('normal');
+            doc.setFont('helvetica', 'normal');
             doc.setFontSize(13);
             doc.text(SmartCard.localization.pdf.addressInfo1, 50, 340);
             doc.setFontSize(16);
-            doc.setFontStyle('bold');
+            doc.setFont('helvetica', 'bold');
             doc.setFontSize(13);
             doc.text(SmartCard.localization.pdf.privateKeyInfo1, 350, 340);
-            doc.setFontStyle('normal');
+            doc.setFont('helvetica', 'normal');
             doc.text(SmartCard.localization.pdf.privateKeyInfo2, 350, 360);
 
             doc.addImage(qrAddress.toDataURL('image/png'), 'PNG', 120, 390, 120, 120);
             doc.addImage(qrPrivateKey.toDataURL('image/png'), 'PNG', 400, 390, 120, 120);
 
-            doc.setFontStyle('normal');
+            doc.setFont('helvetica', 'normal');
             doc.setFontSize(12);
             doc.text(wallet.address, 60, 540);
             doc.text(wallet.privateKey, 360, 540);
