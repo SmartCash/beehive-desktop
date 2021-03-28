@@ -1,13 +1,13 @@
 import React from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import HttpsRedirect from './components/RedirectToHttps';
-import { WalletProvider } from './context/WalletContext';
-import { Send } from './pages/send/Send';
-import Receive from './pages/receive/Receive';
-import Transactions from './pages/transactions/Transactions';
-import { Chat } from './pages/chat/Chat';
-import { RewardsActivate } from './pages/rewards/activate';
-import ProtectedRoute from './components/ProtectedRoute';
+import HttpsRedirect from './presentation/components/RedirectToHttps';
+import { WalletProvider } from './application/context/WalletContext';
+import { Send } from './presentation/pages/send/Send';
+import Receive from './presentation/pages/receive/Receive';
+import Transactions from './presentation/pages/transactions/Transactions';
+import { Chat } from './presentation/pages/chat/Chat';
+import { RewardsActivate } from './presentation/pages/rewards/activate';
+import ProtectedRoute from './presentation/components/ProtectedRoute';
 
 function App() {
     return (
