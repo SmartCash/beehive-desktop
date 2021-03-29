@@ -76,15 +76,16 @@ export const useChatController = () => {
         }
     };
 
-    const handleSubmitSendNewChat = async (addressNewChatToSend, passwordNewChat) => {
+    const handleSubmitSendNewChat = async (addressNewChatToSend, passwordNewChat, rsaPublicKeyRecipient) => {
         chatDispatch({ type: ACTION_TYPE.loading, payload: true });
         chatDispatch({ type: ACTION_TYPE.initialLoading, payload: true });
         chatDispatch({ type: ACTION_TYPE.error, payload: null });
 
         try {
             const spendableInputs = await getSpendableInputs(walletCurrent);
+            console.log(wallets.find((w) => w.address === walletCurrent));
             var messageToSend = wallets.find((w) => w.address === walletCurrent).RSA.rsaPublicKey;
-
+            
             const transaction = await createAndSendRawTransaction({
                 toAddress: addressNewChatToSend,
                 amount: 0.001,
@@ -95,6 +96,8 @@ export const useChatController = () => {
                 unlockedBalance: await getSpendableBalance(walletCurrent, spendableInputs),
                 privateKey: wallets.find((w) => w.address === walletCurrent).privateKey,
                 isChat: true,
+                rsaKeyPairFromSender: wallets.find((w) => w.address === walletCurrent).RSA,
+                rsaKeyPairFromRecipient: { rsaPublicKey: rsaPublicKeyRecipient },
             });
 
             console.log(transaction);

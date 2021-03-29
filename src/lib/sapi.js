@@ -183,7 +183,7 @@ export async function createAndSendRawTransaction({
                                     messageOpReturn
                                 ),
                                 messageToRecipient: encryptTextWithRSAPublicKey(
-                                    rsaKeyPairFromRecipient.rsaPublicKey,
+                                    rsaKeyPairFromRecipient?.rsaPublicKey,
                                     messageOpReturn
                                 ),
                             }),
