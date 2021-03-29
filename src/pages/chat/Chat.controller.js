@@ -97,6 +97,8 @@ export const useChatController = () => {
                 isChat: true,
             });
 
+            console.log(transaction);
+
             if (transaction.status === 200) {
                 chatDispatch({ type: ACTION_TYPE.messageToSend, payload: '' });
                 chatDispatch({ type: ACTION_TYPE.success, payload: transaction.value });
@@ -188,12 +190,18 @@ export const useChatController = () => {
     }
 
     function generateMessage(messages) {
-        console.log(messages);
-        if (messages.length == 1) {
-            return 'Accept invite pending';
-        } else {
-            return messages[messages.length - 2].message.substring(0, 30);
-        }
+        var removePublicKeys = [];
+
+        messages.forEach(item => {
+            if(!item.message.includes('-----BEGIN PUBLIC KEY-----')){
+                removePublicKeys.push(item);
+            }
+        });
+
+        if(removePublicKeys.length > 0)
+            return removePublicKeys[removePublicKeys.length - 1].message.substring(0, 30);
+        else 
+            return ''   
     }
 
     return {
