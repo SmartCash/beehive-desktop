@@ -155,7 +155,9 @@ export async function createAndSendRawTransaction({
     }
 
     try {
+        console.log(password);
         const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(privateKey, password));
+        console.log(decryptedWallet);
         let decriptKey;
 
         if (!decryptedWallet) decriptKey = privateKey;
@@ -481,6 +483,7 @@ export async function getTransactionHistoryGroupedByAddresses(address) {
         const mappedHistory = await Promise.all(
             history.map(async (tx) => {
                 var msg = getOpReturnMessage(tx);
+                console.log(tx);
 
                 if (!tx.time) {
                     tx.amount = 0;
@@ -529,9 +532,17 @@ export function getOpReturnMessage(tx) {
             if (outWithOpReturn) {
                 const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
                 if (message) {
+                    console.log(message);
                     const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
                     const hexToUtf8 = convert('hex', 'utf8');
-                    const decodedMessage = hexToUtf8(message);
+                    let decodedMessage;
+
+                    try {
+                        decodedMessage = hexToUtf8(message);
+                    } catch (error) {
+                        decodedMessage = message;
+                    }                    
+
                     return decodedMessage.replace('smart-chat: ', '');
                 }
             }
@@ -607,7 +618,13 @@ export function getAddressAndMessage(tx) {
                 if (message) {
                     const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
                     const hexToUtf8 = convert('hex', 'utf8');
-                    const decodedMessage = hexToUtf8(message);
+                    let decodedMessage;
+
+                    try {
+                        decodedMessage = hexToUtf8(message);
+                    } catch (error) {
+                        decodedMessage = message;
+                    }                  
                     transaction.message = decodedMessage.replace('smart-chat: ', '');
                 } else {
                     return null;

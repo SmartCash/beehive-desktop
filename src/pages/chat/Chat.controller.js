@@ -82,8 +82,7 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.error, payload: null });
 
         try {
-            const spendableInputs = await getSpendableInputs(walletCurrent);
-            console.log(wallets.find((w) => w.address === walletCurrent));
+            const spendableInputs = await getSpendableInputs(walletCurrent);            
             var messageToSend = wallets.find((w) => w.address === walletCurrent).RSA.rsaPublicKey;
             
             const transaction = await createAndSendRawTransaction({
