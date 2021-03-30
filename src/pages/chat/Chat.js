@@ -44,6 +44,7 @@ function ChatComponent() {
         setPasswordToSend,
         setPasswordAcceptChat,
         generateMessage,
+        isNewWallet
     } = useChatController();
 
     const getChat = () => {
@@ -149,7 +150,7 @@ function ChatComponent() {
                 </Scrollbars>
             </div>
 
-            {newChat === false && (
+            {newChat === false && !isNewWallet(getChat()?.chatAddress) && (
                 <div className="chat-messages">
                     {error && <p className="ChatError">{error}</p>}
 
@@ -185,7 +186,7 @@ function ChatComponent() {
                                     if (m.direction == 'Sent') {
                                         return (
                                             <div class="transaction chatAddress">
-                                                This chat is not accept yet, please await to response.
+                                                This chat is not accepted yet, please await for response.
                                             </div>
                                         );
                                     } else {
@@ -277,6 +278,8 @@ function ChatComponent() {
             )}
 
             {!initialLoading && newChat && <NewChat />}
+
+            {!initialLoading && !newChat && isNewWallet(getChat()?.chatAddress) && <NewChat />}
         </Page>
     );
 }
