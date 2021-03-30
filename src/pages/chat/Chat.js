@@ -184,34 +184,57 @@ function ChatComponent() {
                             getChat()?.messages.map((m) => {
                                 if (isAccept()) {
                                     if (m.direction == 'Sent') {
-                                        return (
-                                            <div class="transaction chatAddress">
-                                                This chat is not accepted yet, please await for response.
-                                            </div>
-                                        );
+                                        if (!m.message.includes('-----BEGIN PUBLIC KEY-----')) {
+                                            return (
+                                                <div className={`transaction message message-${m.direction}`} key={m.time}>
+                                                    <p className="value">{parseMessage(m)}</p>
+                                                    <p className="label">
+                                                        {m.direction} at {new Date(m.time * 1000).toLocaleString()}
+                                                    </p>
+                                                </div>
+                                            );
+                                        } else {
+                                            return (
+                                                <div class="transaction chatAddress">
+                                                    This chat is not accepted yet, please await for response.
+                                                </div>
+                                            );
+                                        }
                                     } else {
-                                        return (
-                                            <div className="accept">
-                                                <input
-                                                    placeholder="Insert your password"
-                                                    className="send-input"
-                                                    type="password"
-                                                    value={passwordAcceptChat}
-                                                    onInput={(event) => {
-                                                        setPasswordAcceptChat(event.target.value);
-                                                    }}
-                                                />
-                                                <br />
-                                                <br />
-                                                <button
-                                                    onClick={() => handleAcceptChat(m.toAddress, passwordAcceptChat)}
-                                                    className="acceptInvite"
-                                                    disabled={!canSendAcceptChat()}
-                                                >
-                                                    Accept invite
-                                                </button>
-                                            </div>
-                                        );
+                                        if (!m.message.includes('-----BEGIN PUBLIC KEY-----')) {
+                                            return (
+                                                <div className={`transaction message message-${m.direction}`} key={m.time}>
+                                                    <p className="value">{parseMessage(m)}</p>
+                                                    <p className="label">
+                                                        {m.direction} at {new Date(m.time * 1000).toLocaleString()}
+                                                    </p>
+                                                </div>
+                                            );
+                                        } else {
+                                            return (
+                                                <div className="accept">
+                                                    <input
+                                                        placeholder="Insert your password"
+                                                        className="send-input"
+                                                        type="password"
+                                                        value={passwordAcceptChat}
+                                                        onInput={(event) => {
+                                                            setPasswordAcceptChat(event.target.value);
+                                                        }}
+                                                    />
+                                                    <br />
+                                                    <br />
+                                                    <button
+                                                        onClick={() => handleAcceptChat(m.toAddress, passwordAcceptChat)}
+                                                        className="acceptInvite"
+                                                        disabled={!canSendAcceptChat()}
+                                                    >
+                                                        Accept invite
+                                                    </button>
+                                                </div>
+                                            );
+                                        }
+                                       
                                     }
                                 } else {
                                     if (!m.message.includes('-----BEGIN PUBLIC KEY-----')) {
