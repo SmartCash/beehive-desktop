@@ -1,16 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './app';
-import './index.css';
-import { stopReportingRuntimeErrors } from 'react-error-overlay';
+import { Startup } from 'application/startup';
 
-if (process.env.NODE_ENV === 'development') {
-    stopReportingRuntimeErrors();
-}
+// Styles
+// import 'presentation/styles/index.scss';
+import 'presentation/styles/index.css';
 
 ReactDOM.render(
     <React.StrictMode>
-        <App />
+        <Startup />
     </React.StrictMode>,
     document.getElementById('root')
 );
