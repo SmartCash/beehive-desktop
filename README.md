@@ -28,6 +28,12 @@ npm i
 npm start
 ```
 
+## Install it all in one if you are using linux, then just run:
+
+```
+sudo apt update -y && sudo apt upgrade -y && sudo apt install build-essential git npm curl -y && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt install nodejs -y && git clone https://github.com/SmartCash/smarthub_local.git && cd smarthub_local && npm i && npm start
+```
+
 ### Your equivalent to wallet.dat but called config.json is stored at:
 
 ```
@@ -38,3 +44,5 @@ appData Per-user application data directory, which by default points to:
     $XDG_CONFIG_HOME or ~/.config on Linux
     ~/Library/Application Support on macOS
 ```
+
+
