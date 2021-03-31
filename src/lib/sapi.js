@@ -77,6 +77,7 @@ export async function createAndSendRawTransaction({
     rsaKeyPairFromSender,
     rsaKeyPairFromRecipient,
 }) {
+
     if (!toAddress) {
         return {
             status: 400,
@@ -154,10 +155,8 @@ export async function createAndSendRawTransaction({
         };
     }
 
-    try {
-        console.log(password);
+    try {        
         const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(privateKey, password));
-        console.log(decryptedWallet);
         let decriptKey;
 
         if (!decryptedWallet) decriptKey = privateKey;
@@ -483,8 +482,6 @@ export async function getTransactionHistoryGroupedByAddresses(address) {
         const mappedHistory = await Promise.all(
             history.map(async (tx) => {
                 var msg = getOpReturnMessage(tx);
-                console.log(tx);
-
                 if (!tx.time) {
                     tx.amount = 0;
                     tx.blockhash = '';
@@ -531,8 +528,7 @@ export function getOpReturnMessage(tx) {
             );
             if (outWithOpReturn) {
                 const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
-                if (message) {
-                    console.log(message);
+                if (message) {                    
                     const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
                     const hexToUtf8 = convert('hex', 'utf8');
                     let decodedMessage;

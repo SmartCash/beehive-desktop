@@ -10,7 +10,7 @@ import { WalletContext } from '../../context/WalletContext';
 import { useChatDispatch, ACTION_TYPE } from './Chat.context';
 
 export const useChatController = () => {
-    const { walletCurrent, wallets } = useContext(WalletContext);
+    const { walletCurrent, wallets, history} = useContext(WalletContext);
     const chatDispatch = useChatDispatch();
 
     async function _getTransactionHistory() {
@@ -206,6 +206,10 @@ export const useChatController = () => {
             return ''   
     }
 
+    function isNewWallet(chat) {
+        return chat === undefined;  
+    }
+
     return {
         _getTransactionHistory,
         handleSetCurrentChatAddress,
@@ -221,5 +225,6 @@ export const useChatController = () => {
         setPasswordNewChatToSend,
         setPasswordAcceptChat,
         generateMessage,
+        isNewWallet
     };
 };
