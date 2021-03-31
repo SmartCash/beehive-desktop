@@ -34,14 +34,14 @@ export function LoginModal() {
                     <div className={style['modal']}>
                         <div className={style['modal-header']}>
                             <Logo className="logo" />
-                            <p>Welcome to SmartCash Hub</p>
+                            <p>Welcome to SmartHub</p>
                         </div>
                         <div className={style['modal-body']}>
                             <div className={style['address-content']}>
                                 <p>All data will be encrypted with this password.</p>
-                                <p>Insert your password to decrypt all data stored in the SmartCash Hub.</p>
+                                <p>Insert your password to decrypt all data stored in the SmartHub.</p>
                                 <p>Your wallet can only be recovered with your password.</p>
-                                <p>Keep in mind that this password will not be stored on the SmartCash Hub.</p>
+                                <p>Keep in mind that this password will not be stored on the SmartHub.</p>
                                 {!loading && (
                                     <React.Fragment>
                                         <div className={style['password-wrapper']}>
