@@ -46,30 +46,36 @@ export function LoginModal() {
                                     <React.Fragment>
                                         <div className={style['password-wrapper']}>
                                             <input
-                                                className="form-control"
+                                                className={style.inputPass}
                                                 placeholder="Insert your password"
                                                 onInput={(e) => setPassword(e.target.value)}
                                                 type={showPassword ? 'text' : 'password'}
                                                 autoFocus
-                                            />
+                                            />                                        
+
+
                                             <button
                                                 type="button"
-                                                className={style.btn}
+                                                className={style.btnShow}
                                                 onClick={() => setShowPassword(!showPassword)}
                                             >
                                                 {showPassword ? 'Hide' : 'Show'}
                                             </button>
+                                            
                                         </div>
-                                        <div>
-                                        <div className={style.accept}>
-                                            <input id="accept" type='checkbox' onChange={(event) => setSavePasswordInContext(event.target.checked)} />
-                                            <label htmlFor='accept'>Remember</label>
-                                        </div>
-                                        </div>
+
                                         {decryptError && (
                                             <p className="alert-error">Wallet is not possible decrypt using this password.</p>
                                         )}
-                                        <button className={style.btn} onClick={handleDecryptWallets}>Open wallet using password above</button>
+                                        
+                                        <div className={style.accept}>
+                                            <input id="accept" type='checkbox' onChange={(event) => setSavePasswordInContext(event.target.checked)} />
+                                            <label htmlFor='accept'>Remember password</label>
+                                        </div>
+
+                                        <div className={style.buttonArea}>
+                                        <button className={style.btnOpen} onClick={handleDecryptWallets}>Open wallet using password above</button>
+                                        </div>                                                                                                                  
                                     </React.Fragment>
                                 )}
                                 {loading && (
