@@ -1,7 +1,9 @@
 import { WalletContext } from 'application/context/WalletContext';
+import useModal from 'application/hooks/useModal';
 import { decryptTextWithRSAPrivateKey } from 'application/lib/sapi';
 import loader from 'presentation/assets/images/loader.svg';
 import Page from 'presentation/components/Page';
+import { PasswordModal } from 'presentation/components/password-modal/passsword-modal';
 import React, { useContext, useEffect, useRef } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { ChatProvider, useChatState } from './Chat.context';
@@ -18,6 +20,7 @@ export function Chat() {
 }
 
 function ChatComponent() {
+    const { isShowing: showPasswordModal, toggle: togglePasswordModal } = useModal();
     const { walletCurrent, wallets } = useContext(WalletContext);
     const {
         history,
@@ -99,6 +102,18 @@ function ChatComponent() {
         }
         return textMessage;
     };
+
+    const handleSend = () => {
+        togglePasswordModal();
+        handleSubmitSendAmount(
+            currentChatAddress,
+            messageToSend,
+            password,
+            (getChat()?.messages.find(
+                (m) => m.direction !== 'Sent' && m.message.includes('-----BEGIN PUBLIC KEY-----')
+            )).message
+        );
+    }
 
     useEffect(() => {
         if (history && history.length > 0 && newChat === false && currentChatAddress === undefined) {
@@ -279,17 +294,8 @@ function ChatComponent() {
                             <div className="">
                                 <button
                                     className="btn send-button"
-                                    onClick={() =>
-                                        handleSubmitSendAmount(
-                                            currentChatAddress,
-                                            messageToSend,
-                                            password,
-                                            (getChat()?.messages.find(
-                                                (m) => m.direction !== 'Sent' && m.message.includes('-----BEGIN PUBLIC KEY-----')
-                                            )).message
-                                        )
-                                    }
-                                    disabled={!canSend()}
+                                    onClick={() => togglePasswordModal()}
+                                    // disabled={!canSend()}
                                 >
                                     Send
                                 </button>
@@ -302,6 +308,16 @@ function ChatComponent() {
             {!initialLoading && newChat && <NewChat />}
 
             {!initialLoading && !newChat && isNewWallet(getChat()?.chatAddress) && <NewChat />}
+
+            {
+                showPasswordModal && (
+                    <PasswordModal
+                        callBack={handleSend}
+                        isShowing={showPasswordModal}
+                        onClose={togglePasswordModal}
+                    />
+                )
+            }
         </Page>
     );
 }

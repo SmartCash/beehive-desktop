@@ -1,22 +1,29 @@
 import React, { useContext, useState } from 'react';
 import ReactDOM from 'react-dom';
-import loader from '../assets/images/loader.svg';
-import { ReactComponent as Logo } from '../assets/images/logo.svg';
+import loader from 'presentation/assets/images/loader.svg';
+import { ReactComponent as Logo } from 'presentation/assets/images/logo.svg';
 import { WalletContext } from 'application/context/WalletContext';
-import style from './modal/modal.module.css';
+import style from '../modal/modal.module.css';
 
-function PasswordModal() {
+export function LoginModal() {
     const { decryptWallets, decryptError } = useContext(WalletContext);
     const [showPassword, setShowPassword] = useState(false);
     const [_password, setPassword] = useState();
     const [showModal, setShowModal] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [savePasswordInContext, setSavePasswordInContext] = useState(false);
 
     const handleDecryptWallets = async () => {
         setLoading(true);
         const wallets = await decryptWallets(_password);
         setLoading(false);
-        if (wallets && wallets.length > 0) setShowModal(false);
+        if (wallets && wallets.length > 0) {
+            setShowModal(false);
+
+            if (savePasswordInContext) {
+                // savePassword from walletController;
+            }
+        };
     };
     return (
         showModal &&
@@ -53,6 +60,12 @@ function PasswordModal() {
                                                 {showPassword ? 'Hide' : 'Show'}
                                             </button>
                                         </div>
+                                        <div>
+                                        <div className={style.accept}>
+                                            <input id="accept" type='checkbox' onChange={(event) => setSavePasswordInContext(event.target.checked)} />
+                                            <label htmlFor='accept'>Remember</label>
+                                        </div>
+                                        </div>
                                         {decryptError && (
                                             <p className="alert-error">Wallet is not possible decrypt using this password.</p>
                                         )}
@@ -73,5 +86,3 @@ function PasswordModal() {
         )
     );
 }
-
-export default PasswordModal;
