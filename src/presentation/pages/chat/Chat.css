@@ -108,13 +108,16 @@
 }
 
 .page-chat .send-button {
-    border: 0;
     background-color: var(--primary);
-    color: var(--black);
-    padding: 0 16px;
-    border-radius: 4px;
-    margin-left: 8px;
-    height: 100%;
+    border: 0;
+    color: #333;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    margin: 16px 0 0;
+    cursor: pointer;
 }
 
 .page-chat .message-Sent {
@@ -337,4 +340,11 @@
 .page-chat .accept{
     width: 100%;
     text-align: center;
+}
+
+.decryptMessages{
+    width: 100%;
+    text-align: center;
+    margin-top: 100px;
+    color:#fff;
 }

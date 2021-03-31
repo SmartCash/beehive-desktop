@@ -45,9 +45,7 @@
     border-radius: 5px;
 }
 
-.modal-body button.btn ~ button.btn {
-    margin-left: 24px;
-}
+
 
 .modal-close-button {
     font-size: 1.4rem;
@@ -131,4 +129,54 @@
     margin: 10px auto 0;
     text-align: center;
     width: 100%;
+}
+
+.accept{
+    margin-top:20px;
+    margin-bottom: 0;
+    height: 20px;
+}
+
+.buttonArea{
+    margin-top: 40px;    
+}
+
+.inputPass{
+    flex: 1;
+    padding: 16px;
+    resize: none;
+    background: #000;
+    border: 0;
+    border-radius: 4px;
+    outline: 0;
+    color: var(--primary);
+    width: 100%;
+    height: 100%;
+}
+
+.btnShow {
+    background: var(--primary);
+    border: 0;
+    color: #333;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    margin: 16px 0 0;
+    cursor: pointer;
+}
+
+.btnOpen{
+    background: var(--primary);
+    border: 0;
+    color: #333;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    margin: 26px 0 0;
+    cursor: pointer;
+    margin-left: -170px;
 }
