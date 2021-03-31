@@ -79,7 +79,7 @@ function ChatComponent() {
                     try {
                         textMessage = decryptTextWithRSAPrivateKey(
                             rsaKeyPair.rsaPrivateKey,
-                            '123456',
+                            password,
                             jsonMessage.messageFromSender
                         );
                     } catch (error) {
