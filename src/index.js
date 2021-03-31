@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './app';
-import './index.css';
+import { Startup } from 'application/startup';
 import { stopReportingRuntimeErrors } from 'react-error-overlay';
+
+// Styles
+import 'presentation/styles/index.css';
 
 if (process.env.NODE_ENV === 'development') {
     stopReportingRuntimeErrors();
@@ -10,7 +12,7 @@ if (process.env.NODE_ENV === 'development') {
 
 ReactDOM.render(
     <React.StrictMode>
-        <App />
+        <Startup />
     </React.StrictMode>,
     document.getElementById('root')
 );
