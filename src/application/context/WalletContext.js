@@ -46,6 +46,9 @@ const userReducer = (state, action) => {
         case 'decryptError': {
             return { ...state, decryptError: action.payload };
         }
+        case 'password': {
+            return { ...state, password: action.payload };
+        }
         default: {
             return state;
         }
@@ -169,6 +172,10 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'updateWallets', payload: wallets });
     }
 
+    function setPassword(pass) {
+        dispatch({ type: 'password', payload: pass });
+    }
+
     useEffect(() => {
         if (state.fiatList.length === 0) {
             loadFiats();
@@ -184,6 +191,7 @@ export const WalletProvider = ({ children }) => {
         downloadWallets,
         getAndUpdateWalletsBallance,
         updateWalletsFunc,
+        setPassword
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;

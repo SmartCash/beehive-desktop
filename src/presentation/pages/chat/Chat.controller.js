@@ -176,7 +176,7 @@ export const useChatController = () => {
     }
 
     function setPasswordToSend(pass) {
-        chatDispatch({ type: ACTION_TYPE.password, payload: pass });
+        chatDispatch({ type: ACTION_TYPE.localPassword, payload: pass });
     }
 
     function setAddressNewChatToSend(message) {
@@ -189,20 +189,7 @@ export const useChatController = () => {
 
     function setPasswordNewChatToSend(pass) {
         chatDispatch({ type: ACTION_TYPE.passwordNewChat, payload: pass });
-    }
-
-    function generateMessage(messages) {
-        var removePublicKeys = [];
-
-        messages.forEach((item) => {
-            if (!item.message.includes('-----BEGIN PUBLIC KEY-----')) {
-                removePublicKeys.push(item);
-            }
-        });
-
-        if (removePublicKeys.length > 0) return removePublicKeys[removePublicKeys.length - 1].message.substring(0, 30);
-        else return '';
-    }
+    }    
 
     function isNewWallet(chat) {
         return chat === undefined;
@@ -222,7 +209,6 @@ export const useChatController = () => {
         setAddressNewChatToSend,
         setPasswordNewChatToSend,
         setPasswordAcceptChat,
-        generateMessage,
         isNewWallet,
     };
 };

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { WalletContext } from 'application/context/WalletContext';
-import PasswordModal from './PasswordModal';
+import { LoginModal } from './login-modal/login-modal';
 import WalletModal from './wallet-modal/wallet-modal';
 
 const { ipcRenderer } = window.require('electron');
@@ -13,7 +13,7 @@ export default function ProtectedRoute({ children }) {
     }
 
     if (ipcRenderer.sendSync('getWalletData') && (!wallets || wallets?.length === 0)) {
-        return <PasswordModal />;
+        return <LoginModal />;
     }
 
     return children;

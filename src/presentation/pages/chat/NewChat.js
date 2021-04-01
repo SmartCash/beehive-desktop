@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './NewChat.css';
+import { WalletContext } from 'application/context/WalletContext';
 import { useChatController } from './Chat.controller';
 import { useChatState } from './Chat.context';
 
 export function NewChat() {
-    const { passwordNewChat, addressNewChatToSend } = useChatState();
+    const { addressNewChatToSend, localPassword } = useChatState();
+    const { password } = useContext(WalletContext);
 
-    const { setAddressNewChatToSend, setPasswordNewChatToSend, handleSubmitSendNewChat } = useChatController();
+    const { setAddressNewChatToSend, handleSubmitSendNewChat } = useChatController();
 
     const canSendNewChat = () => {
-        return passwordNewChat !== '' && addressNewChatToSend !== '';
+        return addressNewChatToSend !== '';
     };
+
+    function getPass(){
+        if(localPassword !== '' && localPassword !== null)
+            return localPassword
+        else
+            return password
+    }
 
     return (
         <div className="page-new-chat">
@@ -31,20 +40,9 @@ export function NewChat() {
                     />
                 </div>
                 <div className="address-form">
-                    <input
-                        placeholder="Insert your password"
-                        className="send-input"
-                        type="password"
-                        value={passwordNewChat}
-                        onInput={(event) => {
-                            setPasswordNewChatToSend(event.target.value);
-                        }}
-                    />
-                </div>
-                <div className="address-form">
                     <button
                         className="btn send-button"
-                        onClick={() => handleSubmitSendNewChat(addressNewChatToSend, passwordNewChat)}
+                        onClick={() => handleSubmitSendNewChat(addressNewChatToSend, getPass())}
                         disabled={!canSendNewChat()}
                     >
                         Invite
