@@ -154,21 +154,7 @@ export const WalletProvider = ({ children }) => {
             dispatch({ type: 'updateWallets', payload: wallets });
         }
         return wallets;
-    }
-
-    function isValidPassword(password){
-        const encryptedWallet = ipcRenderer.sendSync('getWalletData');        
-        let decryptedWallet;
-
-        if (encryptedWallet) {
-            try {
-                decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(encryptedWallet, password));
-                return true;
-            } catch (e) {        
-                return false;         
-            }
-        }
-    }
+    } 
 
     function downloadWallets() {
         generatePDF({ wallets: state.wallets, filename: `MyWallets_SmartCash_${Date.now()}` });
@@ -195,10 +181,6 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'password', payload: pass });
     }
 
-    async function setErroPasswordFalse(){
-        dispatch({ type: 'wrongPassError', payload: false});
-    }
-
     useEffect(() => {
         if (state.fiatList.length === 0) {
             loadFiats();
@@ -214,9 +196,7 @@ export const WalletProvider = ({ children }) => {
         downloadWallets,
         getAndUpdateWalletsBallance,
         updateWalletsFunc,
-        setPassword,
-        isValidPassword,
-        setErroPasswordFalse
+        setPassword
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;

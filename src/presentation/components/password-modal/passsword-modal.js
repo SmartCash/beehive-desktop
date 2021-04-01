@@ -1,32 +1,49 @@
+import * as CryptoJS from 'crypto-js';
 import React, { useState, useContext, useEffect } from 'react';
 import { Modal } from '../modal/modal';
 import style from './password-modal.module.css';
 import { WalletContext } from 'application/context/WalletContext';
+const { ipcRenderer } = window.require('electron');
+
 
 export function PasswordModal(props) {        
     const { callBack, onClose } = props;    
-    const { setPassword, isValidPassword} = useContext(WalletContext);
+    const { setPassword } = useContext(WalletContext);
     const [localPassword, setLocalPassword] = useState();
+    const [_isValidPassword, setValidPassword] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
-    const [savePasswordInContext, setSavePasswordInContext] = useState(false);
-    var _isValidPassword = true;
+    const [savePasswordInContext, setSavePasswordInContext] = useState(false);    
 
     useEffect(() => {        
         console.log('open')
         console.log(_isValidPassword)
     }, []);
 
-    const handleCallback = () => {        
-        _isValidPassword = isValidPassword(localPassword);
-        console.log(_isValidPassword);
-        
-        if(_isValidPassword){
+    
+    function isValidPassword(password){
+        const encryptedWallet = ipcRenderer.sendSync('getWalletData');        
+        let decryptedWallet;
+
+        if (encryptedWallet) {
+            try {
+                decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(encryptedWallet, password));
+                return true;
+            } catch (e) {        
+                return false;         
+            }
+        }
+    }
+
+    const handleCallback = () => {
+        if(isValidPassword(localPassword)){
             if (savePasswordInContext) {
                 setPassword(localPassword);
             }
-                        
-            callBack(localPassword, savePasswordInContext)
-        }       
+
+            callBack(localPassword, savePasswordInContext)            
+        } else {
+            setValidPassword(false);            
+        }
     }
 
     return (
@@ -55,7 +72,7 @@ export function PasswordModal(props) {
                 <label htmlFor='accept'>Remember password</label>
             </div>
 
-            {!_isValidPassword && (
+            {_isValidPassword === false && (
                 <p className="alert-error">Wrong password.</p>
             )}
 
