@@ -13,13 +13,7 @@ export function PasswordModal(props) {
     const [_isValidPassword, setValidPassword] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
     const [savePasswordInContext, setSavePasswordInContext] = useState(false);    
-
-    useEffect(() => {        
-        console.log('open')
-        console.log(_isValidPassword)
-    }, []);
-
-    
+        
     function isValidPassword(password){
         const encryptedWallet = ipcRenderer.sendSync('getWalletData');        
         let decryptedWallet;
