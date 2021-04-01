@@ -348,15 +348,15 @@ function ChatComponent() {
                 )
             }
 
-              {
-                    showPasswordModal && (
-                        <PasswordModal
-                            callBack={handleSend}
-                            isShowing={showPasswordModal}
-                            onClose={togglePasswordModal}
-                        />
-                    )
-                }              
+            {
+                showPasswordModal && (
+                    <PasswordModal
+                        callBack={handleSend}
+                        isShowing={showPasswordModal}
+                        onClose={togglePasswordModal}
+                    />
+                )
+            }              
         </Page>
     );
 }

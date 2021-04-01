@@ -212,3 +212,9 @@
     border-radius: inherit;
     background-color: var(--primary);
  }
+
+ .page-send .loading{
+     margin-top: 100px;
+     text-align: center;
+     width: 100%;
+ }

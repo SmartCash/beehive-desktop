@@ -1,11 +1,15 @@
 import useDebounce from 'application/hooks/useDebounce';
+import { WalletContext } from 'application/context/WalletContext';
 import { ReactComponent as IconCopy } from 'presentation/assets/images/copy.svg';
 import Page from 'presentation/components/Page';
 import React, { useContext, useEffect } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 import MaskedInput from 'react-text-mask';
+import useModal from 'application/hooks/useModal';
+import { PasswordModal } from 'presentation/components/password-modal/passsword-modal';
 import './Send.css';
 import { SendContext, SendProvider } from './SendContext';
+import loader from 'presentation/assets/images/loader.svg';
 
 const electron = window.require('electron');
 
@@ -18,8 +22,6 @@ function SendComponent() {
         currencyMask,
         addressToSend,
         setAddressToSend,
-        setPassword,
-        password,
         addressToSendError,
         netFee,
         totalInSmart,
@@ -34,11 +36,13 @@ function SendComponent() {
         clearTxId,
         messageToSend,
         setMessageToSend,
-        onHandleChange,
         TXIDError,
+        TXIDLoading
     } = useContext(SendContext);
 
     const debouncedAmount = useDebounce(amountToSend, 1500);
+    const { isShowing: showPasswordModal, toggle: togglePasswordModal } = useModal();
+    const { password, setPassword } = useContext(WalletContext);
 
     useEffect(() => {
         if (debouncedAmount) {
@@ -74,11 +78,41 @@ function SendComponent() {
         );
     }
 
+    function getPass(){
+        return password;
+    }
+
+    function send(){
+        var pass = getPass();
+
+        if(!pass){
+            togglePasswordModal();
+        } else{
+            submitSendAmount(pass)
+        }        
+    }
+
+    const handleSend = (pass, saveInContext) => {
+        if(saveInContext)
+            setPassword(pass);             
+        
+        submitSendAmount(pass)
+        togglePasswordModal();
+    }  
+
     return (
         <Page className="page-send">
             <Scrollbars renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
+                {TXIDLoading && (
+                    <p className="loading">
+                        <img src={loader} alt={'loading...'} />
+                    </p>
+                )}
+                
+                {!TXIDLoading && (
+                    <>
+                        
                 {TXIDError && <p className="SendError">{TXIDError}</p>}
-
                 {TXID && (
                     <div className="hasBeenSent">
                         <button className="btnClose" onClick={() => clearTxId()}>
@@ -174,21 +208,7 @@ function SendComponent() {
                                 calculateSendAmount(event.target.value);
                             }}
                         />
-                    </div>
-
-                    <div className="form-control message">
-                        <label htmlFor="message">Password</label>
-                        <input
-                            id="messageTo"
-                            placeholder="Insert your password here"
-                            autoComplete="off"
-                            type="password"
-                            value={password}
-                            onInput={(event) => {
-                                setPassword(event.target.value);
-                            }}
-                        />
-                    </div>
+                    </div>                    
                 </div>
                 {netFee && (
                     <div className="transactionInfo">
@@ -218,10 +238,22 @@ function SendComponent() {
                         </div>
                     </div>
                 )}
-                <button type="submit" onClick={() => submitSendAmount()} disabled={!canSend()}>
+                <button type="submit" onClick={() => send()} disabled={!canSend()}>
                     Send
-                </button>
-            </Scrollbars>
+                </button>           
+                </>
+                )}         
+                 </Scrollbars>
+
+                {
+                    showPasswordModal && (
+                        <PasswordModal
+                            callBack={handleSend}
+                            isShowing={showPasswordModal}
+                            onClose={togglePasswordModal}
+                        />
+                    )
+                } 
         </Page>
     );
 }

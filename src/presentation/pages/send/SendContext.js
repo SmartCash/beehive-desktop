@@ -8,9 +8,9 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 const initialValue = {
     amountToSend: 0,
     selectedFiat: 'smart',
-    messageToSend: '',
-    password: null,
+    messageToSend: '',    
     listUnspent: null,
+    TXIDLoading: false
 };
 
 const sendReducer = (state, action) => {
@@ -23,9 +23,6 @@ const sendReducer = (state, action) => {
         }
         case 'setListUnspent': {
             return { ...state, setListUnspent: action.payload };
-        }
-        case 'setPassword': {
-            return { ...state, password: action.payload };
         }
         case 'setAmountToSendError': {
             return { ...state, amountToSendError: action.payload };
@@ -131,17 +128,12 @@ export const SendProvider = ({ children }) => {
         dispatch({ type: 'setMessageToSend', payload: value });
     };
 
-    const setPassword = (value) => {
-        dispatch({ type: 'setPassword', payload: value });
-    };
-
     useEffect(() => {
         dispatch({ type: 'clearState' });
     }, [walletCurrent]);
 
-    async function submitSendAmount() {
+    async function submitSendAmount(password) {
         dispatch({ type: 'setTXIDLoading', payload: true });
-
         const { balance } = wallets.find((wallet) => wallet.address === walletCurrent);
 
         // You must get the latest unspent from the NODE
@@ -155,7 +147,7 @@ export const SendProvider = ({ children }) => {
             unspentList: unspent,
             fee: state.netFee,
             unlockedBalance: balance.unlocked,
-            password: state.password,
+            password: password,
         })
             .then((data) => {
                 if (!data) {
@@ -235,8 +227,7 @@ export const SendProvider = ({ children }) => {
         setAmountToSend,
         checkAmounToSendError,
         setAddressToSend,
-        setMessageToSend,
-        setPassword,
+        setMessageToSend,        
         submitSendAmount,
         handleSelectedFiat,
         isSmartFiat,
