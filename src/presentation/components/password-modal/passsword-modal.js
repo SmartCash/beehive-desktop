@@ -1,23 +1,22 @@
-import { use } from 'random';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Modal } from '../modal/modal';
 import style from './password-modal.module.css';
+import { WalletContext } from 'application/context/WalletContext';
 
-export function PasswordModal(props) {    
-    console.log(props);
+export function PasswordModal(props) {        
     const { callBack, onClose } = props;
     //Get password from walletContext
+    const { setPassword } = useContext(WalletContext);
     const [localPassword, setLocalPassword] = useState();
-
-    useEffect(() => {
-        // Todo verify if has password from WalletContext and call callback if true
-        // if (password) {
-        //     callback()
-        // }
-    }, [])
-
+    const [showPassword, setShowPassword] = useState(false);
+    const [savePasswordInContext, setSavePasswordInContext] = useState(false);
+    
     const handleCallback = () => {
-        callBack(localPassword)
+        if (savePasswordInContext) {
+            setPassword(localPassword);
+        }
+
+        callBack(localPassword, savePasswordInContext)
     }
 
     return (
@@ -31,16 +30,18 @@ export function PasswordModal(props) {
                     placeholder="Insert your password"                   
                     type="password"
                     autoFocus
-                    onInput = {
-                        (event) => setLocalPassword(event.target.value)
-                    }
+                    onInput = {(event) => setLocalPassword(event.target.value)}
+                    type={showPassword ? 'text' : 'password'}
                 />
 
-                <button type="button" className={style.btnShow}>Show</button>
+                <button type="button" className={style.btnShow}
+                 onClick={() => setShowPassword(!showPassword)}
+                 > {showPassword ? 'Hide' : 'Show'}
+                 </button>
             </div>                               
            
             <div className={style.accept}>
-                <input id="accept" type='checkbox' />
+                <input id="accept" type='checkbox' onChange={(event) => setSavePasswordInContext(event.target.checked)} />
                 <label htmlFor='accept'>Remember password</label>
             </div>
 

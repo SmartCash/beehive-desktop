@@ -6,9 +6,9 @@ import { WalletContext } from 'application/context/WalletContext';
 import style from '../modal/modal.module.css';
 
 export function LoginModal() {
-    const { decryptWallets, decryptError } = useContext(WalletContext);
+    const { decryptWallets, decryptError, setPassword } = useContext(WalletContext);
     const [showPassword, setShowPassword] = useState(false);
-    const [_password, setPassword] = useState();
+    const [_password, setLocalPassword] = useState();
     const [showModal, setShowModal] = useState(true);
     const [loading, setLoading] = useState(false);
     const [savePasswordInContext, setSavePasswordInContext] = useState(false);
@@ -21,7 +21,7 @@ export function LoginModal() {
             setShowModal(false);
 
             if (savePasswordInContext) {
-                // savePassword from walletController;
+                setPassword(_password);
             }
         };
     };
@@ -48,7 +48,7 @@ export function LoginModal() {
                                             <input
                                                 className={style.inputPass}
                                                 placeholder="Insert your password"
-                                                onInput={(e) => setPassword(e.target.value)}
+                                                onInput={(e) => setLocalPassword(e.target.value)}
                                                 type={showPassword ? 'text' : 'password'}
                                                 autoFocus
                                             />                                        

@@ -21,7 +21,7 @@ export function Chat() {
 
 function ChatComponent() {
     const { isShowing: showPasswordModal, toggle: togglePasswordModal } = useModal();
-    const { walletCurrent, wallets } = useContext(WalletContext);
+    const { walletCurrent, wallets, password, setPassword } = useContext(WalletContext);
     const {
         history,
         error,
@@ -29,9 +29,9 @@ function ChatComponent() {
         currentChatAddress,
         newChat,
         messageToSend,
-        password,
         TXID,
         passwordAcceptChat,
+        localPassword
     } = useChatState();
     const messagesRef = useRef();
     const {
@@ -44,8 +44,7 @@ function ChatComponent() {
         clearTXID,
         setMessageToSend,
         setPasswordAcceptChat,
-        setPasswordToSend,
-        generateMessage,
+        setPasswordToSend,        
         isNewWallet
     } = useChatController();
 
@@ -62,8 +61,19 @@ function ChatComponent() {
     };
 
     const canSend = () => {
-        return password !== '' && messageToSend !== '';
+        return messageToSend !== '';
     };
+
+    function hasPass(){
+        return ((localPassword !== '' && localPassword !== null) || (password !== '' && password !== null))
+    }
+
+    function getPass(){
+        if(localPassword !== '' && localPassword !== null)
+            return localPassword
+        else
+            return password
+    }
 
     const parseMessage = (messageObject) => {
         let jsonMessage = null;
@@ -82,7 +92,7 @@ function ChatComponent() {
                     try {
                         textMessage = decryptTextWithRSAPrivateKey(
                             rsaKeyPair.rsaPrivateKey,
-                            password,
+                            getPass(),
                             jsonMessage.messageFromSender
                         );
                     } catch (error) {
@@ -92,7 +102,7 @@ function ChatComponent() {
                     try {
                         textMessage = decryptTextWithRSAPrivateKey(
                             rsaKeyPair.rsaPrivateKey,
-                            password,
+                            getPass(),
                             jsonMessage.messageToRecipient
                         );
                     } catch (error) {
@@ -104,11 +114,31 @@ function ChatComponent() {
         return textMessage;
     };
 
-    const handleSend = (pass) => {
-        setPasswordToSend(pass);
+    const handleSend = (pass, saveInContext) => {
+        if(saveInContext)
+            setPassword(pass);
+        else
+            setPasswordToSend(pass);                   
+        
         togglePasswordModal();
+    }    
+
+    function generateMessage(messages) {
+        var removePublicKeys = [];
+
+        messages.forEach((item) => {
+            item = parseMessage(item);
+
+            if(item != null){
+                if (!item.includes('-----BEGIN PUBLIC KEY-----')) {
+                    removePublicKeys.push(item);
+                }
+            }           
+        });
+
+        if (removePublicKeys.length > 0) return removePublicKeys[removePublicKeys.length - 1].substring(0, 30);
+        else return '';
     }
-    
 
     useEffect(() => {
         if (history && history.length > 0 && newChat === false && currentChatAddress === undefined) {
@@ -123,15 +153,10 @@ function ChatComponent() {
         return () => clearInterval(timer);
     }, [walletCurrent]);
 
-    useEffect(() => {
-        
-        console.log(password)
-    }, [messagesRef]);
-
     return (
         <Page className="page-chat">
              {
-                !password && (
+                !hasPass() && (
                     <div className="decryptMessages">
                         <p>The messages in this chat are encrypted, please put your password to decrypt them!</p>                        
                         <button
@@ -144,7 +169,7 @@ function ChatComponent() {
             }
 
             {
-                password && (
+                hasPass() && (
                     <>
                     <div className="chat-wallets">
                     <div className="header">
@@ -163,7 +188,8 @@ function ChatComponent() {
                                         onClick={() => handleSetCurrentChatAddress(tx.chatAddress)}
                                     >
                                         <p className="address">{tx.chatAddress}</p>
-                                        <p className="lastMessage">{generateMessage(tx.messages)}</p>
+                                        <p className="lastMessage">{                                            
+                                            generateMessage(tx.messages)}</p>
                                     </div>
                                 );
                             }
@@ -300,14 +326,13 @@ function ChatComponent() {
                                                 handleSubmitSendAmount(
                                                     currentChatAddress,
                                                     messageToSend,
-                                                    password,
+                                                    getPass(),
                                                     (getChat()?.messages.find(
                                                         (m) => m.direction !== 'Sent' && m.message.includes('-----BEGIN PUBLIC KEY-----')
                                                     )).message
                                                 )
                                             }
                                             disabled={!canSend()}
-                                            // onClick={() => togglePasswordModal()}   
                                         >Send
                                         </button>
                                     </div>

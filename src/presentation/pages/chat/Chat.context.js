@@ -11,7 +11,7 @@ const initialValue = {
     currentChatAddress: undefined,
     newChat: false,
     messageToSend: '',
-    password: '',
+    localPassword: '',
     TXID: '',
     passwordNewChat: '',
     addressNewChatToSend: '',
@@ -28,7 +28,7 @@ const ACTION_TYPE = {
     messageToSend: 'messageToSend',
     clearState: 'clearState',
     clearTXID: 'clearTXID',
-    password: 'password',
+    localPassword: 'password',
     passwordNewChat: 'passwordNewChat',
     addressNewChatToSend: 'addressNewChatToSend',
     passwordAcceptChat: 'passwordAcceptChat'
@@ -61,8 +61,8 @@ function reducer(state, action) {
         case ACTION_TYPE.messageToSend: {
             return { ...state, messageToSend: payload };
         }
-        case ACTION_TYPE.password: {
-            return { ...state, password: payload };
+        case ACTION_TYPE.localPassword: {
+            return { ...state, localPassword: payload };
         }
         case ACTION_TYPE.clearState: {
             return initialValue;
