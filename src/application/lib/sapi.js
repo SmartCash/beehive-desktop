@@ -15,20 +15,20 @@ const random = require('random');
 
 const ping = (url, timeout = 2000) => {
     return new Promise((resolve, reject) => {
-      const urlRule = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]');
-      if (!urlRule.test(url)) reject('invalid url');
-      try {
-        fetch(url)
-          .then(() => resolve(true))
-          .catch(() => resolve(false));
-        setTimeout(() => {
-          resolve(false);
-        }, timeout);
-      } catch (e) {
-        reject(e);
-      }
+        const urlRule = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]');
+        if (!urlRule.test(url)) reject('invalid url');
+        try {
+            fetch(url)
+                .then(() => resolve(true))
+                .catch(() => resolve(false));
+            setTimeout(() => {
+                resolve(false);
+            }, timeout);
+        } catch (e) {
+            reject(e);
+        }
     });
-  };
+};
 
 
 export async function getEnabledNodes() {
@@ -48,20 +48,35 @@ export async function getEnabledNodes() {
     }
 }
 
-export async function GetSapiUrl() {    
+export async function GetSapiUrl() {
     var sapis = await getEnabledNodes();
     return getEnabledNode(sapis);
 }
 
-async function getEnabledNode(sapis){
-    var electedSapi = sapis[random.int(0, sapis.length - 1)];    
+async function getEnabledNode(sapis) {
+    var electedSapi = sapis[random.int(0, sapis.length - 1)];
     const res = await ping(electedSapi);
-    
-    if(!res){
+
+    if (!res) {
         return await getEnabledNode(sapis);
-    }    
-    
+    }
+
     return electedSapi;
+}
+
+function tryToDecryptAES({ textToDecrypt, password }) {
+
+    try {
+        const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(textToDecrypt, password));
+        let decriptKey;
+
+        if (!decryptedWallet) decriptKey = textToDecrypt;
+        else decriptKey = decryptedWallet;
+
+        return decriptKey
+    } catch (error) {
+        return textToDecrypt;
+    }
 }
 
 export async function createAndSendRawTransaction({
@@ -155,13 +170,8 @@ export async function createAndSendRawTransaction({
         };
     }
 
-    try {        
-        const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(privateKey, password));
-        let decriptKey;
-
-        if (!decryptedWallet) decriptKey = privateKey;
-        else decriptKey = decryptedWallet;
-
+    try {
+        const decriptKey = tryToDecryptAES({ textToDecrypt: privateKey, password });
         let key = smartCash.ECPair.fromWIF(decriptKey);
         let fromAddress = key.getAddress().toString();
         let transaction = new smartCash.TransactionBuilder();
@@ -173,21 +183,21 @@ export async function createAndSendRawTransaction({
 
         if (messageOpReturn && messageOpReturn.trim().length > 0) {
             let dataScript = null;
-            if (isChat) {
+            if (isChat && rsaKeyPairFromRecipient && rsaKeyPairFromRecipient?.rsaPublicKey) {
                 dataScript = smartCash.script.compile([
                     smartCash.opcodes.OP_RETURN,
                     Buffer.from(
                         'smart-chat: ' +
-                            JSON.stringify({
-                                messageFromSender: encryptTextWithRSAPublicKey(
-                                    rsaKeyPairFromSender.rsaPublicKey,
-                                    messageOpReturn
-                                ),
-                                messageToRecipient: encryptTextWithRSAPublicKey(
-                                    rsaKeyPairFromRecipient?.rsaPublicKey,
-                                    messageOpReturn
-                                ),
-                            }),
+                        JSON.stringify({
+                            messageFromSender: encryptTextWithRSAPublicKey(
+                                rsaKeyPairFromSender.rsaPublicKey,
+                                messageOpReturn
+                            ),
+                            messageToRecipient: encryptTextWithRSAPublicKey(
+                                rsaKeyPairFromRecipient?.rsaPublicKey,
+                                messageOpReturn
+                            ),
+                        }),
                         'utf8'
                     ),
                 ]);
@@ -528,7 +538,7 @@ export function getOpReturnMessage(tx) {
             );
             if (outWithOpReturn) {
                 const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
-                if (message) {                    
+                if (message) {
                     const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
                     const hexToUtf8 = convert('hex', 'utf8');
                     let decodedMessage;
@@ -537,7 +547,7 @@ export function getOpReturnMessage(tx) {
                         decodedMessage = hexToUtf8(message);
                     } catch (error) {
                         decodedMessage = message;
-                    }                    
+                    }
 
                     return decodedMessage.replace('smart-chat: ', '');
                 }
@@ -620,7 +630,7 @@ export function getAddressAndMessage(tx) {
                         decodedMessage = hexToUtf8(message);
                     } catch (error) {
                         decodedMessage = message;
-                    }                  
+                    }
                     transaction.message = decodedMessage.replace('smart-chat: ', '');
                 } else {
                     return null;
@@ -732,12 +742,12 @@ export async function calculateFee(listUnspent, messageOpReturn) {
         0.001 *
         Math.round(
             1.27 +
-                (countUnspent * 148 +
-                    2 * 34 +
-                    10 +
-                    9 +
-                    (messageOpReturn ? messageOpReturn.length : 0)) /*OP_RETURN_DEFAULT.length*/ /
-                    1024
+            (countUnspent * 148 +
+                2 * 34 +
+                10 +
+                9 +
+                (messageOpReturn ? messageOpReturn.length : 0)) /*OP_RETURN_DEFAULT.length*/ /
+            1024
         );
 
     return newFee;

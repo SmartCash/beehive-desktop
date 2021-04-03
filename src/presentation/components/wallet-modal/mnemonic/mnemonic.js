@@ -3,6 +3,7 @@ import generatePDF from 'application/lib/GeneratorPDF';
 import { createRSAKeyPair } from 'application/lib/sapi';
 import { generatePhrase, getFromDerivationPaths, validatePhrase } from 'application/lib/smart-mnemonic';
 import * as CryptoJS from 'crypto-js';
+import * as _ from 'lodash';
 import React, { useContext, useState } from 'react';
 import style from '../wallet-modal.module.css';
 const { ipcRenderer } = window.require('electron');
@@ -40,7 +41,8 @@ export function Mnemonic({ hide }) {
 
         updateWalletsFunc(_wallets);
 
-        hide();
+        if (hide && _.isFunction(hide))
+            hide();
     };
 
     const passphraseValidation = async (event) => {
