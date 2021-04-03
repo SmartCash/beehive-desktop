@@ -221,9 +221,7 @@ function ChatComponent() {
                                             <li><button className="link" onClick={() => electron.shell.openExternal(`https://insight.smartcash.cc/tx/${TXID}`)}>Open into Insight</button></li>
                                             <li><button className="link" onClick={() => electron.shell.openExternal(`http://explorer.smartcash.cc/tx/${TXID}`)}>Open into Sapi Explorer</button></li>
                                         </ul>                                                                                                                    
-                                    </div>
-
-                                    <p className="obsTime">it may take up to a minute for your message to appear.</p>
+                                    </div>                                    
                                 </div>
                             )}
         

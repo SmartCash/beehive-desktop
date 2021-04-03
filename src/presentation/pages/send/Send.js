@@ -113,18 +113,25 @@ function SendComponent() {
                     <>
                         
                 {TXIDError && <p className="SendError">{TXIDError}</p>}
-                {TXID && (
-                    <div className="hasBeenSent">
-                        <button className="btnClose" onClick={() => clearTxId()}>
-                            X
-                        </button>
-                        <p>Amount has been sent</p>
-                        <button onClick={() => electron.shell.openExternal(`http://explorer.smartcash.cc/tx/${TXID}`)}>
-                            {TXID}
-                            <small>(click to view details)</small>
-                        </button>
-                    </div>
-                )}
+               
+
+{TXID && (
+                                <div className="hasBeenSent">
+                                    <button className="btnClose" onClick={() => clearTxId()}>X</button>
+                                    <p><strong>Amount has been sent</strong></p>
+                                    <div className="msgSuccess">Transaction ID: </div>
+                                    <strong className="txID">{TXID}</strong>
+
+                                    <div>
+                                        <ul className="links">
+                                            <li><button className="link" title="Copy address to clipboard" onClick={() => electron.clipboard.writeText(TXID)}>Copy</button></li>
+                                            <li><button className="link" onClick={() => electron.shell.openExternal(`https://insight.smartcash.cc/tx/${TXID}`)}>Open into Insight</button></li>
+                                            <li><button className="link" onClick={() => electron.shell.openExternal(`http://explorer.smartcash.cc/tx/${TXID}`)}>Open into Sapi Explorer</button></li>
+                                        </ul>                                                                                                                    
+                                    </div>                                    
+                                </div>
+                            )}
+
                 <div className="form-control privateKey">
                     <p>
                         Sending from <span>{walletCurrent} </span>
