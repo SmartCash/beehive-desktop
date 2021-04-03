@@ -1,11 +1,12 @@
 import { WalletContext } from 'application/context/WalletContext';
-import { getOpReturnMessage, getTransactionHistory, isLockedTransaction } from 'application/lib/sapi';
+import { getOpReturnMessage, getTransactionHistory, isChat, isLockedTransaction } from 'application/lib/sapi';
 import loader from 'presentation/assets/images/loader.svg';
 import Page from 'presentation/components/Page';
 import { ReactComponent as IconCopy } from 'presentation/assets/images/copy.svg';
 import React, { useContext, useEffect, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import './Transactions.css';
+import { fireEvent } from '@testing-library/dom';
 
 const electron = window.require('electron');
 
@@ -47,6 +48,9 @@ function Transactions() {
                     {history?.map((tx, index) => {
                         tx.isLocked = isLockedTransaction(tx, walletCurrent) ? 'Yes' : 'No';
                         tx.message = getOpReturnMessage(tx);
+                        tx.isChat = isChat(tx);
+
+                        if (tx.isChat) return ''
                         return (
                             <div className="transaction" key={index}>
                                 <div className="wrapper">
@@ -102,27 +106,27 @@ function Transactions() {
                                 <div>
                                     {tx.direction === 'Sent' && (
                                         <div>
-                                        <p className="label">To Address</p>
-                                        <p className="value"> {tx.vout[0].scriptPubKey.addresses[0]}
-                                            <button className="btn copy" title="Copy address to clipboard"
+                                            <p className="label">To Address</p>
+                                            <p className="value"> {tx.vout[0].scriptPubKey.addresses[0]}
+                                                <button className="btn copy" title="Copy address to clipboard"
                                                     onClick={() => electron.clipboard.writeText(tx.vout[0].scriptPubKey.addresses[0])}>
-                                                <IconCopy className="btnCopy" />
-                                            </button>
-                                        </p>                                                                                     
+                                                    <IconCopy className="btnCopy" />
+                                                </button>
+                                            </p>
                                         </div>
                                     )}
 
                                     {tx.direction === 'Received' && (
                                         <div>
                                             <p className="label">From Address</p>
-                                            <p className="value"> {tx.vin[0].scriptPubKey.addresses[0]} 
+                                            <p className="value"> {tx.vin[0].scriptPubKey.addresses[0]}
                                                 <button className="btn copy" title="Copy address to clipboard"
-                                                        onClick={() => electron.clipboard.writeText(tx.vin[0].scriptPubKey.addresses[0])}>
+                                                    onClick={() => electron.clipboard.writeText(tx.vin[0].scriptPubKey.addresses[0])}>
                                                     <IconCopy className="btnCopy" />
                                                 </button>
                                             </p>
-                                        </div>                                                                                
-                                    )}                                   
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         );

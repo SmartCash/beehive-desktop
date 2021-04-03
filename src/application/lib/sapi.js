@@ -560,6 +560,36 @@ export function getOpReturnMessage(tx) {
     }
 }
 
+export function isChat(tx) {
+    try {
+        if (tx && tx?.vout) {
+            const outWithOpReturn = tx?.vout?.find(
+                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN')
+            );
+            if (outWithOpReturn) {
+                const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
+                if (message) {
+                    const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
+                    const hexToUtf8 = convert('hex', 'utf8');
+                    let decodedMessage;
+
+                    try {
+                        decodedMessage = hexToUtf8(message);
+                    } catch (error) {
+                        decodedMessage = message;
+                    }
+
+                    return decodedMessage.includes('smart-chat: ') || decodedMessage.includes('-----BEGIN PUBLIC KEY-----');
+                }
+            }
+        }
+        return false;
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
+}
+
 export function groupByAddress(txs) {
     try {
         let parsedTransactions = txs
