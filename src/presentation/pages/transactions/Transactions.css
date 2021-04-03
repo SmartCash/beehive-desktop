@@ -32,6 +32,10 @@
     cursor: pointer;
 }
 
+.copy{
+    margin-left: 10px;
+}
+
 .page-transactions .transaction button.link ~ button.link {
     margin-left: 25px;
 }

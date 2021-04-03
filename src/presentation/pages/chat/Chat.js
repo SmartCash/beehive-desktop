@@ -11,6 +11,8 @@ import { useChatController } from './Chat.controller';
 import './Chat.css';
 import { NewChat } from './NewChat';
 
+const electron = window.require('electron');
+
 export function Chat() {
     return (
         <ChatProvider>
@@ -208,16 +210,20 @@ function ChatComponent() {
         
                             {TXID && (
                                 <div className="hasBeenSent">
-                                    <button className="btnClose" onClick={() => clearTXID()}>
-                                        X
-                                    </button>
-                                    <p>
-                                        <strong>Message has been sent</strong>
-                                    </p>
-                                    <p>
-                                        Transaction ID: <strong class="txID"> {TXID} </strong>
-                                    </p>
-                                    <p>it may take up to a minute for your message to appear.</p>
+                                    <button className="btnClose" onClick={() => clearTXID()}>X</button>
+                                    <p><strong>Message has been sent</strong></p>
+                                    <div className="msgSuccess">Transaction ID: </div>
+                                    <strong className="txID">{TXID}</strong>
+
+                                    <div>
+                                        <ul className="links">
+                                            <li><button className="link" title="Copy address to clipboard" onClick={() => electron.clipboard.writeText(TXID)}>Copy</button></li>
+                                            <li><button className="link" onClick={() => electron.shell.openExternal(`https://insight.smartcash.cc/tx/${TXID}`)}>Open into Insight</button></li>
+                                            <li><button className="link" onClick={() => electron.shell.openExternal(`http://explorer.smartcash.cc/tx/${TXID}`)}>Open into Sapi Explorer</button></li>
+                                        </ul>                                                                                                                    
+                                    </div>
+
+                                    <p className="obsTime">it may take up to a minute for your message to appear.</p>
                                 </div>
                             )}
         
@@ -265,21 +271,13 @@ function ChatComponent() {
                                                 } else {
                                                     return (
                                                         <div className="accept">
-                                                            <input
-                                                                placeholder="Insert your password"
-                                                                className="send-input"
-                                                                type="password"
-                                                                value={passwordAcceptChat}
-                                                                onInput={(event) => {
-                                                                    setPasswordAcceptChat(event.target.value);
-                                                                }}
-                                                            />
-                                                            <br />
+                                                             <div class="transaction chatAddress">
+                                                            This chat is not active yet, you need accept this invite.
+                                                            </div>
                                                             <br />
                                                             <button
-                                                                onClick={() => handleAcceptChat(m.toAddress, passwordAcceptChat)}
+                                                                onClick={() => handleAcceptChat(m.toAddress, getPass())}
                                                                 className="acceptInvite"
-                                                                disabled={!canSendAcceptChat()}
                                                             >
                                                                 Accept invite
                                                             </button>

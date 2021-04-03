@@ -289,7 +289,7 @@
 .page-chat .hasBeenSent p {
     margin: 0;
     padding: 0;
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 300;
 }
 .page-chat .hasBeenSent .btnClose {
@@ -315,7 +315,7 @@
 }
 
 .txID{
-    font-size: 10px;
+    font-size: 13px;    
 }
 
 .page-chat .ChatError{
@@ -347,4 +347,40 @@
     text-align: center;
     margin-top: 100px;
     color:#fff;
+}
+
+
+.msgSuccess{
+    font-size: 18px;
+    font-weight: bold;
+    margin-top:10px
+}
+
+.transactionId{
+    font-size: 18px;
+}
+
+ul.links{
+   list-style: none;
+   text-align: left;
+   margin-top: -15px;
+   margin-left: -20px;
+   padding: 0;
+}
+
+.links li{
+    display:inline-block;
+    top: 0;
+    padding: 0;
+    margin:0 20px
+}
+
+.link {
+    padding: 0;
+    color: #999999;
+    font-size: 11px;
+    background: none;
+    border: 0 !important;
+    outline: 0 !important;
+    cursor: pointer;
 }
