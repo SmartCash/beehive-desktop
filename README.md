@@ -46,3 +46,10 @@ appData Per-user application data directory, which by default points to:
 ```
 
 
+
+
+## Generate Windows build version
+
+Remove package-lock.json and node_modules, so run the follow code:
+
+npm install && npm run build

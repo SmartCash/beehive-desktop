@@ -45,7 +45,7 @@ function SendComponent() {
     const { password, setPassword } = useContext(WalletContext);
 
     useEffect(() => {
-        if (debouncedAmount) {
+        if (debouncedAmount) {            
             checkAmounToSendError(debouncedAmount);
         }
     }, [debouncedAmount]);

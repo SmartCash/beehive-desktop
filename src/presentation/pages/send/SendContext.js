@@ -99,10 +99,12 @@ export const SendProvider = ({ children }) => {
         const unspent = await getSpendableInputs(walletCurrent);
 
         var total = 0;
+        console.log(state.messageToSend)
         const fee = await calculateFee(unspent.utxos, state.messageToSend);
 
         if (fee != undefined) {
             total = sumFloatsValues(value, fee);
+            console.log(total);
             dispatch({ type: 'setNetFee', payload: fee || 0 })
         }
 
@@ -190,7 +192,7 @@ export const SendProvider = ({ children }) => {
         dispatch({ type: 'setAmountToSend', payload: amountToSend });
     }
 
-    async function calculateSendAmount(messageOpReturn) {
+    async function calculateSendAmount(messageOpReturn) {        
         const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
 
         let spendableInputs = wallet?.unspent;
