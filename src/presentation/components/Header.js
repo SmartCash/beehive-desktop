@@ -1,6 +1,7 @@
 import React from 'react';
 import { ReactComponent as Logo } from '../assets/images/logo.svg';
 import { NavLink } from 'react-router-dom';
+var pjson = require('../../../package.json');
 
 function Header() {
     return (
@@ -36,6 +37,9 @@ function Header() {
                         </NavLink>
                     </li>
                 </ul>
+            </div>
+            <div className="numberVersion">
+                <p className="version">v{pjson.version}</p>
             </div>
         </div>
     );

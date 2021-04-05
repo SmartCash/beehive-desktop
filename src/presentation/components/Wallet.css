@@ -37,3 +37,14 @@
     border-radius: inherit;
     background-color: var(--primary);
  }
+
+
+ .numberVersion{
+     text-align: right;
+     float: right;
+     width: 400px;
+ }
+ .version{
+     color: var(--primary);
+     right: 0;
+ }

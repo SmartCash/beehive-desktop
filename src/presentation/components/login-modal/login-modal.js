@@ -4,6 +4,7 @@ import loader from 'presentation/assets/images/loader.svg';
 import { ReactComponent as Logo } from 'presentation/assets/images/logo.svg';
 import { WalletContext } from 'application/context/WalletContext';
 import style from '../modal/modal.module.css';
+var pjson = require('../../../../package.json');
 
 export function LoginModal() {
     const { decryptWallets, decryptError, setPassword } = useContext(WalletContext);
@@ -35,6 +36,8 @@ export function LoginModal() {
                         <div className={style['modal-header']}>
                             <Logo className="logo" />
                             <p>Welcome to SmartHub</p>
+
+                            <p className="version">v{pjson.version}</p>
                         </div>
                         <div className={style['modal-body']}>
                             <div className={style['address-content']}>
