@@ -10,11 +10,15 @@ import Countdown from 'react-countdown';
 import { useForm } from 'react-hook-form';
 import './activate.css';
 import { ActivateContext, ActivateProvider } from './ActivateContext';
+import useModal from 'application/hooks/useModal';
+import { PasswordModal } from 'presentation/components/password-modal/passsword-modal';
 
 
 function RewardsActivateComponent() {
     const { wallets, walletCurrent: address } = useContext(WalletContext);
-    const { setPassword, password, canSend, TXError, hasPassword } = useContext(ActivateContext);
+    const { TXError } = useContext(ActivateContext);
+    const { password, setPassword } = useContext(WalletContext);
+    const { isShowing: showPasswordModal, toggle: togglePasswordModal } = useModal();
 
     const [activating, setActivating] = useState(false);
     const [rewards, setRewards] = useState();
@@ -37,43 +41,62 @@ function RewardsActivateComponent() {
 
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    const onSubmit = async () => {
-        const SLEEP_TIME = 1000;
+    function getPass(){
+        return password;
+    }
 
-        if (hasPassword()) {
-            setActivating(true);
-            setCountDownDate(Date.now() + SLEEP_TIME);
+    function send(){
+        var pass = getPass();
 
-            let unspentList = await getSpendableInputs(address);
+        if(!pass){
+            togglePasswordModal();        
+        } else{
+            submitRewards(pass)
+        }        
+    }
 
-            let rewardsActivationResponse = await activateRewards({ toAddress: address, unspentList, privateKey, password });
+    const handleSend = (pass, saveInContext) => {
+        if(saveInContext)
+            setPassword(pass);             
+        
+        submitRewards(pass);
+        togglePasswordModal();
+    }  
 
-            if (rewardsActivationResponse && rewardsActivationResponse.status === 400) {
-                setError(rewardsActivationResponse.value);
-                return rewardsActivationResponse;
-            }
+    async function submitRewards(pass) {
+        const SLEEP_TIME = 1000;        
+        setActivating(true);
+        setCountDownDate(Date.now() + SLEEP_TIME);
 
-            await sleep(SLEEP_TIME);
+        let unspentList = await getSpendableInputs(address);
 
-            const transactionResponse = await getTxId(rewardsActivationResponse.value);
+        let rewardsActivationResponse = await activateRewards({ toAddress: address, unspentList, privateKey, pass });
 
-            if (!transactionResponse) {
-                return {
-                    status: 400,
-                    value: 'Error to broadcast the transaction',
-                };
-            }
-            rewards.activated = 1;
-            setCountDownDate(0);
-            setRewards(rewards);
-            setIsActive(true);
-            setActivating(false);
+        if (rewardsActivationResponse && rewardsActivationResponse.status === 400) {
+            setError(rewardsActivationResponse.value);
+            return rewardsActivationResponse;
+        }
 
+        await sleep(SLEEP_TIME);
+
+        const transactionResponse = await getTxId(rewardsActivationResponse.value);
+
+        if (!transactionResponse) {
             return {
-                status: 200,
-                value: transactionResponse.txid,
+                status: 400,
+                value: 'Error to broadcast the transaction',
             };
         }
+        rewards.activated = 1;
+        setCountDownDate(0);
+        setRewards(rewards);
+        setIsActive(true);
+        setActivating(false);
+
+        return {
+            status: 200,
+            value: transactionResponse.txid,
+        };        
     };
 
     {
@@ -150,15 +173,14 @@ function RewardsActivateComponent() {
                 </div>
             )}
 
-            {rewards && rewards.activated === 0 && isActive === false && (
-                <form onSubmit={handleSubmit(onSubmit)} className="formGroup" autoComplete="off">
+            {rewards && rewards.activated === 0 && isActive === false && (                
                     <div className="wrapper">
                         <p>
                             The rewards is not activated for the address <span className="text-primary">{address}</span>
                         </p>
 
                         <div className="form-not-activated">
-                            <input
+                            {/* <input
                                 id="messageTo"
                                 placeholder="Insert your password here"
                                 autoComplete="off"
@@ -167,15 +189,24 @@ function RewardsActivateComponent() {
                                 onInput={(event) => {
                                     setPassword(event.target.value);
                                 }}
-                            />
-                            <button type="submit" disabled={!canSend()}>
+                            /> */}
+                            <button type="submit" onClick={() => send()}>
                                 Activate Rewards
                             </button>
                         </div>
-                    </div>
-                </form>
+                    </div>                
             )}
             <SmartNodeRewardsRoi />
+
+            {
+                    showPasswordModal && (
+                        <PasswordModal
+                            callBack={handleSend}
+                            isShowing={showPasswordModal}
+                            onClose={togglePasswordModal}
+                        />
+                    )
+                } 
         </Page>
     );
 }

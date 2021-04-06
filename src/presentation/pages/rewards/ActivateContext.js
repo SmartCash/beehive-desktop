@@ -30,19 +30,9 @@ export const ActivateProvider = ({ children }) => {
         dispatch({ type: 'setPassword', payload: value });
     };
 
-    function canSend() {
-        return state.password !== '';
-    }
-
-    function hasPassword(){
-        return state.password;
-    }
-
     const providerValue = {
         ...state,
-        setPassword,
-        canSend,
-        hasPassword
+        setPassword
     };
 
     return <ActivateContext.Provider value={providerValue}>{children}</ActivateContext.Provider>;
