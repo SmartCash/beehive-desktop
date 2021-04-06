@@ -1,6 +1,6 @@
 {
     "name": "smartcashhub",
-    "version": "2.0.14",
+    "version": "1.0.1",
     "private": true,
     "build": {
         "appId": "smarthub",
