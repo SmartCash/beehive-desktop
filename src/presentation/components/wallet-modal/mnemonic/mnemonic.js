@@ -34,11 +34,11 @@ export function Mnemonic({ hide }) {
 
         generatePDF({ wallets: walletsGenerated, filename: `SmartCash_Address_${Date.now()}`, mnemonic: words, passphrase });
 
-        const _wallets = [...wallets, ...walletsGenerated];
-
-        _wallets.forEach((wallet) => {
+        walletsGenerated.forEach((wallet) => {
             wallet.privateKey = CryptoJS.AES.encrypt(wallet.privateKey, passphrase).toString();
         });
+
+        const _wallets = [...wallets, ...walletsGenerated];
 
         const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(_wallets), passphrase).toString();
         await ipcRenderer.send('setWalletData', encryptedWallet);
