@@ -1,7 +1,9 @@
 {
     "name": "smartcashhub",
     "version": "1.0.1",
+    "description": "A descentralized Smartcash wallet.",
     "private": true,
+    "author": "SmartCash",
     "build": {
         "appId": "smarthub",
         "mac": {
@@ -9,7 +11,9 @@
             "category": "public.app-category.finances"
         },
         "win": {
-            "icon": "build/icon.svg"
+            "icon": "./build/icon.png",
+            "artifactName": "${productName}-${version}.${ext}",            
+            "target": "nsis"
         }
     },
     "main": "public/electron.js",
