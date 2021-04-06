@@ -64,7 +64,7 @@ async function getEnabledNode(sapis) {
     return electedSapi;
 }
 
-function tryToDecryptAES({ textToDecrypt, password }) {
+export function tryToDecryptAES({ textToDecrypt, password }) {
 
     try {
         const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(textToDecrypt, password));
