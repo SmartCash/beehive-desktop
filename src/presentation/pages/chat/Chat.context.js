@@ -78,7 +78,7 @@ function reducer(state, action) {
         }
         case ACTION_TYPE.passwordAcceptChat: {
             return { ...state, passwordAcceptChat: payload };
-        }        
+        }   
         default: {
             throw new Error(`Unhandled action type: ${type}`);
         }

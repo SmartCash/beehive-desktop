@@ -163,6 +163,11 @@ export const useChatController = () => {
         }
     }
 
+    function hasBalance(){
+        var wallet = wallets.find((wallet) => wallet.address === walletCurrent);        
+        return wallet.balance.total > 0.001        
+    }
+
     function clearState() {
         chatDispatch({ type: ACTION_TYPE.clearState });
     }
@@ -210,5 +215,6 @@ export const useChatController = () => {
         setPasswordNewChatToSend,
         setPasswordAcceptChat,
         isNewWallet,
+        hasBalance
     };
 };

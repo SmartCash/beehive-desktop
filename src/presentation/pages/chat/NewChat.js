@@ -8,10 +8,10 @@ export function NewChat() {
     const { addressNewChatToSend, localPassword } = useChatState();
     const { password } = useContext(WalletContext);
 
-    const { setAddressNewChatToSend, handleSubmitSendNewChat } = useChatController();
+    const { setAddressNewChatToSend, handleSubmitSendNewChat, hasBalance } = useChatController();
 
     const canSendNewChat = () => {
-        return addressNewChatToSend !== '';
+        return addressNewChatToSend !== '' && hasBalance();
     };
 
     function getPass(){
@@ -39,8 +39,15 @@ export function NewChat() {
                         }}
                     />
                 </div>
+                <div>
+                    {!hasBalance() && (
+                        <p className="errorBalance">You don't have balance to send messages, please make a deposit in your wallet.</p>
+                    )}
+                    </div>
+
                 <div className="address-form">
-                    <button
+                   
+                  <button
                         className="btn send-button"
                         onClick={() => handleSubmitSendNewChat(addressNewChatToSend, getPass())}
                         disabled={!canSendNewChat()}

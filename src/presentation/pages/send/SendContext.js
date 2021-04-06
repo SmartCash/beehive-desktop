@@ -99,12 +99,10 @@ export const SendProvider = ({ children }) => {
         const unspent = await getSpendableInputs(walletCurrent);
 
         var total = 0;
-        console.log(state.messageToSend)
         const fee = await calculateFee(unspent.utxos, state.messageToSend);
 
         if (fee != undefined) {
             total = sumFloatsValues(value, fee);
-            console.log(total);
             dispatch({ type: 'setNetFee', payload: fee || 0 })
         }
 

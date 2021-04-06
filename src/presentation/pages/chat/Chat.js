@@ -32,7 +32,6 @@ function ChatComponent() {
         newChat,
         messageToSend,
         TXID,
-        passwordAcceptChat,
         localPassword
     } = useChatState();
     const messagesRef = useRef();
@@ -45,17 +44,13 @@ function ChatComponent() {
         clearState,
         clearTXID,
         setMessageToSend,
-        setPasswordAcceptChat,
         setPasswordToSend,
-        isNewWallet
+        isNewWallet,
+        hasBalance
     } = useChatController();
 
     const getChat = () => {
         return history?.find((chat) => chat.chatAddress === currentChatAddress);
-    };
-
-    const canSendAcceptChat = () => {
-        return passwordAcceptChat !== '';
     };
 
     const isAccept = () => {
@@ -63,8 +58,12 @@ function ChatComponent() {
     };
 
     const canSend = () => {
-        return messageToSend !== '';
-    };
+        return messageToSend !== '' && hasBalance();
+    };   
+
+    const canAcceptInvite = () => {
+        return hasBalance();
+    }
 
     function hasPass(){
         return ((localPassword !== '' && localPassword !== null) || (password !== '' && password !== null))
@@ -273,9 +272,15 @@ function ChatComponent() {
                                                             This chat is not active yet, you need accept this invite.
                                                             </div>
                                                             <br />
+
+                                                            {!hasBalance() && (
+                                                                <p className="errorBalance">You don't have balance to send messages, please make a deposit in your wallet.</p>
+                                                            )}
+
                                                             <button
                                                                 onClick={() => handleAcceptChat(m.toAddress, getPass())}
                                                                 className="acceptInvite"
+                                                                disabled={!canAcceptInvite()}
                                                             >
                                                                 Accept invite
                                                             </button>
@@ -316,6 +321,10 @@ function ChatComponent() {
                                     </div>
 
                                     <div className="">
+                                        {!hasBalance() && (
+                                            <p className="errorBalance">You don't have balance to send messages, please make a deposit in your wallet.</p>
+                                        )}
+
                                         <button
                                             className="btn send-button"
                                             onClick={() =>

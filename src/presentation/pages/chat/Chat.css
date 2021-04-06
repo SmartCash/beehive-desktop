@@ -384,3 +384,11 @@ ul.links{
     outline: 0 !important;
     cursor: pointer;
 }
+
+.errorBalance{
+    background-color:brown;
+    color: white;
+    padding:10px;
+    font-size: 14px;
+    border-radius: var(--borderRadius);
+}
