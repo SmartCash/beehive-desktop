@@ -119,9 +119,9 @@ function Transactions() {
                                     {tx.direction === 'Received' && (
                                         <div>
                                             <p className="label">From Address</p>
-                                            <p className="value"> {tx.vin[0].scriptPubKey.addresses[0]}
+                                            <p className="value"> {tx?.vin[0]?.scriptPubKey?.addresses[0]}
                                                 <button className="btn copy" title="Copy address to clipboard"
-                                                    onClick={() => electron.clipboard.writeText(tx.vin[0].scriptPubKey.addresses[0])}>
+                                                    onClick={() => electron.clipboard.writeText(tx?.vin[0]?.scriptPubKey?.addresses[0])}>
                                                     <IconCopy className="btnCopy" />
                                                 </button>
                                             </p>

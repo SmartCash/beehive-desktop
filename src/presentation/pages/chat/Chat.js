@@ -46,7 +46,7 @@ function ChatComponent() {
         clearTXID,
         setMessageToSend,
         setPasswordAcceptChat,
-        setPasswordToSend,        
+        setPasswordToSend,
         isNewWallet
     } = useChatController();
 
@@ -120,10 +120,10 @@ function ChatComponent() {
         if(saveInContext)
             setPassword(pass);
         else
-            setPasswordToSend(pass);                   
-        
+            setPasswordToSend(pass);
+
         togglePasswordModal();
-    }    
+    }
 
     function generateMessage(messages) {
         var removePublicKeys = [];
@@ -135,7 +135,7 @@ function ChatComponent() {
                 if (!item.includes('-----BEGIN PUBLIC KEY-----')) {
                     removePublicKeys.push(item);
                 }
-            }           
+            }
         });
 
         if (removePublicKeys.length > 0) return removePublicKeys[removePublicKeys.length - 1].substring(0, 30);
@@ -160,10 +160,10 @@ function ChatComponent() {
              {
                 !hasPass() && (
                     <div className="decryptMessages">
-                        <p>The messages in this chat are encrypted, please put your password to decrypt them!</p>                        
+                        <p>The messages in this chat are encrypted, please put your password to decrypt them!</p>
                         <button
                             className="btn send-button"
-                            onClick={() => togglePasswordModal()}                                    
+                            onClick={() => togglePasswordModal()}
                         >Decrypt Messages
                         </button>
                 </div>
@@ -190,7 +190,7 @@ function ChatComponent() {
                                         onClick={() => handleSetCurrentChatAddress(tx.chatAddress)}
                                     >
                                         <p className="address">{tx.chatAddress}</p>
-                                        <p className="lastMessage">{                                            
+                                        <p className="lastMessage">{
                                             generateMessage(tx.messages)}</p>
                                     </div>
                                 );
@@ -203,11 +203,11 @@ function ChatComponent() {
                         )}
                     </Scrollbars>
                 </div>
-    
+
                     {newChat === false && !isNewWallet(getChat()?.chatAddress) && (
                         <div className="chat-messages">
                             {error && <p className="ChatError">{error}</p>}
-        
+
                             {TXID && (
                                 <div className="hasBeenSent">
                                     <button className="btnClose" onClick={() => clearTXID()}>X</button>
@@ -220,11 +220,11 @@ function ChatComponent() {
                                             <li><button className="link" title="Copy address to clipboard" onClick={() => electron.clipboard.writeText(TXID)}>Copy</button></li>
                                             <li><button className="link" onClick={() => electron.shell.openExternal(`https://insight.smartcash.cc/tx/${TXID}`)}>Open into Insight</button></li>
                                             <li><button className="link" onClick={() => electron.shell.openExternal(`http://explorer.smartcash.cc/tx/${TXID}`)}>Open into Sapi Explorer</button></li>
-                                        </ul>                                                                                                                    
-                                    </div>                                    
+                                        </ul>
+                                    </div>
                                 </div>
                             )}
-        
+
                             <input type="hidden" value={getChat()?.chatAddress} id="chatAddress" />
                             <div className="transaction chatAddress">
                                 <p className="label">Chat Address</p>
@@ -282,7 +282,7 @@ function ChatComponent() {
                                                         </div>
                                                     );
                                                 }
-        
+
                                             }
                                         } else {
                                             if (!m.message.includes('-----BEGIN PUBLIC KEY-----')) {
@@ -298,7 +298,7 @@ function ChatComponent() {
                                         }
                                     })}
                             </Scrollbars>
-        
+
                             {isAccept() === false && (
                                 <div className="send-wrapper">
                                     <div className="message-wrap">
@@ -314,7 +314,7 @@ function ChatComponent() {
                                             }}
                                         />
                                     </div>
-                                
+
                                     <div className="">
                                         <button
                                             className="btn send-button"
@@ -324,8 +324,8 @@ function ChatComponent() {
                                                     messageToSend,
                                                     getPass(),
                                                     (getChat()?.messages.find(
-                                                        (m) => m.direction !== 'Sent' && m.message.includes('-----BEGIN PUBLIC KEY-----')
-                                                    )).message
+                                                        (m) => m?.direction !== 'Sent' && m?.message?.includes('-----BEGIN PUBLIC KEY-----')
+                                                    ))?.message
                                                 )
                                             }
                                             disabled={!canSend()}
@@ -336,10 +336,10 @@ function ChatComponent() {
                             )}
                         </div>
                     )}
-        
+
                     {!initialLoading && newChat && <NewChat />}
-        
-                    {!initialLoading && !newChat && isNewWallet(getChat()?.chatAddress) && <NewChat />}                  
+
+                    {!initialLoading && !newChat && isNewWallet(getChat()?.chatAddress) && <NewChat />}
                     </>
                 )
             }
@@ -352,7 +352,7 @@ function ChatComponent() {
                         onClose={togglePasswordModal}
                     />
                 )
-            }              
+            }
         </Page>
     );
 }

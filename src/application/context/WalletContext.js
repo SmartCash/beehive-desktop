@@ -11,7 +11,7 @@ const initialState = {
     walletCurrent: '',
     fiatList: [],
     password: null,
-    wrongPassError: false
+    wrongPassError: false,
 };
 
 const getBalanceFromSAPI = async (address) => {
@@ -53,7 +53,7 @@ const userReducer = (state, action) => {
         }
         case 'wrongPassError': {
             return { ...state, wrongPassError: action.payload };
-        }        
+        }
         default: {
             return state;
         }
@@ -143,9 +143,15 @@ export const WalletProvider = ({ children }) => {
                         wallet.RSA = createRSAKeyPair(password);
                     }
 
-                    if (!CryptoJS.AES.decrypt(wallet.privateKey, password))
+                    try {
+                        CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(wallet.privateKey, password));
+                    } catch (error) {
                         wallet.privateKey = CryptoJS.AES.encrypt(wallet.privateKey, password).toString();
+                    }
                 }
+
+                const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(wallets), password).toString();
+                await ipcRenderer.send('setWalletData', encryptedWallet);
 
                 dispatch({ type: 'setWalletCurrent', payload: wallets[0].address });
                 dispatch({ type: 'updateWallets', payload: wallets });
@@ -154,10 +160,6 @@ export const WalletProvider = ({ children }) => {
             dispatch({ type: 'updateWallets', payload: wallets });
         }
         return wallets;
-    } 
-
-    function downloadWallets() {
-        generatePDF({ wallets: state.wallets, filename: `MyWallets_SmartCash_${Date.now()}` });
     }
 
     async function getAndUpdateWalletsBallance(wallets) {
@@ -193,10 +195,9 @@ export const WalletProvider = ({ children }) => {
         setWalletCurrent,
         updateBalance,
         decryptWallets,
-        downloadWallets,
         getAndUpdateWalletsBallance,
         updateWalletsFunc,
-        setPassword
+        setPassword,
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;

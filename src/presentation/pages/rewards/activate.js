@@ -149,6 +149,7 @@ function RewardsActivateComponent() {
                     </div>
                 </div>
             )}
+
             {rewards && rewards.activated === 0 && isActive === false && (
                 <form onSubmit={handleSubmit(onSubmit)} className="formGroup" autoComplete="off">
                     <div className="wrapper">
