@@ -757,6 +757,10 @@ export async function sendTransaction(hex, isChat) {
     try {
         return await request.post(options);
     } catch (err) {
+
+        if (err && err?.error && err?.error.length > 0 && (err.error[0].message && err.error[0].message.includes('258: txn-mempool-conflict') || err.error[0].message && err.error[0].message.includes('insufficient priority'))) {
+            return await sendTransaction(hex, isChat);
+        }
         return {
             status: 400,
             value: err.error[0].message,
