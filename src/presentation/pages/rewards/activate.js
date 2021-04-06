@@ -12,7 +12,7 @@ import './activate.css';
 import { ActivateContext, ActivateProvider } from './ActivateContext';
 import useModal from 'application/hooks/useModal';
 import { PasswordModal } from 'presentation/components/password-modal/passsword-modal';
-
+import loader from 'presentation/assets/images/loader.svg';
 
 function RewardsActivateComponent() {
     const { wallets, walletCurrent: address } = useContext(WalletContext);
@@ -26,17 +26,24 @@ function RewardsActivateComponent() {
     const [rewardsError, setRewardsError] = useState(false);
     const { privateKey, balance } = wallets.find((wallet) => wallet.address === address);
     const [countDownDate, setCountDownDate] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     const { handleSubmit, setError } = useForm({
         mode: 'onChange',
     });
 
     useEffect(() => {
+        setLoading(true);
         setRewards(null);
         setRewardsError(false);
         getRewards(address)
-            .then((data) => setRewards(data))
-            .catch(() => setRewardsError(true));
+            .then((data) => 
+                setRewards(data),
+                setLoading(false)
+            )
+            .catch(() => 
+                setRewardsError(true),
+                setLoading(false))
     }, [address]);
 
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -106,9 +113,18 @@ function RewardsActivateComponent() {
     if (rewardsError || balance.unlocked < 999) {
         return (
             <Page className="page-rewards">
-                <div className="wrapper">
-                    The address <span className="text-primary">{address}</span> is not eligible for rewards.
-                </div>
+                {loading && (
+                    <p className="loading">
+                        <img src={loader} alt={'loading...'} />
+                    </p>
+                )}
+
+                {!loading && (                    
+                    <div className="wrapper">
+                        The address <span className="text-primary">{address}</span> is not eligible for rewards.
+                    </div>                    
+                )}
+
                 <SmartNodeRewardsRoi />
             </Page>
         );
@@ -133,80 +149,86 @@ function RewardsActivateComponent() {
 
     return (
         <Page className="page-rewards">
-            {isActive && (
-                <div className="wrapper">
-                    <p>
-                        Rewards are already activated for this address <span className="text-primary">{address}</span>
-                    </p>
-                </div>
+            {loading && (
+                <p className="loading">
+                    <img src={loader} alt={'loading...'} />
+                </p>
             )}
-            {rewards && rewards.activated === 1 && isActive === false && (
-                <div className="wrapper">
-                    <div className="wrapper">
-                        <p>
-                            Rewards are already activated for this address <span className="text-primary">{address}</span>
-                        </p>
-                        <p>
-                            Balance Eligible:{' '}
-                            <span className="text-primary">
-                                {rewards.balance_eligible
-                                    .toLocaleString('en-US', {
-                                        style: 'currency',
-                                        currency: 'USD',
-                                        minimumFractionDigits: 4,
-                                    })
-                                    .replace('$', '∑')}
-                            </span>
-                        </p>
-                        <p>
-                            Bonus level: <span className="text-primary">{rewards.bonus_level}</span>
-                        </p>
-                        <div>
-                            {rewards.activated && rewards.balance_eligible > 999 && rewards.balance_eligible < 999999 && (
-                                <img src={SmartRewardsImage} className="rewardsImg" />
-                            )}
-                            {rewards.activated && rewards.balance_eligible >= 999999 && (
-                                <img src={SuperRewardsImage} className="rewardsImg" />
-                            )}
+
+            {!loading && (
+                <div>
+                    {isActive && (
+                        <div className="wrapper"><p>Rewards are already activated for this address <span className="text-primary">{address}</span></p></div>
+                    )}
+                    
+                    {rewards && rewards.activated === 1 && isActive === false && (
+                        <div className="wrapper">
+                            <div className="wrapper">
+                                <p>
+                                    Rewards are already activated for this address <span className="text-primary">{address}</span>
+                                </p>
+                                <p>
+                                    Balance Eligible:{' '}
+                                    <span className="text-primary">
+                                        {rewards.balance_eligible
+                                            .toLocaleString('en-US', {
+                                                style: 'currency',
+                                                currency: 'USD',
+                                                minimumFractionDigits: 4,
+                                            })
+                                            .replace('$', '∑')}
+                                    </span>
+                                </p>
+                                <p>
+                                    Bonus level: <span className="text-primary">{rewards.bonus_level}</span>
+                                </p>
+                                <div>
+                                    {rewards.activated && rewards.balance_eligible > 999 && rewards.balance_eligible < 999999 && (
+                                        <img src={SmartRewardsImage} className="rewardsImg" />
+                                    )}
+                                    {rewards.activated && rewards.balance_eligible >= 999999 && (
+                                        <img src={SuperRewardsImage} className="rewardsImg" />
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            )}
+                    )}
 
-            {rewards && rewards.activated === 0 && isActive === false && (                
-                    <div className="wrapper">
-                        <p>
-                            The rewards is not activated for the address <span className="text-primary">{address}</span>
-                        </p>
+                    {rewards && rewards.activated === 0 && isActive === false && (                
+                            <div className="wrapper">
+                                <p>
+                                    The rewards is not activated for the address <span className="text-primary">{address}</span>
+                                </p>
 
-                        <div className="form-not-activated">
-                            {/* <input
-                                id="messageTo"
-                                placeholder="Insert your password here"
-                                autoComplete="off"
-                                type="password"
-                                value={password}
-                                onInput={(event) => {
-                                    setPassword(event.target.value);
-                                }}
-                            /> */}
-                            <button type="submit" onClick={() => send()}>
-                                Activate Rewards
-                            </button>
-                        </div>
-                    </div>                
-            )}
-            <SmartNodeRewardsRoi />
+                                <div className="form-not-activated">
+                                    {/* <input
+                                        id="messageTo"
+                                        placeholder="Insert your password here"
+                                        autoComplete="off"
+                                        type="password"
+                                        value={password}
+                                        onInput={(event) => {
+                                            setPassword(event.target.value);
+                                        }}
+                                    /> */}
+                                    <button type="submit" onClick={() => send()}>
+                                        Activate Rewards
+                                    </button>
+                                </div>
+                            </div>                
+                    )}
 
-            {
-                    showPasswordModal && (
-                        <PasswordModal
-                            callBack={handleSend}
-                            isShowing={showPasswordModal}
-                            onClose={togglePasswordModal}
-                        />
-                    )
-                } 
+                    <SmartNodeRewardsRoi />
+                </div>                       
+            )}                        
+            
+            {showPasswordModal && (
+                <PasswordModal
+                    callBack={handleSend}
+                    isShowing={showPasswordModal}
+                    onClose={togglePasswordModal}
+                />
+            )} 
         </Page>
     );
 }

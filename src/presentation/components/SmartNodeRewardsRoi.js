@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getSmartRewardsRoi, getSmartNodeRoi } from 'application/lib/sapi';
 import style from './SmartNodeRewardsRoi.module.css';
+import loader from 'presentation/assets/images/loader.svg';
 
 export default function SmartNodeRewardsRoi() {
     const [nodeRoi, setNodeRoi] = useState();
@@ -64,7 +65,10 @@ export default function SmartNodeRewardsRoi() {
                 </div>
             </div>
         );
+    } else {        
+        return (
+            <p className="loading">
+                <img src={loader} alt={'loading...'} />
+            </p>)            
     }
-
-    return '';
 }

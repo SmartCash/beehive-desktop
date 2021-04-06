@@ -83,3 +83,9 @@
     font-weight: 700;
     cursor: pointer;
 }
+
+.page-rewards .loading{
+    margin:0 auto;
+    text-align: center;
+    margin-top:200px
+}
