@@ -199,6 +199,7 @@ export const useChatController = () => {
     function isNewWallet(chat) {
         return chat === undefined;
     }
+    
 
     return {
         _getTransactionHistory,

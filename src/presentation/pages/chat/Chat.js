@@ -141,17 +141,18 @@ function ChatComponent() {
         else return '';
     }
 
-    useEffect(() => {
+    useEffect(() => {        
         if (history && history.length > 0 && newChat === false && currentChatAddress === undefined) {
             handleSetCurrentChatAddress(history[0].chatAddress);
         }
+
     }, [history]);
 
     useEffect(() => {
         clearState();
         _getTransactionHistory();
-        const timer = setInterval(() => _getTransactionHistory(), 60000);
-        return () => clearInterval(timer);
+        // const timer = setInterval(() => _getTransactionHistory(), 20000);
+        // return () => clearInterval(timer);
     }, [walletCurrent]);
 
     return (
@@ -175,12 +176,20 @@ function ChatComponent() {
                     <div className="chat-wallets">
                     <div className="header">
                         <span className="title">Chats</span>
-                        {<button onClick={handleSetNewChat}>Start chat</button>}
+                        {<button onClick={() => handleSetNewChat() }>Start chat</button>}
                         <button onClick={() => _getTransactionHistory()}>Refresh</button>
                     </div>
                     {error && <p className="error">{error}</p>}
                     <Scrollbars renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
-                        {history?.map((tx) => {
+                    {initialLoading && (
+                            <p className="loading">
+                                <img src={loader} alt={'loading...'} />
+                            </p>
+                    )}
+
+                    {!initialLoading && (
+                        <>
+                         {history?.map((tx) => {
                             if (tx.chatAddress !== 'undefined') {
                                 return (
                                     <div
@@ -195,15 +204,20 @@ function ChatComponent() {
                                 );
                             }
                         })}
-                        {initialLoading && (
-                            <p className="loading">
-                                <img src={loader} alt={'loading...'} />
-                            </p>
-                        )}
+                        </>
+                    )}                     
                     </Scrollbars>
                 </div>
+                
+                {initialLoading && (
+                    <p className="loading">
+                        <img src={loader} alt={'loading...'} />
+                    </p>
+                )}
 
-                    {newChat === false && !isNewWallet(getChat()?.chatAddress) && (
+                {!initialLoading && (
+                    <>
+                     {newChat === false && !isNewWallet(getChat()?.chatAddress) && (
                         <div className="chat-messages">
                             {error && <p className="ChatError">{error}</p>}
 
@@ -235,13 +249,13 @@ function ChatComponent() {
                                         <img src={loader} alt={'loading...'} />
                                     </p>
                                 )}
-                                {!initialLoading &&
-                                    getChat()?.messages.map((m) => {
+                                {!initialLoading && getChat() &&
+                                    getChat()?.messages.map((m, index) => {
                                         if (isAccept()) {
                                             if (m.direction == 'Sent') {
                                                 if (!m.message.includes('-----BEGIN PUBLIC KEY-----')) {
                                                     return (
-                                                        <div className={`transaction message message-${m.direction}`} key={m.time}>
+                                                        <div className={`transaction message message-${m.direction}`} key={m.time + index}>
                                                             <p className="value">{parseMessage(m)}</p>
                                                             <p className="label">
                                                                 {m.direction} at {new Date(m.time * 1000).toLocaleString()}
@@ -258,7 +272,7 @@ function ChatComponent() {
                                             } else {
                                                 if (!m.message.includes('-----BEGIN PUBLIC KEY-----')) {
                                                     return (
-                                                        <div className={`transaction message message-${m.direction}`} key={m.time}>
+                                                        <div className={`transaction message message-${m.direction}`} key={m.time + index}>
                                                             <p className="value">{parseMessage(m)}</p>
                                                             <p className="label">
                                                                 {m.direction} at {new Date(m.time * 1000).toLocaleString()}
@@ -267,7 +281,7 @@ function ChatComponent() {
                                                     );
                                                 } else {
                                                     return (
-                                                        <div className="accept">
+                                                        <div className="accept" key={m.time + index}>
                                                              <div class="transaction chatAddress">
                                                             This chat is not active yet, you need accept this invite.
                                                             </div>
@@ -292,7 +306,7 @@ function ChatComponent() {
                                         } else {
                                             if (!m.message.includes('-----BEGIN PUBLIC KEY-----')) {
                                                 return (
-                                                    <div className={`transaction message message-${m.direction}`} key={m.time}>
+                                                    <div className={`transaction message message-${m.direction}`} key={m.time + index}>
                                                         <p className="value">{parseMessage(m)}</p>
                                                         <p className="label">
                                                             {m.direction} at {new Date(m.time * 1000).toLocaleString()}
@@ -345,6 +359,8 @@ function ChatComponent() {
                             )}
                         </div>
                     )}
+                    </>
+                )}
 
                     {!initialLoading && newChat && <NewChat />}
 
