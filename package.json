@@ -1,11 +1,11 @@
 {
-    "name": "smartcashhub",
+    "name": "beehivedesktop",
     "version": "1.0.1",
     "description": "A descentralized Smartcash wallet.",
     "private": true,
     "author": "SmartCash",
     "build": {
-        "appId": "smarthub",
+        "appId": "beehivedesktop",
         "mac": {
             "icon": "build/icon.icns",
             "category": "public.app-category.finances"

@@ -1,6 +1,6 @@
 {
-    "short_name": "SmartHub",
-    "name": "SmartHub",
+    "short_name": "BeeHive Desktop",
+    "name": "BeeHive Desktop",
     "icons": [
         {
             "src": "icon.svg",

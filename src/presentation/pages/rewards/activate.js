@@ -32,10 +32,14 @@ function RewardsActivateComponent() {
         mode: 'onChange',
     });
 
-    useEffect(() => {
+    useEffect(() => {        
         setLoading(true);
         setRewards(null);
         setRewardsError(false);
+        setCountDownDate(0);
+        setIsActive(false);
+        setActivating(false);
+
         getRewards(address)
             .then((data) => 
                 setRewards(data),
@@ -70,14 +74,14 @@ function RewardsActivateComponent() {
         togglePasswordModal();
     }  
 
-    async function submitRewards(pass) {
+    async function submitRewards(pass) {        
         const SLEEP_TIME = 1000;        
         setActivating(true);
         setCountDownDate(Date.now() + SLEEP_TIME);
 
         let unspentList = await getSpendableInputs(address);
 
-        let rewardsActivationResponse = await activateRewards({ toAddress: address, unspentList, privateKey, pass });
+        let rewardsActivationResponse = await activateRewards(address, unspentList, privateKey, pass);
 
         if (rewardsActivationResponse && rewardsActivationResponse.status === 400) {
             setError(rewardsActivationResponse.value);
@@ -86,8 +90,7 @@ function RewardsActivateComponent() {
 
         await sleep(SLEEP_TIME);
 
-        const transactionResponse = await getTxId(rewardsActivationResponse.value);
-
+        const transactionResponse = await getTxId(rewardsActivationResponse.value);        
         if (!transactionResponse) {
             return {
                 status: 400,
@@ -200,17 +203,7 @@ function RewardsActivateComponent() {
                                     The rewards is not activated for the address <span className="text-primary">{address}</span>
                                 </p>
 
-                                <div className="form-not-activated">
-                                    {/* <input
-                                        id="messageTo"
-                                        placeholder="Insert your password here"
-                                        autoComplete="off"
-                                        type="password"
-                                        value={password}
-                                        onInput={(event) => {
-                                            setPassword(event.target.value);
-                                        }}
-                                    /> */}
+                                <div className="form-not-activated">                                 
                                     <button type="submit" onClick={() => send()}>
                                         Activate Rewards
                                     </button>

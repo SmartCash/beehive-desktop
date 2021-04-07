@@ -1,4 +1,4 @@
-# SmartHub
+# BeeHive Desktop
 This is the smart hub wallet that is 100% decentralized using SAPI. With this you don't need to sync any blockchain.
 
 ### Linux dependencies

@@ -711,7 +711,7 @@ async function getSmallestUnspentInput({ unspentList }) {
     return unspentAux;
 }
 
-export async function activateRewards({ toAddress, unspentList, privateKey, password }) {
+export async function activateRewards(toAddress, unspentList, privateKey, password) {
     let minUnspentList = await getSmallestUnspentInput({ unspentList });
 
     // Should return an ERROR if it has no unspent
@@ -724,19 +724,16 @@ export async function activateRewards({ toAddress, unspentList, privateKey, pass
 
     calculateUTXOAmountLessFee = minUnspentList.utxos[0].value - MIN_FEE;
     unlockedBalance = minUnspentList.utxos[0].value;
-
+    
     const tx = await createAndSendRawTransaction({
-        toAddress,
-        fee: MIN_FEE,
+        toAddress: toAddress,
         amount: calculateUTXOAmountLessFee,
-        unlockedBalance,
-        privateKey,
+        fee: MIN_FEE,       
+        unlockedBalance: unlockedBalance,
+        privateKey: privateKey,
         unspentList: minUnspentList,
-        password,
+        password: password,
     });
-
-    console.log(`activation-tx`, tx);
-
     return tx;
 }
 
