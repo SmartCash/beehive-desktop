@@ -59,7 +59,7 @@ function ChatComponent() {
 
     const canSend = () => {
         return messageToSend !== '' && hasBalance();
-    };   
+    };
 
     const canAcceptInvite = () => {
         return hasBalance();
@@ -141,11 +141,11 @@ function ChatComponent() {
         else return '';
     }
 
-    useEffect(() => {        
+    useEffect(() => {
         if (history && history.length > 0 && newChat === false && currentChatAddress === undefined) {
             handleSetCurrentChatAddress(history[0].chatAddress);
+            setTimeout(() => messagesRef?.current?.scrollToBottom(), 100);
         }
-
     }, [history]);
 
     useEffect(() => {
@@ -154,6 +154,11 @@ function ChatComponent() {
         // const timer = setInterval(() => _getTransactionHistory(), 20000);
         // return () => clearInterval(timer);
     }, [walletCurrent]);
+
+    useEffect(() => {
+        messagesRef?.current?.scrollToBottom();
+    }, [currentChatAddress, history, walletCurrent, messagesRef])
+
 
     return (
         <Page className="page-chat">
@@ -205,10 +210,10 @@ function ChatComponent() {
                             }
                         })}
                         </>
-                    )}                     
+                    )}
                     </Scrollbars>
                 </div>
-                
+
                 {initialLoading && (
                     <p className="loading">
                         <img src={loader} alt={'loading...'} />
@@ -243,6 +248,7 @@ function ChatComponent() {
                                 <p className="label">Chat Address</p>
                                 <p className="value">{getChat()?.chatAddress}</p>
                             </div>
+
                             <Scrollbars ref={messagesRef} renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
                                 {initialLoading && (
                                     <p className="loading">
