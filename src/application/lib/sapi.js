@@ -30,7 +30,6 @@ const ping = (url, timeout = 2000) => {
     });
 };
 
-
 export async function getEnabledNodes() {
     try {
         const localServers = ipcRenderer.sendSync('getSapiServers');
@@ -64,19 +63,74 @@ async function getEnabledNode(sapis) {
     return electedSapi;
 }
 
-export function tryToDecryptAES({ textToDecrypt, password }) {
-
+export function tryToDecryptAES({ text, password }) {
     try {
-        const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(textToDecrypt, password));
+        const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(text, password));
         let decriptKey;
 
-        if (!decryptedWallet) decriptKey = textToDecrypt;
+        if (!decryptedWallet) decriptKey = text;
         else decriptKey = decryptedWallet;
 
-        return decriptKey
+        return decriptKey;
     } catch (error) {
-        return textToDecrypt;
+        return text;
     }
+}
+
+export function tryToEncryptAES({ text, password, stringify = false }) {
+    try {
+        if (stringify) return CryptoJS.AES.encrypt(JSON.stringify(text), password).toString();
+        return CryptoJS.AES.encrypt(text, password).toString();
+    } catch (error) {
+        return text;
+    }
+}
+
+export function isEncryptedAES({ text, password }) {
+    try {
+        const isDecrypted = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(text, password));
+        return isDecrypted ? true : false;
+    } catch (error) {
+        return false;
+    }
+}
+
+export async function decryptWallets({ password = '', wallets = [] }) {
+    let decryptedWallet;
+    if (encryptedWallet) {
+        try {
+            decryptedWallet = tryToDecryptAES({ text: encryptedWallet, password: password });
+        } catch (e) {
+            return dispatch({ type: 'decryptError', payload: true });
+        }
+
+        if (decryptedWallet) {
+            wallets = JSON.parse(decryptedWallet);
+
+            await getAndUpdateWalletsBallance(wallets);
+
+            for (const wallet of wallets) {
+                if (!wallet.RSA) {
+                    wallet.RSA = createRSAKeyPair(password);
+                }
+
+                try {
+                    CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(wallet.privateKey, password));
+                } catch (error) {
+                    wallet.privateKey = CryptoJS.AES.encrypt(wallet.privateKey, password).toString();
+                }
+            }
+
+            const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(wallets), password).toString();
+            await ipcRenderer.send('setWalletData', encryptedWallet);
+
+            dispatch({ type: 'setWalletCurrent', payload: wallets[0].address });
+            dispatch({ type: 'updateWallets', payload: wallets });
+        }
+    } else {
+        dispatch({ type: 'updateWallets', payload: wallets });
+    }
+    return wallets;
 }
 
 export async function createAndSendRawTransaction({
@@ -92,7 +146,6 @@ export async function createAndSendRawTransaction({
     rsaKeyPairFromSender,
     rsaKeyPairFromRecipient,
 }) {
-
     if (!toAddress) {
         return {
             status: 400,
@@ -171,7 +224,7 @@ export async function createAndSendRawTransaction({
     }
 
     try {
-        const decriptKey = tryToDecryptAES({ textToDecrypt: privateKey, password });
+        const decriptKey = tryToDecryptAES({ text: privateKey, password });
         let key = smartCash.ECPair.fromWIF(decriptKey);
         let fromAddress = key.getAddress().toString();
         let transaction = new smartCash.TransactionBuilder();
@@ -188,16 +241,16 @@ export async function createAndSendRawTransaction({
                     smartCash.opcodes.OP_RETURN,
                     Buffer.from(
                         'smart-chat: ' +
-                        JSON.stringify({
-                            messageFromSender: encryptTextWithRSAPublicKey(
-                                rsaKeyPairFromSender.rsaPublicKey,
-                                messageOpReturn
-                            ),
-                            messageToRecipient: encryptTextWithRSAPublicKey(
-                                rsaKeyPairFromRecipient?.rsaPublicKey,
-                                messageOpReturn
-                            ),
-                        }),
+                            JSON.stringify({
+                                messageFromSender: encryptTextWithRSAPublicKey(
+                                    rsaKeyPairFromSender.rsaPublicKey,
+                                    messageOpReturn
+                                ),
+                                messageToRecipient: encryptTextWithRSAPublicKey(
+                                    rsaKeyPairFromRecipient?.rsaPublicKey,
+                                    messageOpReturn
+                                ),
+                            }),
                         'utf8'
                     ),
                 ]);
@@ -311,6 +364,39 @@ export async function getBalance(_address) {
     } catch (err) {
         console.error(err);
     }
+}
+
+export async function getBalanceFromSAPI({ address }) {
+    let balance = {};
+    try {
+        balance = await getBalance(address);
+    } catch {
+        balance = await getBalanceFromSAPI(address);
+    }
+    return balance;
+}
+
+export async function parseBalanceFromSapi({}) {}
+
+export async function getAddressesBalances({ addresses = [] }) {
+    const balances = await getBalances(addresses);
+    return await Promise.all(
+        addresses.map(async (address) => {
+            const noBalance = {
+                locked: 0,
+                total: 0,
+                unlocked: 0,
+            };
+            address.balance = noBalance;
+            try {
+                const addressBalance = balances.find((balance) => balance.address === address);
+                if (addressBalance) address.balance = addressBalance?.balance;
+            } catch (e) {
+                address.balance = noBalance;
+            }
+            return address;
+        })
+    );
 }
 
 export async function getBalances(addresses) {
@@ -725,11 +811,11 @@ export async function activateRewards(toAddress, unspentList, privateKey, passwo
 
     calculateUTXOAmountLessFee = minUnspentList.utxos[0].value - MIN_FEE;
     unlockedBalance = minUnspentList.utxos[0].value;
-    
+
     const tx = await createAndSendRawTransaction({
         toAddress: toAddress,
         amount: calculateUTXOAmountLessFee,
-        fee: MIN_FEE,       
+        fee: MIN_FEE,
         unlockedBalance: unlockedBalance,
         privateKey: privateKey,
         unspentList: minUnspentList,
@@ -755,8 +841,13 @@ export async function sendTransaction(hex, isChat) {
     try {
         return await request.post(options);
     } catch (err) {
-
-        if (err && err?.error && err?.error.length > 0 && (err.error[0].message && err.error[0].message.includes('258: txn-mempool-conflict') || err.error[0].message && err.error[0].message.includes('insufficient priority'))) {
+        if (
+            err &&
+            err?.error &&
+            err?.error.length > 0 &&
+            ((err.error[0].message && err.error[0].message.includes('258: txn-mempool-conflict')) ||
+                (err.error[0].message && err.error[0].message.includes('insufficient priority')))
+        ) {
             return await sendTransaction(hex, isChat);
         }
         return {
@@ -774,12 +865,12 @@ export async function calculateFee(listUnspent, messageOpReturn) {
         0.001 *
         Math.round(
             1.27 +
-            (countUnspent * 148 +
-                2 * 34 +
-                10 +
-                9 +
-                (messageOpReturn ? messageOpReturn.length : 0)) /*OP_RETURN_DEFAULT.length*/ /
-            1024
+                (countUnspent * 148 +
+                    2 * 34 +
+                    10 +
+                    9 +
+                    (messageOpReturn ? messageOpReturn.length : 0)) /*OP_RETURN_DEFAULT.length*/ /
+                    1024
         );
 
     return newFee;

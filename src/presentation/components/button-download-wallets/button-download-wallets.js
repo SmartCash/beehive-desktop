@@ -14,7 +14,7 @@ export function ButtonDownloadWallets() {
         const walletsShadowClone = JSON.parse(JSON.stringify(wallets))
 
         for (let wallet of walletsShadowClone) {
-            wallet.privateKey = tryToDecryptAES({ textToDecrypt: wallet.privateKey, password })
+            wallet.privateKey = tryToDecryptAES({ text: wallet.privateKey, password })
         }
 
         generatePDF({ wallets: walletsShadowClone, filename: `MyWallets_SmartCash_${Date.now()}` });

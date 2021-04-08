@@ -1,5 +1,12 @@
-import generatePDF from 'application/lib/GeneratorPDF';
-import { createRSAKeyPair, getBalance, getBalances } from 'application/lib/sapi';
+import {
+    createRSAKeyPair,
+    getAddressesBalances,
+    getBalance,
+    getBalances,
+    tryToDecryptAES,
+    isEncryptedAES,
+    tryToEncryptAES,
+} from 'application/lib/sapi';
 import { getSupportedCurrencies } from 'application/lib/smart';
 import * as CryptoJS from 'crypto-js';
 import React, { createContext, useEffect, useReducer } from 'react';
@@ -12,16 +19,6 @@ const initialState = {
     fiatList: [],
     password: null,
     wrongPassError: false,
-};
-
-const getBalanceFromSAPI = async (address) => {
-    let balance = {};
-    try {
-        balance = await getBalance(address);
-    } catch {
-        balance = await getBalance(address);
-    }
-    return balance;
 };
 
 const userReducer = (state, action) => {
@@ -92,7 +89,7 @@ export const WalletProvider = ({ children }) => {
 
         const _wallets = [...state.wallets, wallet];
 
-        const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(_wallets), password).toString();
+        const encryptedWallet = tryToEncryptAES({ text: _wallets, stringify: true, password: password });
         await ipcRenderer.send('setWalletData', encryptedWallet);
 
         dispatch({ type: 'updateWallets', payload: _wallets });
@@ -111,24 +108,25 @@ export const WalletProvider = ({ children }) => {
     }
 
     function saveWalletsInStorage(wallets, password) {
-        const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(wallets), password).toString();
+        const encryptedWallet = tryToEncryptAES({ text: wallets, stringify: true, password: password });
         ipcRenderer.send('setWalletData', encryptedWallet);
     }
 
     function getWalletsFromStorage(password) {
         const encryptedWallet = ipcRenderer.sendSync('getWalletData');
-        const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(encryptedWallet, password));
+        const decryptedWallet = tryToDecryptAES({ text: encryptedWallet, password: password });
         return JSON.parse(decryptedWallet);
     }
 
     async function decryptWallets(password) {
         const encryptedWallet = ipcRenderer.sendSync('getWalletData');
+
         let wallets = [];
         let decryptedWallet;
 
         if (encryptedWallet) {
             try {
-                decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(encryptedWallet, password));
+                decryptedWallet = tryToDecryptAES({ text: encryptedWallet, password: password });
             } catch (e) {
                 return dispatch({ type: 'decryptError', payload: true });
             }
@@ -139,18 +137,13 @@ export const WalletProvider = ({ children }) => {
                 await getAndUpdateWalletsBallance(wallets);
 
                 for (const wallet of wallets) {
-                    if (!wallet.RSA) {
-                        wallet.RSA = createRSAKeyPair(password);
-                    }
+                    if (!wallet.RSA) wallet.RSA = createRSAKeyPair(password);
 
-                    try {
-                        CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(wallet.privateKey, password));
-                    } catch (error) {
-                        wallet.privateKey = CryptoJS.AES.encrypt(wallet.privateKey, password).toString();
-                    }
+                    if (!isEncryptedAES({ text: wallet.privateKey, password: password }))
+                        wallet.privateKey = tryToEncryptAES({ text: wallet.privateKey, password: password });
                 }
 
-                const encryptedWallet = CryptoJS.AES.encrypt(JSON.stringify(wallets), password).toString();
+                const encryptedWallet = tryToEncryptAES({ text: wallets, password: password, stringify: true });
                 await ipcRenderer.send('setWalletData', encryptedWallet);
 
                 dispatch({ type: 'setWalletCurrent', payload: wallets[0].address });
@@ -164,13 +157,8 @@ export const WalletProvider = ({ children }) => {
 
     async function getAndUpdateWalletsBallance(wallets) {
         const walletsAux = wallets ? wallets : state.wallets;
-        const balances = await getBalances(walletsAux?.map((wallet) => wallet.address));
-        const _wallets = await Promise.all(
-            walletsAux.map(async (wallet) => {
-                wallet.balance = balances.find((balance) => balance.address === wallet.address).balance;
-                return wallet;
-            })
-        );
+
+        const getAddressesBalances = await getAddressesBalances({ addresses: walletsAux?.map((wallet) => wallet.address) });
 
         dispatch({ type: 'updateWallets', payload: _wallets });
     }
