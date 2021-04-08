@@ -46,11 +46,11 @@ function Receive() {
         <Page className="page-receive">
             <Scrollbars>
                 <div className="qrcode">
-                    <img src={qrAddress.toDataURL('image/png')} alt="" />
+                    <img src={qrAddress.toDataURL('image/png')} alt="" title="Copy QR Code image and download the QR Code image" />
                     <div className="btnWrapper">
                         <button
                             className="btn"
-                            title="Download Image"
+                            title="Copy QR Code image and download the QR Code image"
                             onClick={async () => {
                                 const base64Response = await fetch(qrAddress.toDataURL('image/png'));
                                 const blob = await base64Response.blob();

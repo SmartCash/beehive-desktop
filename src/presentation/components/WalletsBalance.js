@@ -13,7 +13,7 @@ function WalletsBalance() {
     return (
         <div className="wallets-balance">
             <p className="amount">
-                Balance:{' '}
+                <span className="gray"> Balance:{' '} </span>
                 {sumFloats(wallets.map((wallet) => Number(wallet.balance.unlocked)))
                     .toLocaleString('en-US', {
                         style: 'currency',
@@ -22,15 +22,18 @@ function WalletsBalance() {
                     })
                     .replace('$', '∑') || 0}
             </p>
+
+            <div className="space"></div>
+
             <p className="fiat">
-                Locked:{' '}
-                {sumFloats(wallets.map((wallet) => Number(wallet.balance.locked)))
-                    .toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        minimumFractionDigits: 4,
-                    })
-                    .replace('$', '∑') || 0}
+                <span className="gray">Locked:{' '} </span>
+                    {sumFloats(wallets.map((wallet) => Number(wallet.balance.locked)))
+                        .toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                            minimumFractionDigits: 4,
+                        })
+                        .replace('$', '∑') || 0}
             </p>
         </div>
     );

@@ -177,8 +177,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #999999;
-    color: #999999;
+    border: 1px solid var(--primary);
+    color: var(--primary);
     font-size: 18px;
     font-weight: 700;
     border-radius: 100%;
@@ -200,7 +200,7 @@ body {
     margin: 0 0 8px 0;
     font-size: 18px;
     font-weight: 700;
-    color: #999;
+    color: var(--primary);
 }
 .wallet .address {
     padding: 0;

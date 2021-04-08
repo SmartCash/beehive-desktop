@@ -48,3 +48,11 @@
      color: var(--primary);
      right: 0;
  }
+
+ .gray{
+     color: gray;
+ }
+
+ .space{
+     margin-top:20px;
+ }
