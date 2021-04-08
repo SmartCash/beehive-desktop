@@ -181,6 +181,7 @@
     padding: 0;
     color: var(--primary);
     font-size: 16px;
+    word-break: break-all;
 }
 
 .page-chat .transaction button {
@@ -277,7 +278,7 @@
     background-color: var(--primary);
  }
 
- 
+
  .page-chat .hasBeenSent {
     background: var(--primary);
     padding: var(--spacer);
@@ -315,7 +316,7 @@
 }
 
 .txID{
-    font-size: 13px;    
+    font-size: 13px;
 }
 
 .page-chat .ChatError{
