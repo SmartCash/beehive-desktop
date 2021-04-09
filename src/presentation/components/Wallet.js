@@ -2,10 +2,12 @@ import React, { useContext } from 'react';
 import './Wallet.css';
 import { WalletContext } from 'application/context/WalletContext';
 import { ReactComponent as IconCopy } from '../assets/images/copy.svg';
+import { Balance } from 'presentation/components/Balance';
+
 const electron = window.require('electron');
 
 function Wallet({ wallet, isCurrent }) {
-    const { setWalletCurrent } = useContext(WalletContext);
+    const { setWalletCurrent, hideBalance } = useContext(WalletContext);
     return (
         <div className={`wallet ${isCurrent && 'wallet-current'}`} role="button">
             <div className="symbol" onClick={() => setWalletCurrent(wallet)}>
@@ -14,13 +16,7 @@ function Wallet({ wallet, isCurrent }) {
             <div className="content">
                 <div onClick={() => setWalletCurrent(wallet)}>
                     <p className="amount">
-                        {wallet.balance.unlocked
-                            .toLocaleString('en-US', {
-                                style: 'currency',
-                                currency: 'USD',
-                                minimumFractionDigits: 4,
-                            })
-                            .replace('$', '∑')}
+                        <Balance value={ wallet.balance.unlocked } />             
                     </p>
                     <span className="address">{wallet.label || wallet.address} </span>
                 </div>

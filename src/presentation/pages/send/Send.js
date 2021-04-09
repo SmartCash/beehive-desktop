@@ -10,6 +10,7 @@ import { PasswordModal } from 'presentation/components/password-modal/passsword-
 import './Send.css';
 import { SendContext, SendProvider } from './SendContext';
 import loader from 'presentation/assets/images/loader.svg';
+import { Balance } from 'presentation/components/Balance';
 
 const electron = window.require('electron');
 
@@ -42,7 +43,7 @@ function SendComponent() {
 
     const debouncedAmount = useDebounce(amountToSend, 1500);
     const { isShowing: showPasswordModal, toggle: togglePasswordModal } = useModal();
-    const { password, setPassword } = useContext(WalletContext);
+    const { password, setPassword, hideBalance } = useContext(WalletContext);
 
     useEffect(() => {
         if (debouncedAmount) {            
@@ -65,10 +66,12 @@ function SendComponent() {
                         </button>
                     </p>
                     <p>
-                        Balance <span>{walletCurrentBalance.unlocked}</span>
+                        Balance 
+                        <Balance value={ walletCurrentBalance.unlocked } />                    
                     </p>
                     <p>
-                        Locked <span>{walletCurrentBalance.locked}</span>
+                        Locked 
+                        <Balance value={ walletCurrentBalance.locked } />
                     </p>
                 </div>
                 <div className="walletEmpty">
@@ -115,22 +118,22 @@ function SendComponent() {
                 {TXIDError && <p className="SendError">{TXIDError}</p>}
                
 
-{TXID && (
-                                <div className="hasBeenSent">
-                                    <button className="btnClose" onClick={() => clearTxId()}>X</button>
-                                    <p><strong>Amount has been sent</strong></p>
-                                    <div className="msgSuccess">Transaction ID: </div>
-                                    <strong className="txID">{TXID}</strong>
+                {TXID && (
+                    <div className="hasBeenSent">
+                        <button className="btnClose" onClick={() => clearTxId()}>X</button>
+                        <p><strong>Amount has been sent</strong></p>
+                        <div className="msgSuccess">Transaction ID: </div>
+                        <strong className="txID">{TXID}</strong>
 
-                                    <div>
-                                        <ul className="links">
-                                            <li><button className="link" title="Copy address to clipboard" onClick={() => electron.clipboard.writeText(TXID)}>Copy</button></li>
-                                            <li><button className="link" onClick={() => electron.shell.openExternal(`https://insight.smartcash.cc/tx/${TXID}`)}>Open into Insight</button></li>
-                                            <li><button className="link" onClick={() => electron.shell.openExternal(`http://explorer.smartcash.cc/tx/${TXID}`)}>Open into Sapi Explorer</button></li>
-                                        </ul>                                                                                                                    
-                                    </div>                                    
-                                </div>
-                            )}
+                        <div>
+                            <ul className="links">
+                                <li><button className="link" title="Copy address to clipboard" onClick={() => electron.clipboard.writeText(TXID)}>Copy</button></li>
+                                <li><button className="link" onClick={() => electron.shell.openExternal(`https://insight.smartcash.cc/tx/${TXID}`)}>Open into Insight</button></li>
+                                <li><button className="link" onClick={() => electron.shell.openExternal(`http://explorer.smartcash.cc/tx/${TXID}`)}>Open into Sapi Explorer</button></li>
+                            </ul>                                                                                                                    
+                        </div>                                    
+                    </div>
+                )}
 
                 <div className="form-control privateKey">
                     <p>
@@ -146,25 +149,13 @@ function SendComponent() {
                     <p>
                         Balance{' '}
                         <span>
-                            {walletCurrentBalance?.unlocked
-                                .toLocaleString('en-US', {
-                                    style: 'currency',
-                                    currency: 'USD',
-                                    minimumFractionDigits: 4,
-                                })
-                                .replace('$', '∑')}
+                            <Balance value={ walletCurrentBalance?.unlocked } />
                         </span>
                     </p>
                     <p>
                         Locked{' '}
                         <span>
-                            {walletCurrentBalance?.locked
-                                .toLocaleString('en-US', {
-                                    style: 'currency',
-                                    currency: 'USD',
-                                    minimumFractionDigits: 4,
-                                })
-                                .replace('$', '∑')}
+                            <Balance value={ walletCurrentBalance?.locked } />                       
                         </span>
                     </p>
                 </div>

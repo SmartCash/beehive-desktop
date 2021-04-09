@@ -12,6 +12,7 @@ const initialState = {
     fiatList: [],
     password: null,
     wrongPassError: false,
+    hideBalance: true
 };
 
 const getBalanceFromSAPI = async (address) => {
@@ -53,6 +54,9 @@ const userReducer = (state, action) => {
         }
         case 'wrongPassError': {
             return { ...state, wrongPassError: action.payload };
+        }
+        case 'hideBalance': {
+            return { ...state, hideBalance: action.payload };
         }
         default: {
             return state;
@@ -183,6 +187,10 @@ export const WalletProvider = ({ children }) => {
         dispatch({ type: 'password', payload: pass });
     }
 
+    function setHideBalance(hide) {
+        dispatch({ type: 'hideBalance', payload: hide });
+    }
+
     useEffect(() => {
         if (state.fiatList.length === 0) {
             loadFiats();
@@ -198,6 +206,7 @@ export const WalletProvider = ({ children }) => {
         getAndUpdateWalletsBallance,
         updateWalletsFunc,
         setPassword,
+        setHideBalance
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;
