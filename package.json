@@ -43,7 +43,7 @@
         "react-router-dom": "~5.1.2",
         "react-scripts": "^4.0.0",
         "react-text-mask": "~5.4.3",
-        "smartcashjs-lib": "git+https://github.com/SmartCash/SmartCashjs-lib.git#sapi",
+        "smartcashjs-lib": "git+ssh://git@github.com:SmartCash/SmartCashjs-lib.git#f53745922ee0b558cc8a897a97dd4b058c95a295",
         "text-mask-addons": "~3.8.0"
     },
     "scripts": {
