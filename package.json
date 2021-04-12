@@ -12,7 +12,7 @@
         },
         "win": {
             "icon": "./build/favicon.png",
-            "artifactName": "${productName}-${version}.${ext}",            
+            "artifactName": "${productName}-${version}.${ext}",
             "target": "nsis"
         }
     },
@@ -38,8 +38,6 @@
         "i": "^0.3.6",
         "jspdf": "~1.5.3",
         "lodash": "~4.17.15",
-        "node-fetch": "^2.6.1",
-        "nodejs": "0.0.0",
         "npm": "^7.7.6",
         "qrious": "~4.0.2",
         "random": "~2.1.1",
