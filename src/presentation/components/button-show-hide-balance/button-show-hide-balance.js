@@ -13,8 +13,8 @@ export function ButtonShowHideBalance() {
     return (
         <>
             <button className="btnHideShow" title="Show/Hide Balance"  onClick={() => hideShowBalance()}>
-                {hideBalance && (<VisibleOffIcon />)}
-                {!hideBalance && (<VisibleOnIcon />)}                               
+                {!hideBalance && (<VisibleOffIcon />)}
+                {hideBalance && (<VisibleOnIcon />)}                               
             </button>            
         </>
     );

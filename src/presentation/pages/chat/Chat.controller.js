@@ -163,7 +163,7 @@ export const useChatController = () => {
         }
     }
 
-    function hasBalance(){
+    async function hasBalance(){
         var wallet = wallets.find((wallet) => wallet.address === walletCurrent);        
         return wallet.balance.total > 0.001        
     }
