@@ -82,7 +82,7 @@ export const SendProvider = ({ children }) => {
     };
     const currencyMask = createNumberMask(defaultMaskOptions);
 
-    const setAmountToSend = (value) => {
+    const setAmountToSend = (value) => {        
         dispatch({ type: 'setAmountToSend', payload: value });
     };
 
