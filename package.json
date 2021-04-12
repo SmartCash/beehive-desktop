@@ -11,7 +11,7 @@
             "category": "public.app-category.finances"
         },
         "win": {
-            "icon": "./build/icon.png",
+            "icon": "./build/favicon.png",
             "artifactName": "${productName}-${version}.${ext}",            
             "target": "nsis"
         }

@@ -35,7 +35,7 @@ export function LoginModal() {
                     <div className={style['modal']}>
                         <div className={style['modal-header']}>
                             <Logo className="logo" />
-                            <p>Welcome to BeeHive Desktop</p>
+                            <p className="welcome">Welcome to BeeHive Desktop</p>
 
                             <p className="version">v{pjson.version}</p>
                         </div>
