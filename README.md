@@ -53,3 +53,15 @@ appData Per-user application data directory, which by default points to:
 Remove package-lock.json and node_modules, so run the follow code:
 
 npm install && npm run build
+
+
+==========
+
+version: 1.0.1
+files:
+  - url: beehivedesktop-1.0.1.exe
+    sha512: kdYxLoxeQLDD9EFvRepIkOY+xVRnDUoIGfQWcktztVlPBpFfPVcI5S/LSG3NogszDxU8tmYU2Td1aB4V3JSdJg==
+    size: 134142290
+path: beehivedesktop-1.0.1.exe
+sha512: kdYxLoxeQLDD9EFvRepIkOY+xVRnDUoIGfQWcktztVlPBpFfPVcI5S/LSG3NogszDxU8tmYU2Td1aB4V3JSdJg==
+releaseDate: '2021-04-13T13:55:38.562Z'
