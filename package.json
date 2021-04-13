@@ -1,7 +1,7 @@
 {
     "name": "beehivedesktop",
     "version": "1.0.1",
-    "description": "A descentralized Smartcash wallet.",
+    "description": "A decentralized Smartcash wallet.",
     "private": true,
     "author": "SmartCash",
     "build": {

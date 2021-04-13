@@ -12,7 +12,7 @@ function createWindow() {
         height: 768,
         minWidth: 940,
         minHeight: 500,
-        icon: __dirname + '/favicon.ico',
+        icon: __dirname + '/icon.ico',
         autoHideMenuBar: true,
         webPreferences: {
             nodeIntegration: true,
