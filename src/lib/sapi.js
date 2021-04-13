@@ -585,15 +585,15 @@ export async function calculateFee(listUnspent, messageOpReturn) {
 
     let newFee =
         0.001 *
-        Math.round(
+        Math.round((
             1.27 +
                 (countUnspent * 148 +
                     2 * 34 +
                     10 +
                     9 +
-                    (messageOpReturn ? messageOpReturn.length : 0)) /*OP_RETURN_DEFAULT.length*/ /
+                    4 * (messageOpReturn ? messageOpReturn.length : 0)) /*OP_RETURN_DEFAULT.length*/ /
                     1024
-        );
+        ),0);
 
     return newFee;
 }
