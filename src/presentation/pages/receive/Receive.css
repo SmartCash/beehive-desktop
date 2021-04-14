@@ -15,10 +15,18 @@
     width: 190px;
     display: inline;
     flex-direction: column;
-    
 }
 
 .page-receive .qrcode .btnWrapper button ~ button {
+    margin-top: 16px;
+}
+
+.page-receive .qrcode .btnIcon {
+    display: flex;
+    align-items: center;
+}
+
+.page-receive .qrcode .btnIcon ~ .btnIcon {
     margin-top: 16px;
 }
 
@@ -85,5 +93,6 @@
 .page-receive .descIcon{
     color: var(--primary);
     float: right;
-    font-size: 12px;    
+    font-size: 12px;
+    margin: 0 0 0 8px;
 }
