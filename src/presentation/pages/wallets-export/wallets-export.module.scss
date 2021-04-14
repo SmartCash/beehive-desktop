@@ -1,0 +1,42 @@
+
+.root {
+    color: #fff;
+
+    .page {
+        display: flex;
+        margin: auto;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .wrapper {
+        margin-top: 32px;
+    }
+
+    h1, p {
+        margin: 0;
+        padding: 0;
+    }
+
+    label {
+        cursor: pointer;
+    }
+
+    .btn {
+        background-color: var(--primary);
+        border: 0;
+        color: #333;
+        padding: 16px 24px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        font-family: inherit;
+        margin: 16px 0 0;
+        cursor: pointer;
+
+        &:disabled {
+         opacity: .5;
+        }
+    }
+}
+
