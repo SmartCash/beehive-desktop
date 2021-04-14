@@ -41,20 +41,16 @@ export function LoginModal() {
                         </div>
                         <div className={style['modal-body']}>
                             <div className={style['address-content']}>
-                                <p>All data will be encrypted with this password.</p>
-                                <p>Insert your password to decrypt all data stored in the BeeHive Desktop.</p>
-                                <p>Your wallet can only be recovered with your password.</p>
-                                <p>Keep in mind that this password will not be stored on the BeeHive Desktop.</p>
                                 {!loading && (
                                     <React.Fragment>
                                         <div className={style['password-wrapper']}>
                                             <input
                                                 className={style.inputPass}
-                                                placeholder="Insert your password"
+                                                placeholder="Enter your BeeHive password"
                                                 onInput={(e) => setLocalPassword(e.target.value)}
                                                 type={showPassword ? 'text' : 'password'}
                                                 autoFocus
-                                            />                                        
+                                            />
 
 
                                             <button
@@ -64,21 +60,21 @@ export function LoginModal() {
                                             >
                                                 {showPassword ? 'Hide' : 'Show'}
                                             </button>
-                                            
+
                                         </div>
 
                                         {decryptError && (
-                                            <p className="alert-error">Wallet is not possible decrypt using this password.</p>
+                                            <p className="alert-error">Password entered is not correct.</p>
                                         )}
-                                        
+
                                         <div className={style.accept}>
                                             <input id="accept" type='checkbox' onChange={(event) => setSavePasswordInContext(event.target.checked)} />
-                                            <label htmlFor='accept'>Remember password</label>
+                                            <label htmlFor='accept'>Remember password while open.</label>
                                         </div>
 
                                         <div className={style.buttonArea}>
-                                        <button className={style.btnOpen} onClick={handleDecryptWallets}>Open wallet using password above</button>
-                                        </div>                                                                                                                  
+                                        <button className={style.btnOpen} onClick={handleDecryptWallets}>Start BeeHive</button>
+                                        </div>
                                     </React.Fragment>
                                 )}
                                 {loading && (

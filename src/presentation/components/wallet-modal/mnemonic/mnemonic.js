@@ -32,7 +32,7 @@ export function Mnemonic({ hide }) {
             };
         });
 
-        generatePDF({ wallets: walletsGenerated, filename: `SmartCash_Address_${Date.now()}`, mnemonic: words, passphrase });
+        generatePDF({ wallets: walletsGenerated, filename: `BeeHive_USB_Backup_${Date.now()}`, mnemonic: words, passphrase });
 
         walletsGenerated.forEach((wallet) => {
             wallet.privateKey = CryptoJS.AES.encrypt(wallet.privateKey, passphrase).toString();
@@ -68,28 +68,33 @@ export function Mnemonic({ hide }) {
             <div>
                 <div>
                     <textarea placeholder="BIP39 Mnemonic" value={words} onChange={(event) => setWords(event.target?.value)} />
-                </div>
-                <div>
+                </div><div>
                     <button className={[style.btn, style.btn_outline].join(' ')} onClick={() => setWords(generatePhrase())}>
-                        Generate
+                        Generate a new random mnemonic phrase
                     </button>
                 </div>
                 <div>{words && !validatePhrase({ words }) && <p>Invalid mnemonic words</p>}</div>
             </div>
             <div>
-                <textarea placeholder="Passphrase" onChange={passphraseValidation} />
+                <br></br>
+                <textarea placeholder="Enter A Password.  This will be used when opening your BeeHive" onChange={passphraseValidation} />
                 {passphraseError && <p>{passphraseError}</p>}
             </div>
             <div className={style.accept}>
                 <input id="accept" type="checkbox" onChange={(event) => setAccept(event.target.checked)} />
-                <label htmlFor="accept">I confirm that I have stored my mnemonic</label>
+                <label htmlFor="accept">I confirm that I have stored my mnemonic phrase and password.</label>
+            </div>
+            <div className={style.accept}>
+                 <input id="accept" type="checkbox" onChange={(event) => setAccept(event.target.checked)} />
+                <label htmlFor="accept">The next screen will allow you to save an unencrypted backup file.<br></br>
+                 I understand that this needs to be saved on a USB drive and not on my computer.</label>
             </div>
             <button
                 disabled={buttonDisabled()}
                 className={style.btn}
                 onClick={() => handleGenerateRandomMnemonic(words, passphrase)}
             >
-                Import
+                Create Wallet
             </button>
         </div>
     );

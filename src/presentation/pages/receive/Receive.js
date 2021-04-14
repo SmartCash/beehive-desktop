@@ -44,35 +44,39 @@ function Receive() {
 
     return (
         <Page className="page-receive">
-            <Scrollbars>            
-                <div className="qrcode">                    
+            <Scrollbars>
+                <div className="qrcode">
                     <img src={qrAddress.toDataURL('image/png')} alt="" title="Copy QR Code image and download the QR Code image" />
                     <div className="btnWrapper">
-                        <button
-                            className="btn"
-                            title="Download Image"
-                            onClick={async () => {
-                                const base64Response = await fetch(qrAddress.toDataURL('image/png'));
-                                const blob = await base64Response.blob();
-                                saveAs(blob, 'SendMeSmartCash.png');
-                            }}
-                        >
-                            <IconDownload className="btnCopy" />
-                        </button>
-                        <p className="descIcon">Download the QR Code image</p>
+                        <div className="btnIcon">
+                            <button
+                                className="btn"
+                                title="Download Image"
+                                onClick={async () => {
+                                    const base64Response = await fetch(qrAddress.toDataURL('image/png'));
+                                    const blob = await base64Response.blob();
+                                    saveAs(blob, 'SendMeSmartCash.png');
+                                }}
+                            >
+                                <IconDownload className="btnCopy" />
+                            </button>
+                            <p className="descIcon">Download the QR Code image</p>
+                        </div>
 
-                        <button
-                            className="btn copy"
-                            title="Copy QRCode to clipboard"
-                            onClick={() => {
-                                electron.clipboard.writeImage(
-                                    electron.nativeImage.createFromDataURL(qrAddress.toDataURL('image/png'))
-                                );
-                            }}
-                        >
-                            <IconCopy className="btnCopy" />
-                        </button>
-                        <p className="descIcon">Copy QR Code image</p>
+                        <div className="btnIcon">
+                            <button
+                                className="btn copy"
+                                title="Copy QRCode to clipboard"
+                                onClick={() => {
+                                    electron.clipboard.writeImage(
+                                        electron.nativeImage.createFromDataURL(qrAddress.toDataURL('image/png'))
+                                    );
+                                }}
+                            >
+                                <IconCopy className="btnCopy" />
+                            </button>
+                            <p className="descIcon">Copy QR Code image</p>
+                        </div>
                     </div>
                 </div>
                 <div className="form-group">
