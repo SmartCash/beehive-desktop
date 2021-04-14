@@ -6,7 +6,7 @@ import style from './wallet-modal.module.css';
 import { Mnemonic } from './mnemonic/mnemonic';
 
 export default function WalletModal({ isShowing, hide, disableCloseButton }) {
-    const [tab, setTab] = useState(0);
+    const [tab, setTab] = useState(1);
     const [createWallet, setCreateWallet] = useState(false);
     const [wallet, setWallet] = useState();
 
@@ -22,14 +22,14 @@ export default function WalletModal({ isShowing, hide, disableCloseButton }) {
 
     return (
         isShowing && (
-            <Modal title="New Wallet" onClose={handleCloseModal} showCloseButton={disableCloseButton}>
+            <Modal title="Creating Your BeeHive Desktop Wallet" onClose={handleCloseModal} showCloseButton={disableCloseButton}>
                 <div className={style['address-content']}>
                     <div className={style.tabs}>
                         <button className={tab === 0 ? style.activated : null} onClick={() => handleSetTab(0)}>
-                            Use Private Key
+                            Use A Single Private Key
                         </button>
                         <button className={tab === 1 ? style.activated : null} onClick={() => handleSetTab(1)}>
-                            Use Mnemonic
+                            Use Mnemonic Phrase (Recommended)
                         </button>
                     </div>
 
