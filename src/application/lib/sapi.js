@@ -740,7 +740,7 @@ export async function activateRewards(toAddress, unspentList, privateKey, passwo
 
 export async function sendTransaction(hex, isChat) {
     //Chat needs the same NODE always to get MEM POOL transactions
-    const url = await GetSapiUrl();
+    const url = isChat ? 'https://sapi.smartcash.cc' : await GetSapiUrl();
     var options = {
         method: 'POST',
         uri: `${url}/v1/transaction/send`,
@@ -771,12 +771,7 @@ export async function sendTransaction(hex, isChat) {
     }
 }
 
-export async function calculateChatFee({
-    messageOpReturn,
-    unspentList,
-    rsaKeyPairFromSender,
-    rsaKeyPairFromRecipient,
-}) {
+export async function calculateChatFee({ messageOpReturn, unspentList, rsaKeyPairFromSender, rsaKeyPairFromRecipient }) {
     const encryptedChatMessage = encryptChatMessage({
         rsaKeyPairFromRecipient: rsaKeyPairFromRecipient,
         rsaKeyPairFromSender: rsaKeyPairFromSender,
