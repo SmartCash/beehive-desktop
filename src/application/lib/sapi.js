@@ -30,7 +30,6 @@ const ping = (url, timeout = 2000) => {
     });
 };
 
-
 export async function getEnabledNodes() {
     try {
         const localServers = ipcRenderer.sendSync('getSapiServers');
@@ -65,7 +64,6 @@ async function getEnabledNode(sapis) {
 }
 
 export function tryToDecryptAES({ textToDecrypt, password }) {
-
     try {
         const decryptedWallet = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(textToDecrypt, password));
         let decriptKey;
@@ -73,7 +71,7 @@ export function tryToDecryptAES({ textToDecrypt, password }) {
         if (!decryptedWallet) decriptKey = textToDecrypt;
         else decriptKey = decryptedWallet;
 
-        return decriptKey
+        return decriptKey;
     } catch (error) {
         return textToDecrypt;
     }
@@ -92,7 +90,6 @@ export async function createAndSendRawTransaction({
     rsaKeyPairFromSender,
     rsaKeyPairFromRecipient,
 }) {
-
     if (!toAddress) {
         return {
             status: 400,
@@ -184,23 +181,13 @@ export async function createAndSendRawTransaction({
         if (messageOpReturn && messageOpReturn.trim().length > 0) {
             let dataScript = null;
             if (isChat && rsaKeyPairFromRecipient && rsaKeyPairFromRecipient?.rsaPublicKey) {
-                dataScript = smartCash.script.compile([
-                    smartCash.opcodes.OP_RETURN,
-                    Buffer.from(
-                        'smart-chat: ' +
-                        JSON.stringify({
-                            messageFromSender: encryptTextWithRSAPublicKey(
-                                rsaKeyPairFromSender.rsaPublicKey,
-                                messageOpReturn
-                            ),
-                            messageToRecipient: encryptTextWithRSAPublicKey(
-                                rsaKeyPairFromRecipient?.rsaPublicKey,
-                                messageOpReturn
-                            ),
-                        }),
-                        'utf8'
-                    ),
-                ]);
+                messageOpReturn = encryptChatMessage({
+                    rsaKeyPairFromSender: rsaKeyPairFromSender,
+                    rsaKeyPairFromRecipient: rsaKeyPairFromRecipient,
+                    messageOpReturn: messageOpReturn,
+                });
+
+                dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from(messageOpReturn, 'utf8')]);
             } else {
                 //OP RETURN
                 dataScript = smartCash.script.compile([smartCash.opcodes.OP_RETURN, Buffer.from(messageOpReturn, 'utf8')]);
@@ -249,6 +236,19 @@ export async function createAndSendRawTransaction({
     }
 }
 
+export function encryptChatMessage({ rsaKeyPairFromRecipient, rsaKeyPairFromSender, messageOpReturn }) {
+    if (rsaKeyPairFromRecipient && rsaKeyPairFromRecipient?.rsaPublicKey) {
+        return (
+            'smart-chat: ' +
+            JSON.stringify({
+                messageFromSender: encryptTextWithRSAPublicKey(rsaKeyPairFromSender.rsaPublicKey, messageOpReturn),
+                messageToRecipient: encryptTextWithRSAPublicKey(rsaKeyPairFromRecipient?.rsaPublicKey, messageOpReturn),
+            })
+        );
+    }
+    return null;
+}
+
 export function getAddress(privateKey) {
     let key = smartCash.ECPair.fromWIF(privateKey);
     return key.getAddress().toString();
@@ -266,7 +266,7 @@ export function createNewWalletKeyPair() {
 
 export function createRSAKeyPair(password) {
     const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-        modulusLength: 2048,
+        modulusLength: 4096,
         publicKeyEncoding: {
             type: 'spki',
             format: 'pem',
@@ -725,11 +725,11 @@ export async function activateRewards(toAddress, unspentList, privateKey, passwo
 
     calculateUTXOAmountLessFee = minUnspentList.utxos[0].value - MIN_FEE;
     unlockedBalance = minUnspentList.utxos[0].value;
-    
+
     const tx = await createAndSendRawTransaction({
         toAddress: toAddress,
         amount: calculateUTXOAmountLessFee,
-        fee: MIN_FEE,       
+        fee: MIN_FEE,
         unlockedBalance: unlockedBalance,
         privateKey: privateKey,
         unspentList: minUnspentList,
@@ -740,7 +740,7 @@ export async function activateRewards(toAddress, unspentList, privateKey, passwo
 
 export async function sendTransaction(hex, isChat) {
     //Chat needs the same NODE always to get MEM POOL transactions
-    const url = isChat ? 'https://sapi.smartcash.cc' : await GetSapiUrl();
+    const url = await GetSapiUrl();
     var options = {
         method: 'POST',
         uri: `${url}/v1/transaction/send`,
@@ -755,8 +755,13 @@ export async function sendTransaction(hex, isChat) {
     try {
         return await request.post(options);
     } catch (err) {
-
-        if (err && err?.error && err?.error.length > 0 && (err.error[0].message && err.error[0].message.includes('258: txn-mempool-conflict') || err.error[0].message && err.error[0].message.includes('insufficient priority'))) {
+        if (
+            err &&
+            err?.error &&
+            err?.error.length > 0 &&
+            ((err.error[0].message && err.error[0].message.includes('258: txn-mempool-conflict')) ||
+                (err.error[0].message && err.error[0].message.includes('insufficient priority')))
+        ) {
             return await sendTransaction(hex, isChat);
         }
         return {
@@ -766,21 +771,37 @@ export async function sendTransaction(hex, isChat) {
     }
 }
 
+export async function calculateChatFee({
+    messageOpReturn,
+    unspentList,
+    rsaKeyPairFromSender,
+    rsaKeyPairFromRecipient,
+}) {
+    const encryptedChatMessage = encryptChatMessage({
+        rsaKeyPairFromRecipient: rsaKeyPairFromRecipient,
+        rsaKeyPairFromSender: rsaKeyPairFromSender,
+        messageOpReturn: messageOpReturn,
+    });
+
+    return await calculateFee(unspentList, encryptedChatMessage);
+}
+
 export async function calculateFee(listUnspent, messageOpReturn) {
     if (!listUnspent || listUnspent.length === 0) return MIN_FEE;
     let countUnspent = listUnspent.length;
 
     let newFee =
         0.001 *
-        Math.round((
+        Math.round(
             1.27 +
-            (countUnspent * 148 +
-                2 * 34 +
-                10 +
-                9 +
-                4 * (messageOpReturn ? messageOpReturn.length : 0)) /*OP_RETURN_DEFAULT.length*/ /
-            1024
-        ),0);
+                (countUnspent * 148 +
+                    2 * 34 +
+                    10 +
+                    9 +
+                    4 * (messageOpReturn ? messageOpReturn.length : 0)) /*OP_RETURN_DEFAULT.length*/ /
+                    1024,
+            0
+        );
 
     return newFee;
 }

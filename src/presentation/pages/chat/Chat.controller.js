@@ -1,6 +1,7 @@
 import { WalletContext } from 'application/context/WalletContext';
 import {
     calculateFee,
+    calculateChatFee,
     getSpendableBalance,
     getSpendableInputs,
     getTransactionHistoryGroupedByAddresses,
@@ -38,6 +39,19 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.currentChatAddress, payload: null });
     }
 
+    const handleCalculateChatFee = async (messageToSend, rsaPublicKeyRecipient) => {
+        const spendableInputs = await getSpendableInputs(walletCurrent);
+
+        const chatFee = await calculateChatFee({
+            messageOpReturn: messageToSend,
+            unspentList: spendableInputs.utxos,
+            rsaKeyPairFromSender: wallets.find((w) => w.address === walletCurrent).RSA,
+            rsaKeyPairFromRecipient: { rsaPublicKey: rsaPublicKeyRecipient },
+        });
+
+        console.log(`Chat Fee`, chatFee);
+    };
+
     const handleSubmitSendAmount = async (currentChatAddress, messageToSend, password, rsaPublicKeyRecipient) => {
         chatDispatch({ type: ACTION_TYPE.loading, payload: true });
         chatDispatch({ type: ACTION_TYPE.initialLoading, payload: true });
@@ -45,10 +59,18 @@ export const useChatController = () => {
 
         try {
             const spendableInputs = await getSpendableInputs(walletCurrent);
+
+            const chatFee = await calculateChatFee({
+                messageOpReturn: messageToSend,
+                unspentList: spendableInputs.utxos,
+                rsaKeyPairFromSender: wallets.find((w) => w.address === walletCurrent).RSA,
+                rsaKeyPairFromRecipient: { rsaPublicKey: rsaPublicKeyRecipient },
+            });
+
             const transaction = await createAndSendRawTransaction({
                 toAddress: currentChatAddress,
                 amount: 0.001,
-                fee: await calculateFee(spendableInputs.utxos, messageToSend),
+                fee: chatFee,
                 messageOpReturn: messageToSend,
                 password: password,
                 unspentList: spendableInputs,
@@ -163,9 +185,9 @@ export const useChatController = () => {
         }
     }
 
-    async function hasBalance(){
-        var wallet = wallets.find((wallet) => wallet.address === walletCurrent);        
-        return wallet.balance.total > 0.001        
+    async function hasBalance() {
+        var wallet = wallets.find((wallet) => wallet.address === walletCurrent);
+        return wallet.balance.total > 0.001;
     }
 
     function clearState() {
@@ -194,15 +216,15 @@ export const useChatController = () => {
 
     function setPasswordNewChatToSend(pass) {
         chatDispatch({ type: ACTION_TYPE.passwordNewChat, payload: pass });
-    }    
+    }
 
     function isNewWallet(chat) {
         return chat === undefined;
     }
-    
 
     return {
         _getTransactionHistory,
+        handleCalculateChatFee,
         handleSetCurrentChatAddress,
         handleSetNewChat,
         handleAcceptChat,
@@ -216,6 +238,6 @@ export const useChatController = () => {
         setPasswordNewChatToSend,
         setPasswordAcceptChat,
         isNewWallet,
-        hasBalance
+        hasBalance,
     };
 };
