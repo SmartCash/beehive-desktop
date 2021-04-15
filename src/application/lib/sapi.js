@@ -772,13 +772,11 @@ export async function sendTransaction(hex, isChat) {
 }
 
 export async function calculateChatFee({ messageOpReturn, unspentList, rsaKeyPairFromSender, rsaKeyPairFromRecipient }) {
-    const encryptedChatMessage = encryptChatMessage({
-        rsaKeyPairFromRecipient: rsaKeyPairFromRecipient,
-        rsaKeyPairFromSender: rsaKeyPairFromSender,
-        messageOpReturn: messageOpReturn,
-    });
 
-    return await calculateFee(unspentList, encryptedChatMessage);
+//  This is needed if we expand past 450 characters for chat messages.
+//  let encryptedChatMessage = encryptTextWithRSAPublicKey(rsaKeyPairFromSender.rsaPublicKey, messageOpReturn)
+//  return await calculateFee(unspentList, encryptedChatMessage);
+    return 0.002
 }
 
 export async function calculateFee(listUnspent, messageOpReturn) {
@@ -793,9 +791,8 @@ export async function calculateFee(listUnspent, messageOpReturn) {
                     2 * 34 +
                     10 +
                     9 +
-                    4 * (messageOpReturn ? messageOpReturn.length : 0)) /*OP_RETURN_DEFAULT.length*/ /
-                    1024,
-            0
+                    (messageOpReturn ? 34 + messageOpReturn.length : 0))/
+                    1024
         );
 
     return newFee;
