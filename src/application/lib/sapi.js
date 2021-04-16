@@ -9,6 +9,7 @@ const { ipcRenderer } = window.require('electron');
 const LOCKED = 'pubkeyhashlocked';
 //const OP_RETURN_DEFAULT = 'Sent from SmartHub.';
 const MIN_FEE = 0.001;
+const MIN_FEE_CHAT = 0.002;
 const MIN_AMOUNT_TO_SEND = 0.001;
 
 const random = require('random');
@@ -772,11 +773,12 @@ export async function sendTransaction(hex, isChat) {
 }
 
 export async function calculateChatFee({ messageOpReturn, unspentList, rsaKeyPairFromSender, rsaKeyPairFromRecipient }) {
+    //  This is needed if we expand past 450 characters for chat messages.
+    let encryptedChatMessage = encryptTextWithRSAPublicKey(rsaKeyPairFromRecipient.rsaPublicKey, messageOpReturn);
 
-//  This is needed if we expand past 450 characters for chat messages.
-//  let encryptedChatMessage = encryptTextWithRSAPublicKey(rsaKeyPairFromSender.rsaPublicKey, messageOpReturn)
-//  return await calculateFee(unspentList, encryptedChatMessage);
-    return 0.002
+    if (!encryptedChatMessage || encryptedChatMessage.length === 0) return MIN_FEE_CHAT;
+
+    return await calculateFee(unspentList, encryptedChatMessage);
 }
 
 export async function calculateFee(listUnspent, messageOpReturn) {
@@ -784,16 +786,8 @@ export async function calculateFee(listUnspent, messageOpReturn) {
     let countUnspent = listUnspent.length;
 
     let newFee =
-        0.001 *
-        Math.round(
-            1.27 +
-                (countUnspent * 148 +
-                    2 * 34 +
-                    10 +
-                    9 +
-                    (messageOpReturn ? 34 + messageOpReturn.length : 0))/
-                    1024
-        );
+        MIN_FEE *
+        Math.round(1.27 + (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? 34 + messageOpReturn.length : 0)) / 1024);
 
     return newFee;
 }
