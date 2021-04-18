@@ -1,14 +1,12 @@
 # BeeHive Desktop
-This is the smart hub wallet that is 100% decentralized using SAPI. With this you don't need to sync any blockchain.
+This is the smart hub wallet that is 100% decentralized using SAPI layer on Smartnodes. With this you don't need to sync any blockchain.
 
 ### Linux dependencies
 
 ```
 sudo apt update -y
 sudo apt upgrade -y
-sudo apt install build-essential -y
-sudo apt install git npm -y
-sudo apt install curl -y
+sudo apt install build-essential git npm curl -y
 curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt install nodejs -y
 ```
@@ -18,7 +16,7 @@ sudo apt install nodejs -y
 ```
 git clone https://github.com/SmartCash/smarthub_local.git
 cd smarthub_local
-git checkout develop
+git checkout master
 ```
 
 ## Install dev dependencies, app dependencies and RUN the electron app
@@ -54,14 +52,4 @@ Remove package-lock.json and node_modules, so run the follow code:
 
 npm install && npm run build
 
-
 ==========
-
-version: 1.0.1
-files:
-  - url: beehivedesktop-1.0.1.exe
-    sha512: kdYxLoxeQLDD9EFvRepIkOY+xVRnDUoIGfQWcktztVlPBpFfPVcI5S/LSG3NogszDxU8tmYU2Td1aB4V3JSdJg==
-    size: 134142290
-path: beehivedesktop-1.0.1.exe
-sha512: kdYxLoxeQLDD9EFvRepIkOY+xVRnDUoIGfQWcktztVlPBpFfPVcI5S/LSG3NogszDxU8tmYU2Td1aB4V3JSdJg==
-releaseDate: '2021-04-13T13:55:38.562Z'
