@@ -53,3 +53,14 @@ Remove package-lock.json and node_modules, so run the follow code:
 npm install && npm run build
 
 ==========
+
+
+## NPM known issues
+
+If you are using NPM 7+ you might have issues to install dependencies. So the solution is downgrade to 6+
+
+```
+npm install npm@6.14.11 -g
+```
+
+https://github.com/facebook/create-react-app/issues/10749

@@ -24,7 +24,17 @@ export function Chat() {
 function ChatComponent() {
     const { isShowing: showPasswordModal, toggle: togglePasswordModal } = useModal();
     const { walletCurrent, wallets, password, setPassword } = useContext(WalletContext);
-    const { history, error, initialLoading, currentChatAddress, newChat, messageToSend, TXID, localPassword } = useChatState();
+    const {
+        history,
+        error,
+        initialLoading,
+        currentChatAddress,
+        newChat,
+        messageToSend,
+        TXID,
+        localPassword,
+        chatFee,
+    } = useChatState();
     const messagesRef = useRef();
     const {
         _getTransactionHistory,
@@ -374,6 +384,7 @@ function ChatComponent() {
                                                     placeholder="Type a message..."
                                                     autoComplete="off"
                                                     type="text"
+                                                    maxLength="450"
                                                     value={messageToSend}
                                                     onInput={(event) => {
                                                         setMessageToSend(event.target.value);
@@ -402,7 +413,7 @@ function ChatComponent() {
                                                     }
                                                     disabled={!canSend()}
                                                 >
-                                                    Send
+                                                    Send (fee: {chatFee}) - length ({450 - messageToSend.length})
                                                 </button>
                                             </div>
                                         </div>

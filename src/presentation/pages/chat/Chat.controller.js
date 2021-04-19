@@ -49,6 +49,7 @@ export const useChatController = () => {
             rsaKeyPairFromRecipient: { rsaPublicKey: rsaPublicKeyRecipient },
         });
 
+        chatDispatch({ type: ACTION_TYPE.chatFee, payload: chatFee });
         console.log(`Chat Fee`, chatFee);
     };
 
