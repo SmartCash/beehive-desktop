@@ -791,10 +791,10 @@ export async function calculateFee(listUnspent, messageOpReturn) {
         Math.round(1.27 + (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? 34 + messageOpReturn.length : 0)) / 1024);
 
     return newFee;*/
-    if (listUnspent.length > 50) return 0.010;
-    if (listUnspent.length > 20) return 0.004;
-    if (listUnspent.length > 3) return 0.002;
-    return MIN_FEE;
+    if (listUnspent.length < 4) return MIN_FEE;
+    if (listUnspent.length < 20) return 0.002;
+    if (listUnspent.length < 50) return 0.004;
+    return 0.010;
 }
 
 function roundUp(num, precision) {
