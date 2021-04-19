@@ -413,7 +413,7 @@ function ChatComponent() {
                                                     }
                                                     disabled={!canSend()}
                                                 >
-                                                    Send (fee: {chatFee}) - (length: {450 - messageToSend.length})
+                                                    Send (fee: {chatFee}) - (left: {450 - messageToSend.length})
                                                 </button>
                                             </div>
                                         </div>
