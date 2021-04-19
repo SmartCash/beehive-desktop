@@ -794,7 +794,7 @@ export async function calculateFee(listUnspent, messageOpReturn) {
     if (listUnspent.length > 50) return 0.010;
     if (listUnspent.length > 20) return 0.004;
     if (listUnspent.length > 3) return 0.002;
-    return Min_Fee;
+    return MIN_FEE;
 }
 
 function roundUp(num, precision) {
