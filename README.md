@@ -57,10 +57,11 @@ npm install && npm run build
 
 ## NPM known issues
 
-If you are using NPM 7+ you might have issues to install dependencies. So the solution is downgrade to 6+
+If you are using NPM 7+ you might have issues to install dependencies. So the solution is downgrade to 6+ along with downgrading pdf package.
 
 ```
 npm install npm@6.14.11 -g
+npm install jspdf@1.5.3 -g
 ```
 
 https://github.com/facebook/create-react-app/issues/10749
