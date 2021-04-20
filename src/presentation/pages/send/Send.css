@@ -1,5 +1,5 @@
 .page-send .privateKey {
-    background: #0C0C0D;
+    background: #0c0c0d;
     border-radius: var(--borderRadius);
     padding: var(--spacer);
     display: flex;
@@ -41,7 +41,7 @@
     border-radius: var(--borderRadius);
     padding: 5px 10px;
     cursor: pointer;
-    transition: .5s;
+    transition: 0.5s;
 }
 .page-send .amount button:hover,
 .page-send .amount button:focus {
@@ -80,7 +80,7 @@
     color: #fff;
     margin: 0;
 }
-.page-send button[type="submit"] {
+.page-send button[type='submit'] {
     border: 0;
     outline: 0;
     margin: var(--spacer) 0 0 auto;
@@ -96,10 +96,11 @@
     font-weight: 700;
     cursor: pointer;
 }
-.page-send button[type="submit"]:disabled {
+.page-send button[type='submit']:disabled {
     background: #999;
-    color: #0C0C0D;
-    opacity: .5;
+    color: #0c0c0d;
+    opacity: 0.5;
+    margin: 0;
 }
 .page-send .invalidAddress {
     width: 100%;
@@ -163,7 +164,6 @@
     color: var(--primary);
 }
 
-
 .page-send .btnCopy {
     width: 20px;
     height: 20px;
@@ -171,7 +171,6 @@
     fill: #fff;
     position: relative;
 }
-
 
 .page-send .btnCopy:active {
     fill: var(--primary);
@@ -194,11 +193,10 @@
     border-radius: 10px;
 }
 
-
-.page-send .SendError{
-    background-color:brown;
+.page-send .SendError {
+    background-color: brown;
     color: white;
-    padding:10px;
+    padding: 10px;
     border-radius: var(--borderRadius);
     position: relative;
 }
@@ -211,10 +209,23 @@
     cursor: pointer;
     border-radius: inherit;
     background-color: var(--primary);
- }
+}
 
- .page-send .loading{
-     margin-top: 100px;
-     text-align: center;
-     width: 100%;
- }
+.page-send .loading {
+    margin-top: 100px;
+    text-align: center;
+    width: 100%;
+}
+
+.page-send .buttonsWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 52px;
+}
+
+.page-send .buttonsWrapper img {
+    display: block;
+}
