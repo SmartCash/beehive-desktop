@@ -221,7 +221,7 @@ function SendComponent() {
                                 </div>
                             )}
 
-                            <div className="form-control message">
+                            <div className="form-control message" style={{ display: 'none' }}>
                                 <label htmlFor="message">Write your message</label>
                                 <input
                                     id="messageTo"

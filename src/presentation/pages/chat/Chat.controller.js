@@ -40,16 +40,26 @@ export const useChatController = () => {
     }
 
     const handleCalculateChatFee = async (messageToSend, rsaPublicKeyRecipient) => {
-        const spendableInputs = await getSpendableInputs(walletCurrent);
+        try {
+            const spendableInputs = await getSpendableInputs(walletCurrent);
 
-        const chatFee = await calculateChatFee({
-            messageOpReturn: messageToSend,
-            unspentList: spendableInputs.utxos,
-            rsaKeyPairFromSender: wallets.find((w) => w.address === walletCurrent).RSA,
-            rsaKeyPairFromRecipient: { rsaPublicKey: rsaPublicKeyRecipient },
-        });
+            const chatFee = await calculateChatFee({
+                messageOpReturn: messageToSend,
+                unspentList: spendableInputs.utxos,
+                rsaKeyPairFromSender: wallets.find((w) => w.address === walletCurrent).RSA,
+                rsaKeyPairFromRecipient: { rsaPublicKey: rsaPublicKeyRecipient },
+            });
 
-        console.log(`Chat Fee`, chatFee);
+            chatDispatch({ type: ACTION_TYPE.chatFee, payload: chatFee });
+        } catch (e) {
+            if (e.message.includes('DATA_TOO_LARGE_FOR_KEY_SIZE'))
+                chatDispatch({ type: ACTION_TYPE.error, payload: 'Character limit exceeded. Maximum number of characters per message is 450.' });
+            else {
+                chatDispatch({ type: ACTION_TYPE.error, payload: e.message });
+            }
+
+            chatDispatch({ type: ACTION_TYPE.chatFee, payload: 0.002 });
+        }
     };
 
     const handleSubmitSendAmount = async (currentChatAddress, messageToSend, password, rsaPublicKeyRecipient) => {
