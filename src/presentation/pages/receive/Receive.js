@@ -8,6 +8,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { saveAs } from 'file-saver';
 import { ReactComponent as IconDownload } from '../../assets/images/fileDownload.svg';
 import { ReactComponent as IconCopy } from '../../assets/images/copy.svg';
+import { RandomPartners } from 'presentation/components/random-partners/random-partners';
 const electron = window.require('electron');
 
 function Receive() {
@@ -112,6 +113,9 @@ function Receive() {
                             <input id="receveInSmart" value={calcAmountConverted()} readOnly={true} />
                         </div>
                     )}
+                </div>
+                <div className="partnersWrap">
+                    <RandomPartners />
                 </div>
             </Scrollbars>
         </Page>

@@ -13,6 +13,7 @@ import { ActivateContext, ActivateProvider } from './ActivateContext';
 import useModal from 'application/hooks/useModal';
 import { PasswordModal } from 'presentation/components/password-modal/passsword-modal';
 import loader from 'presentation/assets/images/loader.svg';
+import { RandomPartners } from 'presentation/components/random-partners/random-partners';
 
 function RewardsActivateComponent() {
     const { wallets, walletCurrent: address } = useContext(WalletContext);
@@ -24,15 +25,15 @@ function RewardsActivateComponent() {
     const [rewards, setRewards] = useState();
     const [isActive, setIsActive] = useState(false);
     const [rewardsError, setRewardsError] = useState(false);
-    const { privateKey, balance } = wallets.find((wallet) => wallet.address === address);
     const [countDownDate, setCountDownDate] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [balance, setBalance] = useState();
 
     const { handleSubmit, setError } = useForm({
         mode: 'onChange',
     });
 
-    useEffect(() => {        
+    useEffect(() => {
         setLoading(true);
         setRewards(null);
         setRewardsError(false);
@@ -41,41 +42,41 @@ function RewardsActivateComponent() {
         setActivating(false);
 
         getRewards(address)
-            .then((data) => 
-                setRewards(data),
-                setLoading(false)
-            )
-            .catch(() => 
-                setRewardsError(true),
-                setLoading(false))
+            .then((data) => setRewards(data), setLoading(false))
+            .catch(() => setRewardsError(true), setLoading(false));
     }, [address]);
+
+    useEffect(() => {
+        setBalance(wallets.find((wallet) => wallet.address === address)?.balance);
+    }, [address, wallets])
 
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    function getPass(){
+    function getPass() {
         return password;
     }
 
-    function send(){
+    function send() {
         var pass = getPass();
 
-        if(!pass){
-            togglePasswordModal();        
-        } else{
-            submitRewards(pass)
-        }        
+        if (!pass) {
+            togglePasswordModal();
+        } else {
+            submitRewards(pass);
+        }
     }
 
     const handleSend = (pass, saveInContext) => {
-        if(saveInContext)
-            setPassword(pass);             
-        
+        if (saveInContext) setPassword(pass);
+
         submitRewards(pass);
         togglePasswordModal();
-    }  
+    };
 
-    async function submitRewards(pass) {        
-        const SLEEP_TIME = 1000;        
+    async function submitRewards(pass) {
+        const { privateKey } = wallets.find((wallet) => wallet.address === address);
+
+        const SLEEP_TIME = 1000;
         setActivating(true);
         setCountDownDate(Date.now() + SLEEP_TIME);
 
@@ -90,7 +91,7 @@ function RewardsActivateComponent() {
 
         await sleep(SLEEP_TIME);
 
-        const transactionResponse = await getTxId(rewardsActivationResponse.value);        
+        const transactionResponse = await getTxId(rewardsActivationResponse.value);
         if (!transactionResponse) {
             return {
                 status: 400,
@@ -106,14 +107,14 @@ function RewardsActivateComponent() {
         return {
             status: 200,
             value: transactionResponse.txid,
-        };        
-    };
+        };
+    }
 
     {
         TXError && <p className="SendError">{TXError}</p>;
     }
 
-    if (rewardsError || balance.unlocked < 999) {
+    if (rewardsError || balance?.unlocked < 999) {
         return (
             <Page className="page-rewards">
                 {loading && (
@@ -122,10 +123,10 @@ function RewardsActivateComponent() {
                     </p>
                 )}
 
-                {!loading && (                    
+                {!loading && (
                     <div className="wrapper">
                         The address <span className="text-primary">{address}</span> is not eligible for rewards.
-                    </div>                    
+                    </div>
                 )}
 
                 <SmartNodeRewardsRoi />
@@ -161,9 +162,13 @@ function RewardsActivateComponent() {
             {!loading && (
                 <div>
                     {isActive && (
-                        <div className="wrapper"><p>Rewards are already activated for this address <span className="text-primary">{address}</span></p></div>
+                        <div className="wrapper">
+                            <p>
+                                Rewards are already activated for this address <span className="text-primary">{address}</span>
+                            </p>
+                        </div>
                     )}
-                    
+
                     {rewards && rewards.activated === 1 && isActive === false && (
                         <div className="wrapper">
                             <div className="wrapper">
@@ -197,31 +202,31 @@ function RewardsActivateComponent() {
                         </div>
                     )}
 
-                    {rewards && rewards.activated === 0 && isActive === false && (                
-                            <div className="wrapper">
-                                <p>
-                                    The rewards is not activated for the address <span className="text-primary">{address}</span>
-                                </p>
+                    {rewards && rewards.activated === 0 && isActive === false && (
+                        <div className="wrapper">
+                            <p>
+                                The rewards is not activated for the address <span className="text-primary">{address}</span>
+                            </p>
 
-                                <div className="form-not-activated">                                 
-                                    <button type="submit" onClick={() => send()}>
-                                        Activate Rewards
-                                    </button>
-                                </div>
-                            </div>                
+                            <div className="form-not-activated">
+                                <button type="submit" onClick={() => send()}>
+                                    Activate Rewards
+                                </button>
+                            </div>
+                        </div>
                     )}
 
                     <SmartNodeRewardsRoi />
-                </div>                       
-            )}                        
-            
+
+                    <div className="partnersWrap">
+                        <RandomPartners />
+                    </div>
+                </div>
+            )}
+
             {showPasswordModal && (
-                <PasswordModal
-                    callBack={handleSend}
-                    isShowing={showPasswordModal}
-                    onClose={togglePasswordModal}
-                />
-            )} 
+                <PasswordModal callBack={handleSend} isShowing={showPasswordModal} onClose={togglePasswordModal} />
+            )}
         </Page>
     );
 }

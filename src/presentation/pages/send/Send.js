@@ -2,11 +2,11 @@ import { WalletContext } from 'application/context/WalletContext';
 import useDebounce from 'application/hooks/useDebounce';
 import useModal from 'application/hooks/useModal';
 import { ReactComponent as IconCopy } from 'presentation/assets/images/copy.svg';
-import InstaSwapV2 from 'presentation/assets/images/instaswap_v2.png';
 import loader from 'presentation/assets/images/loader.svg';
 import { Balance } from 'presentation/components/Balance';
 import Page from 'presentation/components/Page';
 import { PasswordModal } from 'presentation/components/password-modal/passsword-modal';
+import { RandomPartners } from 'presentation/components/random-partners/random-partners';
 import React, { useContext, useEffect } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 import MaskedInput from 'react-text-mask';
@@ -266,16 +266,7 @@ function SendComponent() {
                         )}
 
                         <div className="buttonsWrapper">
-                            <button
-                                type="button"
-                                className="btn"
-                                onClick={() =>
-                                    electron.shell.openExternal(`https://instaswap.io/trade/?giveCoin=BTC&getCoin=SMART`)
-                                }
-                            >
-                                <img src={InstaSwapV2} alt="InstaSwap" width="180" />
-                            </button>
-
+                            <RandomPartners />
                             <button type="submit" onClick={() => send()} disabled={!canSend()}>
                                 Send
                             </button>
