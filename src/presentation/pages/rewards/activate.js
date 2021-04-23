@@ -13,7 +13,7 @@ import { ActivateContext, ActivateProvider } from './ActivateContext';
 import useModal from 'application/hooks/useModal';
 import { PasswordModal } from 'presentation/components/password-modal/passsword-modal';
 import loader from 'presentation/assets/images/loader.svg';
-import { RandomPartners } from 'presentation/components/random-partners/random-partners';
+import { Partners } from 'presentation/components/partners/partners';
 
 function RewardsActivateComponent() {
     const { wallets, walletCurrent: address } = useContext(WalletContext);
@@ -219,7 +219,7 @@ function RewardsActivateComponent() {
                     <SmartNodeRewardsRoi />
 
                     <div className="partnersWrap">
-                        <RandomPartners />
+                        <Partners />
                     </div>
                 </div>
             )}

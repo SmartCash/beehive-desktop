@@ -6,7 +6,7 @@ import loader from 'presentation/assets/images/loader.svg';
 import { Balance } from 'presentation/components/Balance';
 import Page from 'presentation/components/Page';
 import { PasswordModal } from 'presentation/components/password-modal/passsword-modal';
-import { RandomPartners } from 'presentation/components/random-partners/random-partners';
+import { Partners } from 'presentation/components/partners/partners';
 import React, { useContext, useEffect } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 import MaskedInput from 'react-text-mask';
@@ -266,7 +266,7 @@ function SendComponent() {
                         )}
 
                         <div className="buttonsWrapper">
-                            <RandomPartners />
+                            <Partners />
                             <button type="submit" onClick={() => send()} disabled={!canSend()}>
                                 Send
                             </button>

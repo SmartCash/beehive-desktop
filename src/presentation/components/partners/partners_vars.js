@@ -10,6 +10,6 @@ export const partners = [
     {
         image: trade_smart_changelly,
         url: 'https://pro.changelly.com/referral/c8b8074764b01982',
-        name: 'Changelly'
+        name: 'Changelly Pro'
     }
 ];
