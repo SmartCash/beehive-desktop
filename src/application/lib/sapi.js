@@ -11,7 +11,7 @@ const LOCKED = 'pubkeyhashlocked';
 const MIN_FEE = 0.001;
 const MIN_FEE_CHAT = 0.002;
 const MIN_AMOUNT_TO_SEND = 0.001;
-
+const SAPI_SERVERS_KEY = 'sapiServers';
 const random = require('random');
 
 const ping = (url, timeout = 2000) => {
@@ -33,16 +33,16 @@ const ping = (url, timeout = 2000) => {
 
 export async function getEnabledNodes() {
     try {
-        const localServers = ipcRenderer.sendSync('getSapiServers');
-        if (localServers) return JSON.parse(ipcRenderer.sendSync('getSapiServers'));
+        const localServers = window.sessionStorage.getItem(SAPI_SERVERS_KEY);
+        if (localServers) return JSON.parse(window.sessionStorage.getItem(SAPI_SERVERS_KEY));
 
         const nodes = await request.get(`https://sapi.smartcash.cc/v1/smartnode/check/ENABLED`, {
             json: true,
             cache: true,
         });
         const servers = nodes.map((node) => 'http://' + node.ip.replace(':9678', ':8080'));
-        ipcRenderer.send('setSapiServers', JSON.stringify(servers));
-        return JSON.parse(ipcRenderer.sendSync('getSapiServers'));
+        window.sessionStorage.setItem(SAPI_SERVERS_KEY, JSON.stringify(servers));
+        return JSON.parse(window.sessionStorage.getItem(SAPI_SERVERS_KEY));
     } catch (err) {
         console.error(err);
     }
@@ -741,7 +741,7 @@ export async function activateRewards(toAddress, unspentList, privateKey, passwo
 
 export async function sendTransaction(hex, isChat) {
     //Chat needs the same NODE always to get MEM POOL transactions
-    const url = isChat ? 'https://sapi.smartcash.cc' : await GetSapiUrl();
+    const url = await GetSapiUrl();
     var options = {
         method: 'POST',
         uri: `${url}/v1/transaction/send`,
@@ -773,28 +773,14 @@ export async function sendTransaction(hex, isChat) {
 }
 
 export async function calculateChatFee({ messageOpReturn, unspentList, rsaKeyPairFromSender, rsaKeyPairFromRecipient }) {
-    //  This is needed if we expand past 450 characters for chat messages.
-/*    let encryptedChatMessage = encryptTextWithRSAPublicKey(rsaKeyPairFromRecipient.rsaPublicKey, messageOpReturn);
-
-    if (!encryptedChatMessage || encryptedChatMessage.length === 0) return MIN_FEE_CHAT;
-
-    return await calculateFee(unspentList, encryptedChatMessage);*/
     return MIN_FEE_CHAT;
 }
 
 export async function calculateFee(listUnspent, messageOpReturn) {
-/*    if (!listUnspent || listUnspent.length === 0) return MIN_FEE;
-    let countUnspent = listUnspent.length;
-
-    let newFee =
-        MIN_FEE *
-        Math.round(1.27 + (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? 34 + messageOpReturn.length : 0)) / 1024);
-
-    return newFee;*/
     if (listUnspent.length < 4) return MIN_FEE;
     if (listUnspent.length < 20) return 0.002;
     if (listUnspent.length < 50) return 0.004;
-    return 0.010;
+    return 0.01;
 }
 
 function roundUp(num, precision) {
