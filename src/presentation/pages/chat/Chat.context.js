@@ -15,7 +15,8 @@ const initialValue = {
     TXID: '',
     passwordNewChat: '',
     addressNewChatToSend: '',
-    passwordAcceptChat: ''
+    passwordAcceptChat: '',
+    chatFee: 0,
 };
 
 const ACTION_TYPE = {
@@ -31,8 +32,9 @@ const ACTION_TYPE = {
     localPassword: 'password',
     passwordNewChat: 'passwordNewChat',
     addressNewChatToSend: 'addressNewChatToSend',
-    passwordAcceptChat: 'passwordAcceptChat'
-}
+    passwordAcceptChat: 'passwordAcceptChat',
+    chatFee: 'chatFee',
+};
 
 function reducer(state, action) {
     const { type, payload } = action;
@@ -78,7 +80,10 @@ function reducer(state, action) {
         }
         case ACTION_TYPE.passwordAcceptChat: {
             return { ...state, passwordAcceptChat: payload };
-        }   
+        }
+        case ACTION_TYPE.chatFee: {
+            return { ...state, chatFee: payload };
+        }
         default: {
             throw new Error(`Unhandled action type: ${type}`);
         }

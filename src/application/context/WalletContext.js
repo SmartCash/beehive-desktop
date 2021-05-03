@@ -12,7 +12,7 @@ const initialState = {
     fiatList: [],
     password: null,
     wrongPassError: false,
-    hideBalance: true
+    hideBalance: true,
 };
 
 const getBalanceFromSAPI = async (address) => {
@@ -171,8 +171,13 @@ export const WalletProvider = ({ children }) => {
         const balances = await getBalances(walletsAux?.map((wallet) => wallet.address));
         const _wallets = await Promise.all(
             walletsAux.map(async (wallet) => {
-                wallet.balance = balances.find((balance) => balance.address === wallet.address).balance;
-                return wallet;
+                try {
+                    wallet.balance = balances?.find((balance) => balance.address === wallet.address)?.balance;
+                } catch (error) {
+                    wallet.balance = 0;
+                } finally {
+                    return wallet;
+                }
             })
         );
 
@@ -206,7 +211,7 @@ export const WalletProvider = ({ children }) => {
         getAndUpdateWalletsBallance,
         updateWalletsFunc,
         setPassword,
-        setHideBalance
+        setHideBalance,
     };
 
     return <WalletContext.Provider value={providerValue}>{children}</WalletContext.Provider>;
