@@ -10,7 +10,7 @@ const LOCKED = 'pubkeyhashlocked';
 //const OP_RETURN_DEFAULT = 'Sent from SmartHub.';
 const MIN_FEE = 0.001;
 const MIN_AMOUNT_TO_SEND = 0.001;
-
+const SAPI_SERVERS_KEY = 'sapiServers';
 const random = require('random');
 
 const ping = (url, timeout = 2000) => {
@@ -32,16 +32,16 @@ const ping = (url, timeout = 2000) => {
 
 export async function getEnabledNodes() {
     try {
-        const localServers = ipcRenderer.sendSync('getSapiServers');
-        if (localServers) return JSON.parse(ipcRenderer.sendSync('getSapiServers'));
+        const localServers = window.sessionStorage.getItem(SAPI_SERVERS_KEY);
+        if (localServers) return JSON.parse(window.sessionStorage.getItem(SAPI_SERVERS_KEY));
 
         const nodes = await request.get(`https://sapi.smartcash.cc/v1/smartnode/check/ENABLED`, {
             json: true,
             cache: true,
         });
         const servers = nodes.map((node) => 'http://' + node.ip.replace(':9678', ':8080'));
-        ipcRenderer.send('setSapiServers', JSON.stringify(servers));
-        return JSON.parse(ipcRenderer.sendSync('getSapiServers'));
+        window.sessionStorage.setItem(SAPI_SERVERS_KEY, JSON.stringify(servers));
+        return JSON.parse(window.sessionStorage.getItem(SAPI_SERVERS_KEY));
     } catch (err) {
         console.error(err);
     }
@@ -740,7 +740,7 @@ export async function activateRewards(toAddress, unspentList, privateKey, passwo
 
 export async function sendTransaction(hex, isChat) {
     //Chat needs the same NODE always to get MEM POOL transactions
-    const url = isChat ? 'https://sapi.smartcash.cc' : await GetSapiUrl();
+    const url = await GetSapiUrl();
     var options = {
         method: 'POST',
         uri: `${url}/v1/transaction/send`,
@@ -772,11 +772,10 @@ export async function sendTransaction(hex, isChat) {
 }
 
 export async function calculateChatFee({ messageOpReturn, unspentList, rsaKeyPairFromSender, rsaKeyPairFromRecipient }) {
-
-//  This is needed if we expand past 450 characters for chat messages.
-//  let encryptedChatMessage = encryptTextWithRSAPublicKey(rsaKeyPairFromSender.rsaPublicKey, messageOpReturn)
-//  return await calculateFee(unspentList, encryptedChatMessage);
-    return 0.002
+    //  This is needed if we expand past 450 characters for chat messages.
+    //  let encryptedChatMessage = encryptTextWithRSAPublicKey(rsaKeyPairFromSender.rsaPublicKey, messageOpReturn)
+    //  return await calculateFee(unspentList, encryptedChatMessage);
+    return 0.002;
 }
 
 export async function calculateFee(listUnspent, messageOpReturn) {
@@ -785,15 +784,7 @@ export async function calculateFee(listUnspent, messageOpReturn) {
 
     let newFee =
         0.001 *
-        Math.round(
-            1.27 +
-                (countUnspent * 148 +
-                    2 * 34 +
-                    10 +
-                    9 +
-                    (messageOpReturn ? 34 + messageOpReturn.length : 0))/
-                    1024
-        );
+        Math.round(1.27 + (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? 34 + messageOpReturn.length : 0)) / 1024);
 
     return newFee;
 }
