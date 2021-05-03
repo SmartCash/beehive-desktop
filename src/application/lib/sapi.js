@@ -773,41 +773,14 @@ export async function sendTransaction(hex, isChat) {
 }
 
 export async function calculateChatFee({ messageOpReturn, unspentList, rsaKeyPairFromSender, rsaKeyPairFromRecipient }) {
-    //  This is needed if we expand past 450 characters for chat messages.
-<<<<<<< HEAD
-    //  let encryptedChatMessage = encryptTextWithRSAPublicKey(rsaKeyPairFromSender.rsaPublicKey, messageOpReturn)
-    //  return await calculateFee(unspentList, encryptedChatMessage);
-    return 0.002;
-=======
-/*    let encryptedChatMessage = encryptTextWithRSAPublicKey(rsaKeyPairFromRecipient.rsaPublicKey, messageOpReturn);
-
-    if (!encryptedChatMessage || encryptedChatMessage.length === 0) return MIN_FEE_CHAT;
-
-    return await calculateFee(unspentList, encryptedChatMessage);*/
     return MIN_FEE_CHAT;
->>>>>>> 652661073756f81b847385f60f9f303fbcd59016
 }
 
 export async function calculateFee(listUnspent, messageOpReturn) {
-/*    if (!listUnspent || listUnspent.length === 0) return MIN_FEE;
-    let countUnspent = listUnspent.length;
-
-    let newFee =
-<<<<<<< HEAD
-        0.001 *
-        Math.round(1.27 + (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? 34 + messageOpReturn.length : 0)) / 1024);
-
-    return newFee;
-=======
-        MIN_FEE *
-        Math.round(1.27 + (countUnspent * 148 + 2 * 34 + 10 + 9 + (messageOpReturn ? 34 + messageOpReturn.length : 0)) / 1024);
-
-    return newFee;*/
     if (listUnspent.length < 4) return MIN_FEE;
     if (listUnspent.length < 20) return 0.002;
     if (listUnspent.length < 50) return 0.004;
-    return 0.010;
->>>>>>> 652661073756f81b847385f60f9f303fbcd59016
+    return 0.01;
 }
 
 function roundUp(num, precision) {
