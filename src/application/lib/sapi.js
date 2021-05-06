@@ -773,6 +773,7 @@ export async function sendTransaction(hex, isChat) {
 }
 
 export async function calculateChatFee({ messageOpReturn, unspentList, rsaKeyPairFromSender, rsaKeyPairFromRecipient }) {
+    if (messageOpReturn && messageOpReturn?.includes('-----BEGIN PUBLIC KEY-----')) return 0.004;
     return MIN_FEE_CHAT;
 }
 
