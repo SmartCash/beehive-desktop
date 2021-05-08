@@ -196,8 +196,8 @@ export const useChatController = () => {
     }
 
     async function hasBalance() {
-        var wallet = wallets.find((wallet) => wallet.address === walletCurrent);
-        return wallet.balance.total > 0.001;
+        var wallet = wallets?.find((wallet) => wallet?.address === walletCurrent);
+        return wallet?.balance?.total > 0.001;
     }
 
     function clearState() {
