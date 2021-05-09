@@ -120,7 +120,7 @@ export const useChatController = () => {
             const transaction = await createAndSendRawTransaction({
                 toAddress: addressNewChatToSend,
                 amount: 0.001,
-                fee: await calculateFee(spendableInputs.utxos, messageToSend),
+                fee: await calculateChatFee(spendableInputs.utxos, messageToSend),
                 messageOpReturn: messageToSend,
                 password: passwordNewChat,
                 unspentList: spendableInputs,
@@ -165,7 +165,7 @@ export const useChatController = () => {
             const transaction = await createAndSendRawTransaction({
                 toAddress: addressToSend,
                 amount: 0.001,
-                fee: await calculateFee(spendableInputs.utxos, messageToSend),
+                fee: await calculateChatFee(spendableInputs.utxos, messageToSend),
                 messageOpReturn: messageToSend,
                 password: passwordAcceptChat,
                 unspentList: spendableInputs,
@@ -196,8 +196,8 @@ export const useChatController = () => {
     }
 
     async function hasBalance() {
-        var wallet = wallets.find((wallet) => wallet.address === walletCurrent);
-        return wallet.balance.total > 0.001;
+        var wallet = wallets?.find((wallet) => wallet?.address === walletCurrent);
+        return wallet?.balance?.total > 0.001;
     }
 
     function clearState() {
