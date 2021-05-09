@@ -225,6 +225,8 @@ export async function createAndSendRawTransaction({
             };
         }
 
+        console.log(tx);
+
         return {
             status: 200,
             value: tx.txid,
@@ -493,7 +495,7 @@ export async function getTransactionHistoryGroupedByAddresses(address) {
         const mappedHistory = await Promise.all(
             history.map(async (tx) => {
                 var msg = getOpReturnMessage(tx);
-                console.log(tx);
+                
                 if (!tx.time) {
                     tx.amount = 0;
                     tx.blockhash = '';
@@ -501,8 +503,7 @@ export async function getTransactionHistoryGroupedByAddresses(address) {
                     tx.message = msg;
                     tx.direction = getTransactionDirection(tx, address);
                     tx.time = parseInt(new Date().getTime() / 1000);
-                }
-                console.log(tx.time);
+                }            
                 return tx;
             })
         );

@@ -120,7 +120,7 @@ export const useChatController = () => {
             const transaction = await createAndSendRawTransaction({
                 toAddress: addressNewChatToSend,
                 amount: 0.001,
-                fee: await calculateFee(spendableInputs.utxos, messageToSend),
+                fee: await calculateChatFee(spendableInputs.utxos, messageToSend),
                 messageOpReturn: messageToSend,
                 password: passwordNewChat,
                 unspentList: spendableInputs,
@@ -165,7 +165,7 @@ export const useChatController = () => {
             const transaction = await createAndSendRawTransaction({
                 toAddress: addressToSend,
                 amount: 0.001,
-                fee: await calculateFee(spendableInputs.utxos, messageToSend),
+                fee: await calculateChatFee(spendableInputs.utxos, messageToSend),
                 messageOpReturn: messageToSend,
                 password: passwordAcceptChat,
                 unspentList: spendableInputs,
