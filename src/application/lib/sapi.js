@@ -14,7 +14,7 @@ const MIN_AMOUNT_TO_SEND = 0.001;
 const SAPI_SERVERS_KEY = 'sapiServers';
 const random = require('random');
 
-const ping = (url, timeout = 2000) => {
+const ping = (url, timeout = 5000) => {
     return new Promise((resolve, reject) => {
         const urlRule = new RegExp('(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]');
         if (!urlRule.test(url)) reject('invalid url');
@@ -425,6 +425,8 @@ export async function getTransactionHistory(address, pageSize = 5) {
             },
             json: true, // Automatically stringifies the body to JSON
         };
+
+        console.log(options);
         return await request.post(options).then((res) => res.data);
     } catch (err) {
         console.error(err);
