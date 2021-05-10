@@ -430,6 +430,7 @@ export async function getTransactionHistory(address, pageSize = 5) {
         return await request.post(options).then((res) => res.data);
     } catch (err) {
         console.error(err);
+        return await getTransactionHistory(address, pageSize);
     }
 }
 
@@ -448,16 +449,14 @@ export async function getChatTransactionHistory(address, pageSize = 5) {
         return await request.post(options).then((res) => res.data);
     } catch (err) {
         console.error(err);
+        return await getChatTransactionHistory(address, pageSize);
     }
 }
 export async function getTransactionHistoryFromMemoryPool(address) {
     try {
-        const transactions = await request.get(
-            `https://sapi.smartcash.cc/v1/address/mempool/SX7SyErLpXjhsq3wAvqxLaE9FDZF5Dbokn`,
-            {
-                json: true,
-            }
-        );
+        const transactions = await request.get(`https://sapi.smartcash.cc/v1/address/mempool/${address}`, {
+            json: true,
+        });
         const mappedTx = await Promise.all(
             transactions.map(async (transaction) => {
                 const tx = await getTxId(transaction.txid);
@@ -471,6 +470,7 @@ export async function getTransactionHistoryFromMemoryPool(address) {
         return mappedTx;
     } catch (err) {
         console.error(err);
+        return await getTransactionHistoryFromMemoryPool(address);
     }
 }
 
@@ -497,7 +497,7 @@ export async function getTransactionHistoryGroupedByAddresses(address) {
         const mappedHistory = await Promise.all(
             history.map(async (tx) => {
                 var msg = getOpReturnMessage(tx);
-                
+
                 if (!tx.time) {
                     tx.amount = 0;
                     tx.blockhash = '';
@@ -505,7 +505,7 @@ export async function getTransactionHistoryGroupedByAddresses(address) {
                     tx.message = msg;
                     tx.direction = getTransactionDirection(tx, address);
                     tx.time = parseInt(new Date().getTime() / 1000);
-                }            
+                }
                 return tx;
             })
         );
@@ -776,7 +776,7 @@ export async function sendTransaction(hex, isChat) {
 }
 
 export async function calculateChatFee({ messageOpReturn, unspentList, rsaKeyPairFromSender, rsaKeyPairFromRecipient }) {
-    if (messageOpReturn && messageOpReturn?.includes('-----BEGIN PUBLIC KEY-----')) return 0.010;
+    if (messageOpReturn && messageOpReturn?.includes('-----BEGIN PUBLIC KEY-----')) return 0.01;
     return MIN_FEE_CHAT;
 }
 
