@@ -131,8 +131,6 @@ export const useChatController = () => {
                 rsaKeyPairFromRecipient: { rsaPublicKey: rsaPublicKeyRecipient },
             });
 
-            console.log(transaction);
-
             if (transaction.status === 200) {
                 chatDispatch({ type: ACTION_TYPE.messageToSend, payload: '' });
                 chatDispatch({ type: ACTION_TYPE.success, payload: transaction.value });

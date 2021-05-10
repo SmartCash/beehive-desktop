@@ -413,7 +413,7 @@ export async function getLockedBalance(address) {
     return Number(balance.toFixed(8));
 }
 
-export async function getTransactionHistory(address, pageSize = 5) {
+export async function getTransactionHistory(address, pageSize = 50) {
     try {
         var options = {
             method: 'POST',
@@ -425,8 +425,7 @@ export async function getTransactionHistory(address, pageSize = 5) {
             },
             json: true, // Automatically stringifies the body to JSON
         };
-
-        console.log(options);
+        
         return await request.post(options).then((res) => res.data);
     } catch (err) {
         console.error(err);
