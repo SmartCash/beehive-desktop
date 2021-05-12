@@ -229,7 +229,7 @@ function ChatComponent() {
                                                 X
                                             </button>
                                             <p>
-                                                <strong>Message has been sent</strong>
+                                                <strong>Message has been sent.  Refresh to show message.</strong>
                                             </p>
                                             <div className="msgSuccess">Transaction ID: </div>
                                             <strong className="txID">{TXID}</strong>
@@ -406,7 +406,7 @@ function ChatComponent() {
                                                     }
                                                     disabled={!canSend()}
                                                 >
-                                                    Send (fee: {chatFee}) - (left: {450 - messageToSend.length})
+                                                    Send (amount and fee: {chatFee + 0.001})  Characters left: {450 - messageToSend.length}
                                                 </button>
                                             </div>
                                         </div>
