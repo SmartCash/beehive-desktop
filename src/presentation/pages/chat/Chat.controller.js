@@ -22,7 +22,7 @@ export const useChatController = () => {
             .then((data) => {
                 chatDispatch({ type: ACTION_TYPE.history, payload: data });
             })
-            .catch(() => chatDispatch({ type: ACTION_TYPE.error, payload: 'There is no chat for this wallet' }))
+            .catch(() => chatDispatch({ type: ACTION_TYPE.error, payload: 'There is no chat history for this wallet' }))
             .finally(() => {
                 chatDispatch({ type: ACTION_TYPE.loading, payload: false });
                 chatDispatch({ type: ACTION_TYPE.initialLoading, payload: false });
@@ -50,15 +50,18 @@ export const useChatController = () => {
                 rsaKeyPairFromRecipient: { rsaPublicKey: rsaPublicKeyRecipient },
             });
 
-            chatDispatch({ type: ACTION_TYPE.chatFee, payload: chatFee });
+            chatDispatch({ type: ACTION_TYPE.chatFee, payload: !messageToSend ? 0 : chatFee });
         } catch (e) {
             if (e.message.includes('DATA_TOO_LARGE_FOR_KEY_SIZE'))
-                chatDispatch({ type: ACTION_TYPE.error, payload: 'Character limit exceeded. Maximum number of characters per message is 450.' });
+                chatDispatch({
+                    type: ACTION_TYPE.error,
+                    payload: 'Character limit exceeded. Maximum number of characters per message is 450.',
+                });
             else {
                 chatDispatch({ type: ACTION_TYPE.error, payload: e.message });
             }
 
-            chatDispatch({ type: ACTION_TYPE.chatFee, payload: 0.002 });
+            chatDispatch({ type: ACTION_TYPE.chatFee, payload: 0.005 });
         }
     };
 
@@ -96,7 +99,7 @@ export const useChatController = () => {
                 chatDispatch({ type: ACTION_TYPE.success, payload: transaction.value });
                 chatDispatch({ type: ACTION_TYPE.error, payload: null });
             } else {
-                chatDispatch({ type: ACTION_TYPE.error, payload: 'One error happened. Try again in a moment.' });
+                chatDispatch({ type: ACTION_TYPE.error, payload: 'Try again in a few moments.' });
             }
             _getTransactionHistory();
             chatDispatch({ type: ACTION_TYPE.loading, payload: false });
@@ -104,7 +107,7 @@ export const useChatController = () => {
 
             chatDispatch({ type: ACTION_TYPE.newChat, payload: false });
         } catch (error) {
-            chatDispatch({ type: ACTION_TYPE.error, payload: 'One error happened. Try again in a moment.' });
+            chatDispatch({ type: ACTION_TYPE.error, payload: 'Not enough funds. Chat messages require 0.006 Snart.' });
         }
     };
 
@@ -139,7 +142,7 @@ export const useChatController = () => {
                 chatDispatch({ type: ACTION_TYPE.addressNewChatToSend, payload: '' });
                 chatDispatch({ type: ACTION_TYPE.password, payload: '' });
             } else {
-                chatDispatch({ type: ACTION_TYPE.error, payload: 'One error happened. Try again in a moment.' });
+                chatDispatch({ type: ACTION_TYPE.error, payload: 'Try again in a few moments.' });
             }
 
             _getTransactionHistory();
@@ -147,7 +150,7 @@ export const useChatController = () => {
             chatDispatch({ type: ACTION_TYPE.initialLoading, payload: false });
             chatDispatch({ type: ACTION_TYPE.newChat, payload: false });
         } catch (error) {
-            chatDispatch({ type: ACTION_TYPE.error, payload: 'One error happened. Try again in a moment.' });
+            chatDispatch({ type: ACTION_TYPE.error, payload: 'Not enough funds. Chat invites require 0.011 Snart.' });
         }
     };
 
@@ -181,7 +184,7 @@ export const useChatController = () => {
                 chatDispatch({ type: ACTION_TYPE.password, payload: '' });
                 chatDispatch({ type: ACTION_TYPE.passwordAcceptChat, payload: '' });
             } else {
-                chatDispatch({ type: ACTION_TYPE.error, payload: 'One error happened. Try again in a moment.' });
+                chatDispatch({ type: ACTION_TYPE.error, payload: 'Try again in a few moments.' });
             }
 
             _getTransactionHistory();
@@ -189,7 +192,7 @@ export const useChatController = () => {
             chatDispatch({ type: ACTION_TYPE.initialLoading, payload: false });
             chatDispatch({ type: ACTION_TYPE.newChat, payload: false });
         } catch (error) {
-            chatDispatch({ type: ACTION_TYPE.error, payload: 'One error happened. Try again in a moment.' });
+            chatDispatch({ type: ACTION_TYPE.error, payload: 'Not enough funds. Accepting an invite require 0.006 Snart' });
         }
     }
 

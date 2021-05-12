@@ -10,6 +10,7 @@ import { ChatProvider, useChatState } from './Chat.context';
 import { useChatController } from './Chat.controller';
 import './Chat.css';
 import { NewChat } from './NewChat';
+import { debounce } from 'lodash';
 
 const electron = window.require('electron');
 
@@ -24,17 +25,8 @@ export function Chat() {
 function ChatComponent() {
     const { isShowing: showPasswordModal, toggle: togglePasswordModal } = useModal();
     const { walletCurrent, wallets, password, setPassword } = useContext(WalletContext);
-    const {
-        history,
-        error,
-        initialLoading,
-        currentChatAddress,
-        newChat,
-        messageToSend,
-        TXID,
-        localPassword,
-        chatFee,
-    } = useChatState();
+    const { history, error, initialLoading, currentChatAddress, newChat, messageToSend, TXID, localPassword, chatFee } =
+        useChatState();
     const messagesRef = useRef();
     const {
         _getTransactionHistory,
@@ -166,6 +158,11 @@ function ChatComponent() {
         messagesRef?.current?.scrollToBottom();
     }, [currentChatAddress, history, walletCurrent, messagesRef]);
 
+    const delayedMessageToSend = debounce((message) => {
+        setMessageToSend(message);
+        handleCalculateChatFee(message, getRecipientRSAPublicKey());
+    }, 1000);
+
     return (
         <Page className="page-chat">
             {!hasPass() && (
@@ -232,7 +229,7 @@ function ChatComponent() {
                                                 X
                                             </button>
                                             <p>
-                                                <strong>Message has been sent</strong>
+                                                <strong>Message has been sent.  Refresh to show message.</strong>
                                             </p>
                                             <div className="msgSuccess">Transaction ID: </div>
                                             <strong className="txID">{TXID}</strong>
@@ -385,11 +382,7 @@ function ChatComponent() {
                                                     autoComplete="off"
                                                     type="text"
                                                     maxLength="450"
-                                                    value={messageToSend}
-                                                    onInput={(event) => {
-                                                        setMessageToSend(event.target.value);
-                                                        handleCalculateChatFee(event.target.value, getRecipientRSAPublicKey());
-                                                    }}
+                                                    onChange={(event) => delayedMessageToSend(event.target.value)}
                                                 />
                                             </div>
 
@@ -413,7 +406,7 @@ function ChatComponent() {
                                                     }
                                                     disabled={!canSend()}
                                                 >
-                                                    Send (fee: {chatFee}) - (left: {450 - messageToSend.length})
+                                                    Send (amount and fee: {chatFee + 0.001})  Characters left: {450 - messageToSend.length}
                                                 </button>
                                             </div>
                                         </div>
