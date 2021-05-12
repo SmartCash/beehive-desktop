@@ -50,10 +50,13 @@ export const useChatController = () => {
                 rsaKeyPairFromRecipient: { rsaPublicKey: rsaPublicKeyRecipient },
             });
 
-            chatDispatch({ type: ACTION_TYPE.chatFee, payload: chatFee });
+            chatDispatch({ type: ACTION_TYPE.chatFee, payload: !messageToSend ? 0 : chatFee });
         } catch (e) {
             if (e.message.includes('DATA_TOO_LARGE_FOR_KEY_SIZE'))
-                chatDispatch({ type: ACTION_TYPE.error, payload: 'Character limit exceeded. Maximum number of characters per message is 450.' });
+                chatDispatch({
+                    type: ACTION_TYPE.error,
+                    payload: 'Character limit exceeded. Maximum number of characters per message is 450.',
+                });
             else {
                 chatDispatch({ type: ACTION_TYPE.error, payload: e.message });
             }
