@@ -107,7 +107,7 @@ export const useChatController = () => {
 
             chatDispatch({ type: ACTION_TYPE.newChat, payload: false });
         } catch (error) {
-            chatDispatch({ type: ACTION_TYPE.error, payload: 'Not enough funds. Chat messages require 0.006 Snart.' });
+            chatDispatch({ type: ACTION_TYPE.error, payload: 'Not enough funds. Chat messages require 0.006 Smart.' });
         }
     };
 
@@ -150,7 +150,7 @@ export const useChatController = () => {
             chatDispatch({ type: ACTION_TYPE.initialLoading, payload: false });
             chatDispatch({ type: ACTION_TYPE.newChat, payload: false });
         } catch (error) {
-            chatDispatch({ type: ACTION_TYPE.error, payload: 'Not enough funds. Chat invites require 0.011 Snart.' });
+            chatDispatch({ type: ACTION_TYPE.error, payload: 'Not enough funds. Chat invites require 0.011 Smart.' });
         }
     };
 
