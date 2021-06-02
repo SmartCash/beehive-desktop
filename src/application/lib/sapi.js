@@ -43,8 +43,10 @@ export async function getEnabledNodes() {
         const servers = nodes.map((node) => 'http://' + node.ip.replace(':9678', ':8080'));
 
         const fasterNodes = await testNodeResponseTime(servers);
+
         window.sessionStorage.setItem(SAPI_SERVERS_KEY, JSON.stringify(fasterNodes));
-        return JSON.parse(window.sessionStorage.getItem(SAPI_SERVERS_KEY));
+
+        return new Promise((resolve, reject) => resolve(fasterNodes));
     } catch (err) {
         console.error(err);
     }
@@ -78,8 +80,8 @@ export async function testNodeResponseTime(sapis) {
                 const duration = Date.now() - start;
                 res.duration = duration;
                 res.statusCode = 200;
-                console.log(res);
-                return res;
+
+                return { duration: res.duration, statusCode: res.statusCode, ip: server };
             } catch (e) {
                 return null;
             }
@@ -89,11 +91,10 @@ export async function testNodeResponseTime(sapis) {
     const fastNodes = testedNodes
         .filter((nodeResponse) => nodeResponse && nodeResponse.statusCode === 200 && nodeResponse.duration < 900)
         .sort((firstItem, secondItem) => firstItem.duration - secondItem.duration)
-        .slice(0, 29);
+        .slice(0, 29)
+        .map((node) => node.ip);
 
-        console.log(fastNodes);
-
-    return fastNodes;
+    return new Promise((resolve, reject) => resolve(fastNodes));
 }
 
 export function tryToDecryptAES({ textToDecrypt, password }) {
@@ -455,7 +456,7 @@ export async function getTransactionHistory(address, pageSize = 50) {
             },
             json: true, // Automatically stringifies the body to JSON
         };
-        
+
         return await request.post(options).then((res) => res.data);
     } catch (err) {
         console.error(err);
