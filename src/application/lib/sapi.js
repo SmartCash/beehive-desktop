@@ -41,8 +41,12 @@ export async function getEnabledNodes() {
             cache: true,
         });
         const servers = nodes.map((node) => 'http://' + node.ip.replace(':9678', ':8080'));
-        window.sessionStorage.setItem(SAPI_SERVERS_KEY, JSON.stringify(servers));
-        return JSON.parse(window.sessionStorage.getItem(SAPI_SERVERS_KEY));
+
+        const fasterNodes = await testNodeResponseTime(servers);
+
+        window.sessionStorage.setItem(SAPI_SERVERS_KEY, JSON.stringify(fasterNodes));
+
+        return new Promise((resolve, reject) => resolve(fasterNodes));
     } catch (err) {
         console.error(err);
     }
@@ -62,6 +66,35 @@ async function getEnabledNode(sapis) {
     }
 
     return electedSapi;
+}
+
+export async function testNodeResponseTime(sapis) {
+    const testedNodes = await Promise.all(
+        sapis.slice(0, 29).map(async (server) => {
+            try {
+                const start = Date.now();
+                const res = await request.get(`${server}/v1/client/status`, {
+                    json: true,
+                    cache: true,
+                });
+                const duration = Date.now() - start;
+                res.duration = duration;
+                res.statusCode = 200;
+
+                return { duration: res.duration, statusCode: res.statusCode, ip: server };
+            } catch (e) {
+                return null;
+            }
+        })
+    );
+
+    const fastNodes = testedNodes
+        .filter((nodeResponse) => nodeResponse && nodeResponse.statusCode === 200 && nodeResponse.duration < 900)
+        .sort((firstItem, secondItem) => firstItem.duration - secondItem.duration)
+        .slice(0, 29)
+        .map((node) => node.ip);
+
+    return new Promise((resolve, reject) => resolve(fastNodes));
 }
 
 export function tryToDecryptAES({ textToDecrypt, password }) {
@@ -224,8 +257,6 @@ export async function createAndSendRawTransaction({
                 value: tx.value,
             };
         }
-
-        console.log(tx);
 
         return {
             status: 200,
@@ -425,7 +456,7 @@ export async function getTransactionHistory(address, pageSize = 50) {
             },
             json: true, // Automatically stringifies the body to JSON
         };
-        
+
         return await request.post(options).then((res) => res.data);
     } catch (err) {
         console.error(err);
