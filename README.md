@@ -1,5 +1,5 @@
 # BeeHive Desktop
-This is the smart hub wallet that is 100% decentralized using SAPI layer on Smartnodes. With this you don't need to sync any blockchain.
+This an SAPI based wallet that is 100% decentralized using SAPI layer on Smartnodes. With this you don't need to sync any blockchain or run any servers.
 
 ### Linux dependencies
 
@@ -14,8 +14,8 @@ sudo apt install nodejs -y
 ## Cloning the correct repo and branch
 
 ```
-git clone https://github.com/SmartCash/smarthub_local.git
-cd smarthub_local
+git clone https://github.com/SmartCash/beehive-desktop.git
+cd beehive-desktop
 git checkout master
 ```
 
