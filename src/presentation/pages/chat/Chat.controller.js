@@ -19,7 +19,7 @@ export const useChatController = () => {
         chatDispatch({ type: ACTION_TYPE.initialLoading, payload: true });
         chatDispatch({ type: ACTION_TYPE.error, payload: null });
         await getTransactionHistoryGroupedByAddresses(walletCurrent)
-            .then((data) => {
+            .then((data) => {                
                 chatDispatch({ type: ACTION_TYPE.history, payload: data });
             })
             .catch(() => chatDispatch({ type: ACTION_TYPE.error, payload: 'There is no chat history for this wallet' }))
@@ -150,6 +150,8 @@ export const useChatController = () => {
             chatDispatch({ type: ACTION_TYPE.initialLoading, payload: false });
             chatDispatch({ type: ACTION_TYPE.newChat, payload: false });
         } catch (error) {
+            chatDispatch({ type: ACTION_TYPE.loading, payload: false });
+            chatDispatch({ type: ACTION_TYPE.initialLoading, payload: false });
             chatDispatch({ type: ACTION_TYPE.error, payload: 'Not enough funds. Chat invites require 0.011 Smart.' });
         }
     };

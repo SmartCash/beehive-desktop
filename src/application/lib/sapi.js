@@ -460,7 +460,8 @@ export async function getTransactionHistory(address, pageSize = 50) {
         return await request.post(options).then((res) => res.data);
     } catch (err) {
         console.error(err);
-        return await getTransactionHistory(address, pageSize);
+        if(err.message !== '400 - [{"code":2001,"message":"No transactions available for this address."}]')
+            return await getTransactionHistory(address, pageSize);
     }
 }
 
@@ -478,8 +479,9 @@ export async function getChatTransactionHistory(address, pageSize = 5) {
         };
         return await request.post(options).then((res) => res.data);
     } catch (err) {
-        console.error(err);
-        return await getChatTransactionHistory(address, pageSize);
+        console.log(err);
+        if(err.message !== '400 - [{"code":2001,"message":"No transactions available for this address."}]')
+            return await getChatTransactionHistory(address, pageSize);
     }
 }
 export async function getTransactionHistoryFromMemoryPool(address) {
