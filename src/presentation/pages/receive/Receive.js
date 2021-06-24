@@ -60,8 +60,9 @@ function Receive() {
                                 }}
                             >
                                 <IconDownload className="btnCopy" />
+                                <p className="descIcon">Download the QR Code image</p>
                             </button>
-                            <p className="descIcon">Download the QR Code image</p>
+                           
                         </div>
 
                         <div className="btnIcon">
@@ -75,8 +76,9 @@ function Receive() {
                                 }}
                             >
                                 <IconCopy className="btnCopy" />
+                                <p className="descIcon">Copy QR Code image</p>
                             </button>
-                            <p className="descIcon">Copy QR Code image</p>
+                            
                         </div>
                     </div>
                 </div>

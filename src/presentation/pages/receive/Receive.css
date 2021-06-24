@@ -13,8 +13,6 @@
     right: -200px;
     bottom: 0;
     width: 190px;
-    display: inline;
-    flex-direction: column;
 }
 
 .page-receive .qrcode .btnWrapper button ~ button {
@@ -67,6 +65,8 @@
     object-fit: contain;
     fill: #fff;
     position: relative;
+    float: left;
+    margin-right: 10px;
 }
 
 .page-receive .btnCopy:active {
@@ -91,8 +91,9 @@
 }
 
 .page-receive .descIcon{
-    color: var(--primary);
-    float: right;
+    color: var(--primary);    
     font-size: 12px;
     margin: 0 0 0 8px;
+    width: 350px;
+    text-align: left;
 }
