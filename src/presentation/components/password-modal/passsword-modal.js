@@ -42,6 +42,7 @@ export function PasswordModal(props) {
 
     return (
         <Modal title="Password" onClose={onClose}>
+            <form onSubmit={e => { e.preventDefault(); handleCallback(e); }}>
             <p>Please, input your password to complete this action.</p>
             <p>Check the flag "Remember Password" to hide this modal in future actions.</p>
 
@@ -71,7 +72,8 @@ export function PasswordModal(props) {
             )}
 
 
-            <button className={style.sendbutton} onClick={handleCallback}>Send</button>
+            <button type="submit" className={style.sendbutton}>Send</button>
+            </form>
         </Modal>
     );
 }

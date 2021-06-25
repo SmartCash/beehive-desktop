@@ -13,7 +13,7 @@ export function LoginModal() {
     const [showModal, setShowModal] = useState(true);
     const [loading, setLoading] = useState(false);
     const [savePasswordInContext, setSavePasswordInContext] = useState(false);
-
+    
     const handleDecryptWallets = async () => {
         setLoading(true);
         const wallets = await decryptWallets(_password);
@@ -40,7 +40,8 @@ export function LoginModal() {
                             <p className="version">v{pjson.version}</p>
                         </div>
                         <div className={style['modal-body']}>
-                            <div className={style['address-content']}>
+                            <form onSubmit={e => { e.preventDefault(); handleDecryptWallets(e); }}>
+                                <div className={style['address-content']}>
                                 {!loading && (
                                     <React.Fragment>
                                         <div className={style['password-wrapper']}>
@@ -73,7 +74,7 @@ export function LoginModal() {
                                         </div>
 
                                         <div className={style.buttonArea}>
-                                        <button className={style.btnOpen} onClick={handleDecryptWallets}>Start BeeHive</button>
+                                        <button type="submit" className={style.btnOpen}>Start BeeHive</button>
                                         </div>
                                     </React.Fragment>
                                 )}
@@ -83,6 +84,7 @@ export function LoginModal() {
                                     </p>
                                 )}
                             </div>
+                            </form>
                         </div>
                     </div>
                 </div>
