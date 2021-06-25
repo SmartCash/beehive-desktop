@@ -234,7 +234,7 @@ function ChatComponent() {
                                                 X
                                             </button>
                                             <p>
-                                                <strong>Message has been sent.  Refresh to show message.</strong>
+                                                <strong>Message has been sent. Refresh to show message.</strong>
                                             </p>
                                             <div className="msgSuccess">Transaction ID: </div>
                                             <strong className="txID">{TXID}</strong>

@@ -140,7 +140,9 @@
 }
 
 .buttonArea{
-    margin-top: 40px;    
+    margin-top: 40px;
+    width: 100%;
+    text-align: center;
 }
 
 .inputPass{
@@ -180,5 +182,4 @@
     font-family: inherit;
     margin: 26px 0 0;
     cursor: pointer;
-    margin-left: -170px;
 }

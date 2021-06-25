@@ -46,7 +46,7 @@
  .numberVersion{
      text-align: right;
      float: right;
-     width: 400px;
+     width: 100%;
  }
  .version{
      color: var(--primary);
