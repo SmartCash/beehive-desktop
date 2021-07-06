@@ -163,6 +163,11 @@ function ChatComponent() {
         handleCalculateChatFee(message, getRecipientRSAPublicKey());
     }, 1000);
 
+    async function refreshButton(){       
+        await _getTransactionHistory();
+        setTimeout(() => messagesRef?.current?.scrollToBottom(), 50);        
+    };
+
     return (
         <Page className="page-chat">
             {!hasPass() && (
@@ -180,7 +185,7 @@ function ChatComponent() {
                         <div className="header">
                             <span className="title">Chats</span>
                             {<button onClick={() => handleSetNewChat()}>Start chat</button>}
-                            <button onClick={() => _getTransactionHistory()}>Refresh</button>
+                            <button onClick={() => refreshButton()}>Refresh</button>
                         </div>
                         {error && <p className="error">{error}</p>}
                         <Scrollbars renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
@@ -229,7 +234,7 @@ function ChatComponent() {
                                                 X
                                             </button>
                                             <p>
-                                                <strong>Message has been sent.  Refresh to show message.</strong>
+                                                <strong>Message has been sent. Refresh to show message.</strong>
                                             </p>
                                             <div className="msgSuccess">Transaction ID: </div>
                                             <strong className="txID">{TXID}</strong>

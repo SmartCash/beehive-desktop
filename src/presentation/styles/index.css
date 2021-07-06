@@ -224,9 +224,6 @@ body {
     display: inline;
     padding: 1px 5px;
 }
-.wallet .btnCopy {
-    margin-left: 16px;
-}
 
 /* FormControl */
 .form-control {

@@ -11,10 +11,10 @@ function Wallet({ wallet, isCurrent }) {
     return (
         <div className={`wallet ${isCurrent && 'wallet-current'}`} role="button">
             <div className="symbol" onClick={() => setWalletCurrent(wallet)}>
-                ∑
+                ∑ 
             </div>
             <div className="content">
-                <div onClick={() => setWalletCurrent(wallet)}>
+                <div onClick={() => setWalletCurrent(wallet)} className="wBalance">
                     <p className="amount">
                         <Balance value={ wallet.balance.unlocked } />             
                     </p>

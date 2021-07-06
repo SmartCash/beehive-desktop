@@ -52,13 +52,15 @@
     font-weight: 700;
     line-height: 1;
     color: #000;
-    opacity: 0.3;
+    opacity: 0.7;
     cursor: pointer;
     border: none;
+    background-color: transparent;
 }
 
 .modal-title {
     color: var(--primary);
+    margin-bottom: -10px;
 }
 
 .address-content {
@@ -138,7 +140,9 @@
 }
 
 .buttonArea{
-    margin-top: 40px;    
+    margin-top: 40px;
+    width: 100%;
+    text-align: center;
 }
 
 .inputPass{
@@ -178,5 +182,4 @@
     font-family: inherit;
     margin: 26px 0 0;
     cursor: pointer;
-    margin-left: -170px;
 }
