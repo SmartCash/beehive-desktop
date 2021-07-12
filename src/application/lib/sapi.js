@@ -85,7 +85,7 @@ export async function testNodeResponseTime(sapis) {
             } catch (e) {
                 return null;
             }
-        })
+        }),
     );
 
     const fastNodes = testedNodes
@@ -112,18 +112,18 @@ export function tryToDecryptAES({ textToDecrypt, password }) {
 }
 
 export async function createAndSendRawTransaction({
-    toAddress,
-    amount,
-    privateKey,
-    messageOpReturn,
-    unspentList,
-    fee,
-    unlockedBalance,
-    password,
-    isChat,
-    rsaKeyPairFromSender,
-    rsaKeyPairFromRecipient,
-}) {
+                                                      toAddress,
+                                                      amount,
+                                                      privateKey,
+                                                      messageOpReturn,
+                                                      unspentList,
+                                                      fee,
+                                                      unlockedBalance,
+                                                      password,
+                                                      isChat,
+                                                      rsaKeyPairFromSender,
+                                                      rsaKeyPairFromRecipient,
+                                                  }) {
     if (!toAddress) {
         return {
             status: 400,
@@ -460,7 +460,7 @@ export async function getTransactionHistory(address, pageSize = 50) {
         return await request.post(options).then((res) => res.data);
     } catch (err) {
         console.error(err);
-        if(err.message !== '400 - [{"code":2001,"message":"No transactions available for this address."}]')
+        if (err.message !== '400 - [{"code":2001,"message":"No transactions available for this address."}]')
             return await getTransactionHistory(address, pageSize);
     }
 }
@@ -480,10 +480,11 @@ export async function getChatTransactionHistory(address, pageSize = 5) {
         return await request.post(options).then((res) => res.data);
     } catch (err) {
         console.log(err);
-        if(err.message !== '400 - [{"code":2001,"message":"No transactions available for this address."}]')
+        if (err.message !== '400 - [{"code":2001,"message":"No transactions available for this address."}]')
             return await getChatTransactionHistory(address, pageSize);
     }
 }
+
 export async function getTransactionHistoryFromMemoryPool(address) {
     try {
         const transactions = await request.get(`https://sapi.smartcash.cc/v1/address/mempool/${address}`, {
@@ -497,7 +498,7 @@ export async function getTransactionHistoryFromMemoryPool(address) {
                 tx.direction = getTransactionDirection(tx, address);
                 tx.time = parseInt(new Date().getTime() / 1000);
                 return tx;
-            })
+            }),
         );
         return mappedTx;
     } catch (err) {
@@ -539,7 +540,7 @@ export async function getTransactionHistoryGroupedByAddresses(address) {
                     tx.time = parseInt(new Date().getTime() / 1000);
                 }
                 return tx;
-            })
+            }),
         );
         return groupByAddress([...new Set(mappedHistory)]);
     } catch (err) {
@@ -558,7 +559,7 @@ export function isLockedTransaction(tx, address) {
                     f?.scriptPubKey?.addresses &&
                     f?.scriptPubKey?.addresses?.includes(address) &&
                     f.scriptPubKey.type &&
-                    f.scriptPubKey.type === LOCKED
+                    f.scriptPubKey.type === LOCKED,
             )
         );
     } catch (err) {
@@ -571,7 +572,7 @@ export function getOpReturnMessage(tx) {
     try {
         if (tx && tx?.vout) {
             const outWithOpReturn = tx?.vout?.find(
-                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN')
+                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN'),
             );
             if (outWithOpReturn) {
                 const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
@@ -601,7 +602,7 @@ export function isChat(tx) {
     try {
         if (tx && tx?.vout) {
             const outWithOpReturn = tx?.vout?.find(
-                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN')
+                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN'),
             );
             if (outWithOpReturn) {
                 const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
@@ -640,7 +641,7 @@ export function groupByAddress(txs) {
 
         var grouped = _(parsedTransactions)
             .groupBy('toAddress')
-            .map(function (messages, key) {
+            .map(function(messages, key) {
                 return {
                     chatAddress: key,
                     messages: messages,
@@ -667,7 +668,7 @@ export function getAddressAndMessage(tx) {
                         f?.scriptPubKey &&
                         f?.scriptPubKey?.addresses &&
                         f?.scriptPubKey?.addresses.length > 0 &&
-                        !f?.scriptPubKey?.addresses?.includes(tx.address)
+                        !f?.scriptPubKey?.addresses?.includes(tx.address),
                 );
 
                 if (outAddress) {
@@ -683,7 +684,7 @@ export function getAddressAndMessage(tx) {
             }
 
             const outWithOpReturn = tx?.vout?.find(
-                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN')
+                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN'),
             );
             if (outWithOpReturn) {
                 const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
@@ -742,7 +743,7 @@ async function getSmallestUnspentInput({ unspentList }) {
     unspentAux.utxos = [
         _.minBy(
             unspentList.utxos.filter((w) => w.value > MIN_AMOUNT_TO_SEND + MIN_FEE),
-            'value'
+            'value',
         ),
     ];
     return unspentAux;
@@ -807,7 +808,12 @@ export async function sendTransaction(hex, isChat) {
     }
 }
 
-export async function calculateChatFee({ messageOpReturn, unspentList, rsaKeyPairFromSender, rsaKeyPairFromRecipient }) {
+export async function calculateChatFee({
+                                           messageOpReturn,
+                                           unspentList,
+                                           rsaKeyPairFromSender,
+                                           rsaKeyPairFromRecipient,
+                                       }) {
     if (messageOpReturn && messageOpReturn?.includes('-----BEGIN PUBLIC KEY-----')) return 0.01;
     return MIN_FEE_CHAT;
 }

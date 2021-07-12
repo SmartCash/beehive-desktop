@@ -48,7 +48,7 @@ function RewardsActivateComponent() {
 
     useEffect(() => {
         setBalance(wallets.find((wallet) => wallet.address === address)?.balance);
-    }, [address, wallets])
+    }, [address, wallets]);
 
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -111,21 +111,21 @@ function RewardsActivateComponent() {
     }
 
     {
-        TXError && <p className="SendError">{TXError}</p>;
+        TXError && <p className='SendError'>{TXError}</p>;
     }
 
     if (rewardsError || balance?.unlocked < 999) {
         return (
-            <Page className="page-rewards">
+            <Page className='page-rewards'>
                 {loading && (
-                    <p className="loading">
+                    <p className='loading'>
                         <img src={loader} alt={'loading...'} />
                     </p>
                 )}
 
                 {!loading && (
-                    <div className="wrapper">
-                        The address <span className="text-primary">{address}</span> is not eligible for rewards.
+                    <div className='wrapper'>
+                        The address <span className='text-primary'>{address}</span> is not eligible for rewards.
                     </div>
                 )}
 
@@ -136,14 +136,14 @@ function RewardsActivateComponent() {
 
     if (isActive === false && activating) {
         return (
-            <Page className="page-rewards">
-                <div className="wrapperActivating">
-                    <IconLoading className="wrapperActivatingLoading" />
+            <Page className='page-rewards'>
+                <div className='wrapperActivating'>
+                    <IconLoading className='wrapperActivatingLoading' />
                     <p>
                         <Countdown date={countDownDate} />
                     </p>
                     <p>
-                        Activating rewards for the address <span className="text-primary">{address}</span>.
+                        Activating rewards for the address <span className='text-primary'>{address}</span>.
                     </p>
                     <p>This can take a while, do not reload this page.</p>
                 </div>
@@ -152,9 +152,9 @@ function RewardsActivateComponent() {
     }
 
     return (
-        <Page className="page-rewards">
+        <Page className='page-rewards'>
             {loading && (
-                <p className="loading">
+                <p className='loading'>
                     <img src={loader} alt={'loading...'} />
                 </p>
             )}
@@ -162,22 +162,24 @@ function RewardsActivateComponent() {
             {!loading && (
                 <div>
                     {isActive && (
-                        <div className="wrapper">
+                        <div className='wrapper'>
                             <p>
-                                Rewards are already activated for this address <span className="text-primary">{address}</span>
+                                Rewards are already activated for this address <span
+                                className='text-primary'>{address}</span>
                             </p>
                         </div>
                     )}
 
                     {rewards && rewards.activated === 1 && isActive === false && (
-                        <div className="wrapper">
-                            <div className="wrapper">
+                        <div className='wrapper'>
+                            <div className='wrapper'>
                                 <p>
-                                    Rewards are already activated for this address <span className="text-primary">{address}</span>
+                                    Rewards are already activated for this address <span
+                                    className='text-primary'>{address}</span>
                                 </p>
                                 <p>
                                     Balance Eligible:{' '}
-                                    <span className="text-primary">
+                                    <span className='text-primary'>
                                         {rewards.balance_eligible
                                             .toLocaleString('en-US', {
                                                 style: 'currency',
@@ -188,14 +190,14 @@ function RewardsActivateComponent() {
                                     </span>
                                 </p>
                                 <p>
-                                    Bonus level: <span className="text-primary">{rewards.bonus_level}</span>
+                                    Bonus level: <span className='text-primary'>{rewards.bonus_level}</span>
                                 </p>
                                 <div>
                                     {rewards.activated && rewards.balance_eligible > 999 && rewards.balance_eligible < 999999 && (
-                                        <img src={SmartRewardsImage} className="rewardsImg" />
+                                        <img src={SmartRewardsImage} className='rewardsImg' />
                                     )}
                                     {rewards.activated && rewards.balance_eligible >= 999999 && (
-                                        <img src={SuperRewardsImage} className="rewardsImg" />
+                                        <img src={SuperRewardsImage} className='rewardsImg' />
                                     )}
                                 </div>
                             </div>
@@ -203,13 +205,14 @@ function RewardsActivateComponent() {
                     )}
 
                     {rewards && rewards.activated === 0 && isActive === false && (
-                        <div className="wrapper">
+                        <div className='wrapper'>
                             <p>
-                                The rewards is not activated for the address <span className="text-primary">{address}</span>
+                                The rewards is not activated for the address <span
+                                className='text-primary'>{address}</span>
                             </p>
 
-                            <div className="form-not-activated">
-                                <button type="submit" onClick={() => send()}>
+                            <div className='form-not-activated'>
+                                <button type='submit' onClick={() => send()}>
                                     Activate Rewards
                                 </button>
                             </div>
@@ -218,7 +221,7 @@ function RewardsActivateComponent() {
 
                     <SmartNodeRewardsRoi />
 
-                    <div className="partnersWrap">
+                    <div className='partnersWrap'>
                         <Partners />
                     </div>
                 </div>

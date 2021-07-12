@@ -6,15 +6,18 @@
     flex-wrap: wrap;
     color: #999;
 }
+
 .page-send .privateKey p {
     display: block;
     width: 100%;
     margin: 5px 0;
 }
+
 .page-send .privateKey p span {
     color: var(--primary);
     font-weight: 500;
 }
+
 .page-send .form-group {
     display: flex;
     flex-wrap: wrap;
@@ -22,17 +25,21 @@
     border-radius: var(--borderRadius);
     margin-top: var(--spacer-lg);
 }
+
 .page-send .address {
     border-bottom: 1px solid #999;
 }
+
 .page-send .fiat {
     width: 200px;
 }
+
 .page-send .amount,
 .page-send .amountInSmart {
     flex: 1;
     align-items: center;
 }
+
 .page-send .amount button {
     margin-left: auto;
     border: 1px solid #999;
@@ -43,15 +50,18 @@
     cursor: pointer;
     transition: 0.5s;
 }
+
 .page-send .amount button:hover,
 .page-send .amount button:focus {
     border: 1px solid var(--primary);
     color: var(--primary);
     outline: 0;
 }
+
 .page-send .amount button ~ button {
     margin-left: 7px;
 }
+
 .page-send .amountToSendError {
     color: var(--primary);
 }
@@ -65,21 +75,25 @@
     display: flex;
     flex-wrap: wrap;
 }
+
 .page-send .transactionInfo > div {
     padding-left: var(--spacer);
     padding-right: var(--spacer);
 }
+
 .page-send .transactionInfo .label {
     font-size: 13px;
     color: #999;
     margin: 0 0 10px;
 }
+
 .page-send .transactionInfo .value {
     font-size: 18px;
     font-weight: 700;
     color: #fff;
     margin: 0;
 }
+
 .page-send button[type='submit'] {
     border: 0;
     outline: 0;
@@ -96,12 +110,14 @@
     font-weight: 700;
     cursor: pointer;
 }
+
 .page-send button[type='submit']:disabled {
     background: #999;
     color: #0c0c0d;
     opacity: 0.5;
     margin: 0;
 }
+
 .page-send .invalidAddress {
     width: 100%;
     font-size: 12px;
@@ -109,6 +125,7 @@
     padding: 0;
     color: var(--primary);
 }
+
 .page-send .hasBeenSent {
     background: var(--primary);
     padding: var(--spacer);
@@ -117,12 +134,14 @@
     margin-bottom: var(--spacer-lg);
     position: relative;
 }
+
 .page-send .hasBeenSent p {
     margin: 0;
     padding: 0;
     font-size: 23px;
     font-weight: 500;
 }
+
 .page-send .hasBeenSent .btnClose {
     border: 1px solid #333;
     font-weight: 700;

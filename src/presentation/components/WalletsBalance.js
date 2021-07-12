@@ -13,18 +13,18 @@ function WalletsBalance() {
     }, [wallets]);
 
     return (
-        <div className="wallets-balance">                        
-            <p className="amount">
-                <span className="gray"> Balance:{' '} </span>
-                    <Balance value={ sumFloats(wallets.map((wallet) => Number(wallet.balance.unlocked))) } />              
-                    <ButtonShowHideBalance />                                
+        <div className='wallets-balance'>
+            <p className='amount'>
+                <span className='gray'> Balance:{' '} </span>
+                <Balance value={sumFloats(wallets.map((wallet) => Number(wallet.balance.unlocked)))} />
+                <ButtonShowHideBalance />
             </p>
 
-            <div className="space"></div>
+            <div className='space'></div>
 
-            <p className="fiat">
-                <span className="gray">Locked:{' '} </span>
-                <Balance value={ sumFloats(wallets.map((wallet) => Number(wallet.balance.locked))) } /> 
+            <p className='fiat'>
+                <span className='gray'>Locked:{' '} </span>
+                <Balance value={sumFloats(wallets.map((wallet) => Number(wallet.balance.locked)))} />
             </p>
         </div>
     );

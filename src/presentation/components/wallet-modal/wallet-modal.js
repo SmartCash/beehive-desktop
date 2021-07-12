@@ -22,7 +22,8 @@ export default function WalletModal({ isShowing, hide, disableCloseButton }) {
 
     return (
         isShowing && (
-            <Modal title="Creating Your BeeHive Desktop Wallet" onClose={handleCloseModal} showCloseButton={disableCloseButton}>
+            <Modal title='Creating Your BeeHive Desktop Wallet' onClose={handleCloseModal}
+                   showCloseButton={disableCloseButton}>
                 <div className={style['address-content']}>
                     <div className={style.tabs}>
                         <button className={tab === 0 ? style.activated : null} onClick={() => handleSetTab(0)}>

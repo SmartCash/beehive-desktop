@@ -46,7 +46,6 @@
 }
 
 
-
 .modal-close-button {
     font-size: 1.4rem;
     font-weight: 700;
@@ -133,19 +132,19 @@
     width: 100%;
 }
 
-.accept{
-    margin-top:20px;
+.accept {
+    margin-top: 20px;
     margin-bottom: 0;
     height: 20px;
 }
 
-.buttonArea{
+.buttonArea {
     margin-top: 40px;
     width: 100%;
     text-align: center;
 }
 
-.inputPass{
+.inputPass {
     flex: 1;
     padding: 16px;
     resize: none;
@@ -171,7 +170,7 @@
     cursor: pointer;
 }
 
-.btnOpen{
+.btnOpen {
     background: var(--primary);
     border: 0;
     color: #333;

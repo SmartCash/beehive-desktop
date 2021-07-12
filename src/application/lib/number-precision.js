@@ -29,6 +29,7 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
+
 /* global Reflect, Promise */
 
 function __spreadArrays() {
@@ -52,6 +53,7 @@ function strip(num, precision) {
     }
     return +parseFloat(Number(num).toPrecision(precision));
 }
+
 /**
  * Return digits length of a number
  * @param {*number} num Input number
@@ -62,6 +64,7 @@ function digitLength(num) {
     const len = (eSplit[0].split('.')[1] || '').length - +(eSplit[1] || 0);
     return len > 0 ? len : 0;
 }
+
 /**
  * 把小数转成整数，支持科学计数法。如果是小数则放大成整数
  * @param {*number} num 输入数
@@ -73,6 +76,7 @@ function float2Fixed(num) {
     const dLen = digitLength(num);
     return dLen > 0 ? strip(Number(num) * Math.pow(10, dLen)) : Number(num);
 }
+
 /**
  * 检测数字是否越界，如果越界给出提示
  * @param {*number} num 输入数
@@ -84,6 +88,7 @@ function checkBoundary(num) {
         }
     }
 }
+
 /**
  * 精确乘法
  */
@@ -102,6 +107,7 @@ function times(num1, num2) {
     checkBoundary(leftValue);
     return leftValue / Math.pow(10, baseNum);
 }
+
 /**
  * 精确加法
  */
@@ -116,6 +122,7 @@ function plus(num1, num2) {
     const baseNum = Math.pow(10, Math.max(digitLength(num1), digitLength(num2)));
     return (times(num1, baseNum) + times(num2, baseNum)) / baseNum;
 }
+
 /**
  * 精确减法
  */
@@ -130,6 +137,7 @@ function minus(num1, num2) {
     const baseNum = Math.pow(10, Math.max(digitLength(num1), digitLength(num2)));
     return (times(num1, baseNum) - times(num2, baseNum)) / baseNum;
 }
+
 /**
  * 精确除法
  */
@@ -148,6 +156,7 @@ function divide(num1, num2) {
     // fix: 类似 10 ** -4 为 0.00009999999999999999，strip 修正
     return times(num1Changed / num2Changed, strip(Math.pow(10, digitLength(num2) - digitLength(num1))));
 }
+
 /**
  * 四舍五入
  */
@@ -155,7 +164,9 @@ function round(num, ratio) {
     const base = Math.pow(10, ratio);
     return divide(Math.round(times(num, base)), base);
 }
+
 var _boundaryCheckingState = true;
+
 /**
  * 是否进行边界检查，默认开启
  * @param flag 标记开关，true 为开启，false 为关闭，默认为 true
@@ -166,6 +177,7 @@ function enableBoundaryChecking(flag) {
     }
     _boundaryCheckingState = flag;
 }
+
 const index = {
     strip: strip,
     plus: plus,

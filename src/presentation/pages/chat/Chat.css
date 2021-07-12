@@ -126,11 +126,11 @@
 
 .page-chat .message-Sent {
     margin-left: auto;
-    background-color: #056162  !important;
+    background-color: #056162 !important;
 }
 
-.page-chat .message-Received  {
-    background-color: #5b5b5b  !important;
+.page-chat .message-Received {
+    background-color: #5b5b5b !important;
 }
 
 .page-chat .message-Received .value {
@@ -260,15 +260,14 @@
 .page-chat .wallet .symbol {
     width: 30px;
     height: 30px;
-   
+
 }
 
-.page-chat .loading{
-    margin:0 auto;
+.page-chat .loading {
+    margin: 0 auto;
     text-align: center;
-    margin-top:100px
+    margin-top: 100px
 }
-
 
 
 .thumb-vertical {
@@ -279,10 +278,10 @@
     cursor: pointer;
     border-radius: inherit;
     background-color: var(--primary);
- }
+}
 
 
- .page-chat .hasBeenSent {
+.page-chat .hasBeenSent {
     background: var(--primary);
     padding: var(--spacer);
     border-radius: var(--borderRadius);
@@ -290,12 +289,14 @@
     margin-bottom: var(--spacer-lg);
     position: relative;
 }
+
 .page-chat .hasBeenSent p {
     margin: 0;
     padding: 0;
     font-size: 14px;
     font-weight: 300;
 }
+
 .page-chat .hasBeenSent .btnClose {
     border: 1px solid #333;
     font-weight: 700;
@@ -318,14 +319,14 @@
     cursor: pointer;
 }
 
-.txID{
+.txID {
     font-size: 13px;
 }
 
-.page-chat .ChatError{
-    background-color:brown;
+.page-chat .ChatError {
+    background-color: brown;
     color: white;
-    padding:10px;
+    padding: 10px;
     border-radius: var(--borderRadius);
     position: relative;
 }
@@ -337,46 +338,46 @@
     padding: 8px;
     border-radius: 4px;
     cursor: pointer;
-    margin:0 auto;
+    margin: 0 auto;
     text-align: center;;
 }
 
-.page-chat .accept{
+.page-chat .accept {
     width: 100%;
     text-align: center;
 }
 
-.decryptMessages{
+.decryptMessages {
     width: 100%;
     text-align: center;
     margin-top: 100px;
-    color:#fff;
+    color: #fff;
 }
 
 
-.msgSuccess{
+.msgSuccess {
     font-size: 18px;
     font-weight: bold;
-    margin-top:10px
+    margin-top: 10px
 }
 
-.transactionId{
+.transactionId {
     font-size: 18px;
 }
 
-ul.links{
-   list-style: none;
-   text-align: left;
-   margin-top: -15px;
-   margin-left: -20px;
-   padding: 0;
+ul.links {
+    list-style: none;
+    text-align: left;
+    margin-top: -15px;
+    margin-left: -20px;
+    padding: 0;
 }
 
-.links li{
-    display:inline-block;
+.links li {
+    display: inline-block;
     top: 0;
     padding: 0;
-    margin:0 20px
+    margin: 0 20px
 }
 
 .link {
@@ -389,10 +390,10 @@ ul.links{
     cursor: pointer;
 }
 
-.errorBalance{
-    background-color:brown;
+.errorBalance {
+    background-color: brown;
     color: white;
-    padding:10px;
+    padding: 10px;
     font-size: 14px;
     border-radius: var(--borderRadius);
 }

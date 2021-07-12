@@ -1,9 +1,8 @@
-import generatePDF from 'application/lib/GeneratorPDF';
 import { createRSAKeyPair, getBalance, getBalances } from 'application/lib/sapi';
 import { getSupportedCurrencies } from 'application/lib/smart';
 import * as CryptoJS from 'crypto-js';
 import React, { createContext, useEffect, useReducer } from 'react';
-import { compile } from 'smartcashjs-lib/src/script';
+
 const { ipcRenderer } = window.require('electron');
 
 const initialState = {
@@ -178,7 +177,7 @@ export const WalletProvider = ({ children }) => {
                 } finally {
                     return wallet;
                 }
-            })
+            }),
         );
 
         dispatch({ type: 'updateWallets', payload: _wallets });

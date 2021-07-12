@@ -9,23 +9,23 @@ const electron = window.require('electron');
 function Wallet({ wallet, isCurrent }) {
     const { setWalletCurrent, hideBalance } = useContext(WalletContext);
     return (
-        <div className={`wallet ${isCurrent && 'wallet-current'}`} role="button">
-            <div className="symbol" onClick={() => setWalletCurrent(wallet)}>
-                ∑ 
+        <div className={`wallet ${isCurrent && 'wallet-current'}`} role='button'>
+            <div className='symbol' onClick={() => setWalletCurrent(wallet)}>
+                ∑
             </div>
-            <div className="content">
-                <div onClick={() => setWalletCurrent(wallet)} className="wBalance">
-                    <p className="amount">
-                        <Balance value={ wallet.balance.unlocked } />             
+            <div className='content'>
+                <div onClick={() => setWalletCurrent(wallet)} className='wBalance'>
+                    <p className='amount'>
+                        <Balance value={wallet.balance.unlocked} />
                     </p>
-                    <span className="address">{wallet.label || wallet.address} </span>
+                    <span className='address'>{wallet.label || wallet.address} </span>
                 </div>
                 <button
-                    className="btn copy"
-                    title="Copy address to clipboard"
+                    className='btn copy'
+                    title='Copy address to clipboard'
                     onClick={() => electron.clipboard.writeText(wallet.address)}
                 >
-                    <IconCopy className="btnCopy" />
+                    <IconCopy className='btnCopy' />
                 </button>
             </div>
         </div>

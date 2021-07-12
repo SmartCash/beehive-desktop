@@ -1,5 +1,3 @@
-'use strict';
-
 const Big = require('big.js');
 let units = {
     BTC: new Big(1),
@@ -44,7 +42,7 @@ function convert(from, fromUnit, toUnit, representation) {
     throw new Error(`'${representation}' is not a valid representation`);
 }
 
-convert.units = function () {
+convert.units = function() {
     return Object.keys(units);
 };
 

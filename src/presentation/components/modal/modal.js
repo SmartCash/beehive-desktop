@@ -10,19 +10,19 @@ function ModalContent(props) {
     return (
         <>
             <div className={style['modal-overlay']} />
-            <div className={style['modal-wrapper']} aria-modal aria-hidden tabIndex={-1} role="dialog">
+            <div className={style['modal-wrapper']} aria-modal aria-hidden tabIndex={-1} role='dialog'>
                 <div className={style['modal']}>
                     <div className={style['modal-header']}>
                         <h2 className={style['modal-title']}>{props.title}</h2>
                         {!props.showCloseButton && (
                             <button
-                                type="button"
+                                type='button'
                                 className={style['modal-close-button']}
-                                data-dismiss="modal"
-                                aria-label="Close"
+                                data-dismiss='modal'
+                                aria-label='Close'
                                 onClick={props.onClose}
                             >
-                                <span aria-hidden="true">&times;</span>
+                                <span aria-hidden='true'>&times;</span>
                             </button>
                         )}
                     </div>

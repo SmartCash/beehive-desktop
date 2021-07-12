@@ -8,9 +8,9 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 const initialValue = {
     amountToSend: 0,
     selectedFiat: 'smart',
-    messageToSend: '',    
+    messageToSend: '',
     listUnspent: null,
-    TXIDLoading: false
+    TXIDLoading: false,
 };
 
 const sendReducer = (state, action) => {
@@ -82,7 +82,7 @@ export const SendProvider = ({ children }) => {
     };
     const currencyMask = createNumberMask(defaultMaskOptions);
 
-    const setAmountToSend = (value) => {        
+    const setAmountToSend = (value) => {
         dispatch({ type: 'setAmountToSend', payload: value });
     };
 
@@ -103,7 +103,7 @@ export const SendProvider = ({ children }) => {
 
         if (fee != undefined) {
             total = sumFloatsValues(value, fee);
-            dispatch({ type: 'setNetFee', payload: fee || 0 })
+            dispatch({ type: 'setNetFee', payload: fee || 0 });
         }
 
         if (exceeds(total, balance.unlocked)) {
@@ -111,7 +111,7 @@ export const SendProvider = ({ children }) => {
         } else {
             dispatch({ type: 'setAmountToSendError', payload: null });
         }
-    }
+    };
 
     const setListUnspent = (value) => {
         dispatch({ type: 'setListUnspent', payload: value });
@@ -190,7 +190,7 @@ export const SendProvider = ({ children }) => {
         dispatch({ type: 'setAmountToSend', payload: amountToSend });
     }
 
-    async function calculateSendAmount(messageOpReturn) {        
+    async function calculateSendAmount(messageOpReturn) {
         const wallet = wallets.find((wallet) => wallet.address === walletCurrent);
 
         let spendableInputs = wallet?.unspent;
@@ -227,7 +227,7 @@ export const SendProvider = ({ children }) => {
         setAmountToSend,
         checkAmounToSendError,
         setAddressToSend,
-        setMessageToSend,        
+        setMessageToSend,
         submitSendAmount,
         handleSelectedFiat,
         isSmartFiat,

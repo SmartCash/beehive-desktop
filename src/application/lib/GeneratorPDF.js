@@ -31,7 +31,7 @@ export default function generatePDF({ wallets, filename, mnemonic, passphrase })
             50,
             70,
             50,
-            56.58
+            56.58,
         );
         doc.setTextColor('#000000');
         doc.setFontStyle('bold');
@@ -79,8 +79,8 @@ export default function generatePDF({ wallets, filename, mnemonic, passphrase })
 
             doc.setFontStyle('normal');
             doc.setFontSize(12);
-            doc.text(mnemonic, 60, 540, {maxWidth: 250});
-            doc.text(passphrase, 360, 540, {maxWidth: 250});
+            doc.text(mnemonic, 60, 540, { maxWidth: 250 });
+            doc.text(passphrase, 360, 540, { maxWidth: 250 });
         }
 
         if (wallet) {

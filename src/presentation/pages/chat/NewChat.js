@@ -14,25 +14,25 @@ export function NewChat() {
         return addressNewChatToSend !== '' && hasBalance();
     };
 
-    function getPass(){
-        if(localPassword !== '' && localPassword !== null)
-            return localPassword
+    function getPass() {
+        if (localPassword !== '' && localPassword !== null)
+            return localPassword;
         else
-            return password
+            return password;
     }
 
     return (
-        <div className="page-new-chat">
-            <div className="page-content">
-                <p className="title">New chat</p>
-                <p className="subtitle">Enter the wallet address to start a new chat</p>
-                <div className="address-form">
+        <div className='page-new-chat'>
+            <div className='page-content'>
+                <p className='title'>New chat</p>
+                <p className='subtitle'>Enter the wallet address to start a new chat</p>
+                <div className='address-form'>
                     <textarea
-                        className="send-input"
+                        className='send-input'
                         autoFocus
-                        rows="3"
-                        cols="10"
-                        placeholder="Contact wallet address"
+                        rows='3'
+                        cols='10'
+                        placeholder='Contact wallet address'
                         value={addressNewChatToSend}
                         onInput={(event) => {
                             setAddressNewChatToSend(event.target.value);
@@ -41,14 +41,15 @@ export function NewChat() {
                 </div>
                 <div>
                     {!hasBalance() && (
-                        <p className="errorBalance">You don't have balance to send messages, please make a deposit in your wallet.</p>
+                        <p className='errorBalance'>You don't have balance to send messages, please make a deposit in
+                            your wallet.</p>
                     )}
-                    </div>
+                </div>
 
-                <div className="address-form">
-                   
-                  <button
-                        className="btn send-button"
+                <div className='address-form'>
+
+                    <button
+                        className='btn send-button'
                         onClick={() => handleSubmitSendNewChat(addressNewChatToSend, getPass())}
                         disabled={!canSendNewChat()}
                     >

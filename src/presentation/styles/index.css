@@ -166,11 +166,13 @@ body {
     transition: 0.5s;
     cursor: pointer;
 }
+
 .wallet.wallet-current,
 .wallet:hover,
 .wallet:focus {
     opacity: 1;
 }
+
 .wallet .symbol {
     width: 50px;
     height: 50px;
@@ -183,11 +185,13 @@ body {
     font-weight: 700;
     border-radius: 100%;
 }
+
 .wallet.wallet-current .symbol {
     background: var(--primary);
     border: 1px solid var(--primary);
     color: #333;
 }
+
 .wallet .content {
     padding: 0 0 0 15px;
     width: calc(100% - 50px);
@@ -195,6 +199,7 @@ body {
     align-items: center;
     flex-wrap: wrap;
 }
+
 .wallet .amount {
     padding: 0;
     margin: 0 0 8px 0;
@@ -202,17 +207,20 @@ body {
     font-weight: 700;
     color: var(--primary);
 }
+
 .wallet .address {
     padding: 0;
     margin: 0;
     font-size: 14px;
     color: #999999;
 }
+
 .wallet ul {
     list-style: none;
     margin: 0;
     padding: 0;
 }
+
 .wallet li {
     font-size: 8px;
     line-height: normal;
@@ -232,11 +240,13 @@ body {
     display: flex;
     flex-wrap: wrap;
 }
+
 .form-control label {
     font-size: 13px;
     color: #999;
     width: 100%;
 }
+
 .form-control input,
 .form-control select {
     flex: 1;
@@ -249,9 +259,11 @@ body {
     background: none;
     max-width: 100%;
 }
+
 .form-control input::placeholder {
     color: #464444;
 }
+
 .form-control input:read-only {
     cursor: unset;
 }

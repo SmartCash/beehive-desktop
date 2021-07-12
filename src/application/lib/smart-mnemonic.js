@@ -31,9 +31,9 @@ function getDerivationPaths() {
     const account = 0;
     const change = 0;
     let path = 'm/';
-    path += purpose + "'/";
-    path += coin + "'/";
-    path += account + "'/";
+    path += purpose + '\'/';
+    path += coin + '\'/';
+    path += account + '\'/';
     path += change;
     const BIP44DerivationPath = path;
     const BIP32DerivationPath = 'm/0';
@@ -53,19 +53,23 @@ function getAddressesFromDerived({ start = 0, total = 10, extendedKey, derivatio
     const addresses = [];
     for (var i = 0; i < total; i++) {
         var index = i + start;
-        addresses.push(new calcAddressesFromDerived({ index: index, extendedKey: extendedKey, derivationPath: derivationPath }));
+        addresses.push(new calcAddressesFromDerived({
+            index: index,
+            extendedKey: extendedKey,
+            derivationPath: derivationPath,
+        }));
     }
     return addresses;
 }
 
 function calcAddressesFromDerived({
-    index,
-    useHardenedAddresses = false,
-    useBip38 = false,
-    bip38password = '',
-    extendedKey,
-    derivationPath,
-}) {
+                                      index,
+                                      useHardenedAddresses = false,
+                                      useBip38 = false,
+                                      bip38password = '',
+                                      extendedKey,
+                                      derivationPath,
+                                  }) {
     // derive HDkey for this row of the table
     var key = 'NA';
     if (useHardenedAddresses) {
@@ -89,7 +93,7 @@ function calcAddressesFromDerived({
         privkey = keyPair.toWIF();
         // BIP38 encode private key if required
         if (useBip38) {
-            privkey = bitcoinjsBip38.encrypt(keyPair.d.toBuffer(), false, bip38password, function (p) {
+            privkey = bitcoinjsBip38.encrypt(keyPair.d.toBuffer(), false, bip38password, function(p) {
                 console.log('Progressed ' + p.percent.toFixed(1) + '% for index ' + index);
             });
         }
@@ -98,7 +102,7 @@ function calcAddressesFromDerived({
     var pubkey = keyPair.getPublicKeyBuffer().toString('hex');
     var indexText = derivationPath + '/' + index;
     if (useHardenedAddresses) {
-        indexText = indexText + "'";
+        indexText = indexText + '\'';
     }
 
     console.log(`derivationPath`, { indexText, address, pubkey, privkey });

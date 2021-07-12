@@ -54,16 +54,16 @@ function SendComponent() {
 
     if (walletCurrentBalance === 0) {
         return (
-            <Page className="page-send">
-                <div className="form-control privateKey">
+            <Page className='page-send'>
+                <div className='form-control privateKey'>
                     <p>
                         Sending from <span>{walletCurrent} </span>
                         <button
-                            className="btn copy"
-                            title="Copy address to clipboard"
+                            className='btn copy'
+                            title='Copy address to clipboard'
                             onClick={() => electron.clipboard.writeText(walletCurrent)}
                         >
-                            <IconCopy className="btnCopy" />
+                            <IconCopy className='btnCopy' />
                         </button>
                     </p>
                     <p>
@@ -75,7 +75,7 @@ function SendComponent() {
                         <Balance value={walletCurrentBalance.locked} />
                     </p>
                 </div>
-                <div className="walletEmpty">
+                <div className='walletEmpty'>
                     <p>This wallet is empty</p>
                 </div>
             </Page>
@@ -104,35 +104,35 @@ function SendComponent() {
     };
 
     return (
-        <Page className="page-send">
-            <Scrollbars renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
+        <Page className='page-send'>
+            <Scrollbars renderThumbVertical={(props) => <div {...props} className='thumb-vertical' />}>
                 {TXIDLoading && (
-                    <p className="loading">
+                    <p className='loading'>
                         <img src={loader} alt={'loading...'} />
                     </p>
                 )}
 
                 {!TXIDLoading && (
                     <>
-                        {TXIDError && <p className="SendError">{TXIDError}</p>}
+                        {TXIDError && <p className='SendError'>{TXIDError}</p>}
 
                         {TXID && (
-                            <div className="hasBeenSent">
-                                <button className="btnClose" onClick={() => clearTxId()}>
+                            <div className='hasBeenSent'>
+                                <button className='btnClose' onClick={() => clearTxId()}>
                                     X
                                 </button>
                                 <p>
                                     <strong>Amount has been sent</strong>
                                 </p>
-                                <div className="msgSuccess">Transaction ID: </div>
-                                <strong className="txID">{TXID}</strong>
+                                <div className='msgSuccess'>Transaction ID:</div>
+                                <strong className='txID'>{TXID}</strong>
 
                                 <div>
-                                    <ul className="links">
+                                    <ul className='links'>
                                         <li>
                                             <button
-                                                className="link"
-                                                title="Copy address to clipboard"
+                                                className='link'
+                                                title='Copy address to clipboard'
                                                 onClick={() => electron.clipboard.writeText(TXID)}
                                             >
                                                 Copy
@@ -140,7 +140,7 @@ function SendComponent() {
                                         </li>
                                         <li>
                                             <button
-                                                className="link"
+                                                className='link'
                                                 onClick={() =>
                                                     electron.shell.openExternal(`https://insight.smartcash.cc/tx/${TXID}`)
                                                 }
@@ -150,7 +150,7 @@ function SendComponent() {
                                         </li>
                                         <li>
                                             <button
-                                                className="link"
+                                                className='link'
                                                 onClick={() =>
                                                     electron.shell.openExternal(`http://explorer.smartcash.cc/tx/${TXID}`)
                                                 }
@@ -163,15 +163,15 @@ function SendComponent() {
                             </div>
                         )}
 
-                        <div className="form-control privateKey">
+                        <div className='form-control privateKey'>
                             <p>
                                 Sending from <span>{walletCurrent} </span>
                                 <button
-                                    className="btn copy"
-                                    title="Copy address to clipboard"
+                                    className='btn copy'
+                                    title='Copy address to clipboard'
                                     onClick={() => electron.clipboard.writeText(walletCurrent)}
                                 >
-                                    <IconCopy className="btnCopy" />
+                                    <IconCopy className='btnCopy' />
                                 </button>
                             </p>
                             <p>
@@ -187,47 +187,47 @@ function SendComponent() {
                                 </span>
                             </p>
                         </div>
-                        <div className="form-group">
-                            <div className="form-control address">
-                                <label htmlFor="addressTo">Send funds to address</label>
+                        <div className='form-group'>
+                            <div className='form-control address'>
+                                <label htmlFor='addressTo'>Send funds to address</label>
                                 <input
-                                    id="addressTo"
-                                    placeholder="Insert address here"
-                                    autoComplete="off"
-                                    type="text"
+                                    id='addressTo'
+                                    placeholder='Insert address here'
+                                    autoComplete='off'
+                                    type='text'
                                     value={addressToSend}
                                     onInput={(event) => setAddressToSend(event.target.value.trim())}
                                 />
-                                {addressToSendError && <p className="invalidAddress">Invalid address</p>}
+                                {addressToSendError && <p className='invalidAddress'>Invalid address</p>}
                             </div>
 
-                            <div className="form-control amount">
-                                <label htmlFor="amount">Amount to send</label>
+                            <div className='form-control amount'>
+                                <label htmlFor='amount'>Amount to send</label>
                                 <MaskedInput
                                     mask={currencyMask}
-                                    id="amount"
+                                    id='amount'
                                     value={amountToSend}
                                     onInput={(event) => setAmountToSend(event.target.value)}
-                                    autoComplete="off"
+                                    autoComplete='off'
                                 />
-                                {amountToSendError && <p className="amountToSendError">{amountToSendError}</p>}
+                                {amountToSendError && <p className='amountToSendError'>{amountToSendError}</p>}
                             </div>
 
                             {isSmartFiat() && (
-                                <div className="form-control amount">
-                                    <button type="button" onClick={() => calculateSendAll(1)}>
+                                <div className='form-control amount'>
+                                    <button type='button' onClick={() => calculateSendAll(1)}>
                                         Send All
                                     </button>
                                 </div>
                             )}
 
-                            <div className="form-control message" style={{ display: 'none' }}>
-                                <label htmlFor="message">Write your message</label>
+                            <div className='form-control message' style={{ display: 'none' }}>
+                                <label htmlFor='message'>Write your message</label>
                                 <input
-                                    id="messageTo"
-                                    placeholder="Insert message here"
-                                    autoComplete="off"
-                                    type="text"
+                                    id='messageTo'
+                                    placeholder='Insert message here'
+                                    autoComplete='off'
+                                    type='text'
                                     value={messageToSend}
                                     onInput={(event) => {
                                         setMessageToSend(event.target.value);
@@ -237,10 +237,10 @@ function SendComponent() {
                             </div>
                         </div>
                         {netFee && (
-                            <div className="transactionInfo">
+                            <div className='transactionInfo'>
                                 <div>
-                                    <p className="label">Net fee</p>
-                                    <p className="value">
+                                    <p className='label'>Net fee</p>
+                                    <p className='value'>
                                         {netFee
                                             .toLocaleString('en-US', {
                                                 style: 'currency',
@@ -251,8 +251,8 @@ function SendComponent() {
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="label">Total in Smart</p>
-                                    <p className="value">
+                                    <p className='label'>Total in Smart</p>
+                                    <p className='value'>
                                         {totalInSmart
                                             .toLocaleString('en-US', {
                                                 style: 'currency',
@@ -265,9 +265,9 @@ function SendComponent() {
                             </div>
                         )}
 
-                        <div className="buttonsWrapper">
+                        <div className='buttonsWrapper'>
                             <Partners />
-                            <button type="submit" onClick={() => send()} disabled={!canSend()}>
+                            <button type='submit' onClick={() => send()} disabled={!canSend()}>
                                 Send
                             </button>
                         </div>

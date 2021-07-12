@@ -1,4 +1,5 @@
-.page-transactions {}
+.page-transactions {
+}
 
 .page-transactions .transaction {
     padding: var(--spacer);
@@ -32,7 +33,7 @@
     cursor: pointer;
 }
 
-.copy{
+.copy {
     margin-left: 10px;
 }
 
@@ -84,8 +85,8 @@
     opacity: .5;
 }
 
-.page-transactions .spaceicon{
-    margin:0 20px;
+.page-transactions .spaceicon {
+    margin: 0 20px;
 }
 
 
@@ -119,10 +120,10 @@
     border-radius: 10px;
 }
 
-.page-transactions .loading{
-    margin:0 auto;
+.page-transactions .loading {
+    margin: 0 auto;
     text-align: center;
-    margin-top:200px
+    margin-top: 200px
 }
 
 
@@ -134,4 +135,4 @@
     cursor: pointer;
     border-radius: inherit;
     background-color: var(--primary);
- }
+}

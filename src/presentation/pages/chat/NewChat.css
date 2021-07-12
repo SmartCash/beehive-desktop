@@ -2,24 +2,30 @@
     flex: 1;
     display: flex;
 }
+
 .page-new-chat .page-content {
     margin: auto;
 }
+
 .page-new-chat .title {
     font-size: 18px;
     font-weight: 700;
     color: #fff;
     text-align: center;
 }
+
 .page-new-chat .subtitle {
     color: #fff;
 }
+
 .page-new-chat .address-form {
     display: flex;
 }
+
 .page-new-chat .address-form ~ .address-form {
     margin-top: 25px;
 }
+
 .page-new-chat .address-form input {
     flex: 1;
     height: 55px;
@@ -31,6 +37,7 @@
     color: #fff;
     outline: 0;
 }
+
 .page-new-chat .address-form button {
     border: 0;
     background: var(--primary);

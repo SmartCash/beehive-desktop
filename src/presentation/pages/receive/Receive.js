@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import Page from '../../components/Page';
 import './Receive.css';
 import QRious from 'qrious';
@@ -9,6 +9,7 @@ import { saveAs } from 'file-saver';
 import { ReactComponent as IconDownload } from '../../assets/images/fileDownload.svg';
 import { ReactComponent as IconCopy } from '../../assets/images/copy.svg';
 import { Partners } from 'presentation/components/partners/partners';
+
 const electron = window.require('electron');
 
 function Receive() {
@@ -44,60 +45,61 @@ function Receive() {
     };
 
     return (
-        <Page className="page-receive">
+        <Page className='page-receive'>
             <Scrollbars>
-                <div className="qrcode">
-                    <img src={qrAddress.toDataURL('image/png')} alt="" title="Copy QR Code image and download the QR Code image" />
-                    <div className="btnWrapper">
-                        <div className="btnIcon">
+                <div className='qrcode'>
+                    <img src={qrAddress.toDataURL('image/png')} alt=''
+                         title='Copy QR Code image and download the QR Code image' />
+                    <div className='btnWrapper'>
+                        <div className='btnIcon'>
                             <button
-                                className="btn"
-                                title="Download Image"
+                                className='btn'
+                                title='Download Image'
                                 onClick={async () => {
                                     const base64Response = await fetch(qrAddress.toDataURL('image/png'));
                                     const blob = await base64Response.blob();
                                     saveAs(blob, 'SendMeSmartCash.png');
                                 }}
                             >
-                                <IconDownload className="btnCopy" />
-                                <p className="descIcon">Download the QR Code image</p>
+                                <IconDownload className='btnCopy' />
+                                <p className='descIcon'>Download the QR Code image</p>
                             </button>
-                           
+
                         </div>
 
-                        <div className="btnIcon">
+                        <div className='btnIcon'>
                             <button
-                                className="btn copy"
-                                title="Copy QRCode to clipboard"
+                                className='btn copy'
+                                title='Copy QRCode to clipboard'
                                 onClick={() => {
                                     electron.clipboard.writeImage(
-                                        electron.nativeImage.createFromDataURL(qrAddress.toDataURL('image/png'))
+                                        electron.nativeImage.createFromDataURL(qrAddress.toDataURL('image/png')),
                                     );
                                 }}
                             >
-                                <IconCopy className="btnCopy" />
-                                <p className="descIcon">Copy QR Code image</p>
+                                <IconCopy className='btnCopy' />
+                                <p className='descIcon'>Copy QR Code image</p>
                             </button>
-                            
+
                         </div>
                     </div>
                 </div>
-                <div className="form-group">
-                    <div className="form-control address">
-                        <label htmlFor="addressTo">Send funds to address</label>
-                        <input id="addressTo" value={walletCurrent} readOnly={true} />
+                <div className='form-group'>
+                    <div className='form-control address'>
+                        <label htmlFor='addressTo'>Send funds to address</label>
+                        <input id='addressTo' value={walletCurrent} readOnly={true} />
                         <button
-                            className="btn copy"
-                            title="Copy address to clipboard"
+                            className='btn copy'
+                            title='Copy address to clipboard'
                             onClick={() => electron.clipboard.writeText(walletCurrent)}
                         >
-                            <IconCopy className="btnCopy" />
+                            <IconCopy className='btnCopy' />
                         </button>
                     </div>
-                    <div className="form-control fiat">
-                        <label htmlFor="fiat">Fiat</label>
-                        <select id="fiat" onInput={handleSelectedFiat}>
-                            <option value="smart">Smart</option>
+                    <div className='form-control fiat'>
+                        <label htmlFor='fiat'>Fiat</label>
+                        <select id='fiat' onInput={handleSelectedFiat}>
+                            <option value='smart'>Smart</option>
                             {fiatList?.map((currencie) => (
                                 <option key={currencie} value={currencie}>
                                     {currencie}
@@ -105,18 +107,18 @@ function Receive() {
                             ))}
                         </select>
                     </div>
-                    <div className="form-control amount">
-                        <label htmlFor="amount">Amount to receive {!isFiatSmart() && `in (${fiatSelected})`}:</label>
-                        <input id="amount" defaultValue={amount} onInput={(event) => setAmount(event.target.value)} />
+                    <div className='form-control amount'>
+                        <label htmlFor='amount'>Amount to receive {!isFiatSmart() && `in (${fiatSelected})`}:</label>
+                        <input id='amount' defaultValue={amount} onInput={(event) => setAmount(event.target.value)} />
                     </div>
                     {!isFiatSmart() && (
-                        <div className="form-control amountInSmart">
-                            <label htmlFor="receveInSmart">Amount to receive in SMART</label>
-                            <input id="receveInSmart" value={calcAmountConverted()} readOnly={true} />
+                        <div className='form-control amountInSmart'>
+                            <label htmlFor='receveInSmart'>Amount to receive in SMART</label>
+                            <input id='receveInSmart' value={calcAmountConverted()} readOnly={true} />
                         </div>
                     )}
                 </div>
-                <div className="partnersWrap">
+                <div className='partnersWrap'>
                     <Partners />
                 </div>
             </Scrollbars>

@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useEffect, useReducer } from 'react';
+import React, { createContext, useContext, useReducer } from 'react';
 import { WalletContext } from 'application/context/WalletContext';
 
 const initialValue = {
     password: '',
-    TXError: ''
+    TXError: '',
 };
 
 const sendReducer = (state, action) => {
@@ -18,7 +18,7 @@ const sendReducer = (state, action) => {
             return state;
         }
     }
-}
+};
 
 export const ActivateContext = createContext(initialValue);
 
@@ -32,7 +32,7 @@ export const ActivateProvider = ({ children }) => {
 
     const providerValue = {
         ...state,
-        setPassword
+        setPassword,
     };
 
     return <ActivateContext.Provider value={providerValue}>{children}</ActivateContext.Provider>;

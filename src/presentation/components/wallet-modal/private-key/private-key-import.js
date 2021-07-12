@@ -40,11 +40,12 @@ export function PrivateKeyImport({ hide, disableCloseButton, setCreateWallet, wa
     return (
         <div className={style.import_address}>
             <h2>Import from Private Key</h2>
-            <textarea onInput={insertPrivateKey} placeholder="Insert your private key here" rows={5} />
-            <input type="password" placeholder="Your password" onInput={(event) => setPassword(event.target.value)} />
+            <textarea onInput={insertPrivateKey} placeholder='Insert your private key here' rows={5} />
+            <input type='password' placeholder='Your password' onInput={(event) => setPassword(event.target.value)} />
             {error && <p>{error}</p>}
             <button className={style.btn} onClick={handleImportPrivateKey}>Import</button>
-            <button className={[style.btn, style.btn_outline].join(' ')} onClick={handleCreateNewOne}>Create new one</button>
+            <button className={[style.btn, style.btn_outline].join(' ')} onClick={handleCreateNewOne}>Create new one
+            </button>
         </div>
     );
 }

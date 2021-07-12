@@ -35,15 +35,19 @@
     border-radius: var(--borderRadius);
     margin-top: var(--spacer-lg);
 }
+
 .page-receive .address {
     border-bottom: 1px solid #999;
 }
+
 .page-receive .fiat {
     width: 200px;
 }
+
 .page-receive .amount {
     max-width: 220px;
 }
+
 .page-receive .amount,
 .page-receive .amountInSmart {
     flex: 1;
@@ -90,8 +94,8 @@
     border-radius: 10px;
 }
 
-.page-receive .descIcon{
-    color: var(--primary);    
+.page-receive .descIcon {
+    color: var(--primary);
     font-size: 12px;
     margin: 0 0 0 8px;
     width: 350px;

@@ -95,7 +95,7 @@ function ChatComponent() {
                         textMessage = decryptTextWithRSAPrivateKey(
                             rsaKeyPair.rsaPrivateKey,
                             getPass(),
-                            jsonMessage.messageFromSender
+                            jsonMessage.messageFromSender,
                         );
                     } catch (error) {
                         textMessage = error.message;
@@ -105,7 +105,7 @@ function ChatComponent() {
                         textMessage = decryptTextWithRSAPrivateKey(
                             rsaKeyPair.rsaPrivateKey,
                             getPass(),
-                            jsonMessage.messageToRecipient
+                            jsonMessage.messageToRecipient,
                         );
                     } catch (error) {
                         textMessage = error.message;
@@ -163,17 +163,17 @@ function ChatComponent() {
         handleCalculateChatFee(message, getRecipientRSAPublicKey());
     }, 1000);
 
-    async function refreshButton(){       
+    async function refreshButton() {
         await _getTransactionHistory();
-        setTimeout(() => messagesRef?.current?.scrollToBottom(), 50);        
-    };
+        setTimeout(() => messagesRef?.current?.scrollToBottom(), 50);
+    }
 
     return (
-        <Page className="page-chat">
+        <Page className='page-chat'>
             {!hasPass() && (
-                <div className="decryptMessages">
+                <div className='decryptMessages'>
                     <p>The messages in this chat are encrypted, please put your password to decrypt them!</p>
-                    <button className="btn send-button" onClick={() => togglePasswordModal()}>
+                    <button className='btn send-button' onClick={() => togglePasswordModal()}>
                         Decrypt Messages
                     </button>
                 </div>
@@ -181,16 +181,16 @@ function ChatComponent() {
 
             {hasPass() && (
                 <>
-                    <div className="chat-wallets">
-                        <div className="header">
-                            <span className="title">Chats</span>
+                    <div className='chat-wallets'>
+                        <div className='header'>
+                            <span className='title'>Chats</span>
                             {<button onClick={() => handleSetNewChat()}>Start chat</button>}
                             <button onClick={() => refreshButton()}>Refresh</button>
                         </div>
-                        {error && <p className="error">{error}</p>}
-                        <Scrollbars renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}>
+                        {error && <p className='error'>{error}</p>}
+                        <Scrollbars renderThumbVertical={(props) => <div {...props} className='thumb-vertical' />}>
                             {initialLoading && (
-                                <p className="loading">
+                                <p className='loading'>
                                     <img src={loader} alt={'loading...'} />
                                 </p>
                             )}
@@ -205,8 +205,8 @@ function ChatComponent() {
                                                     key={tx.chatAddress}
                                                     onClick={() => handleSetCurrentChatAddress(tx.chatAddress)}
                                                 >
-                                                    <p className="address">{tx.chatAddress}</p>
-                                                    <p className="lastMessage">{generateMessage(tx.messages)}</p>
+                                                    <p className='address'>{tx.chatAddress}</p>
+                                                    <p className='lastMessage'>{generateMessage(tx.messages)}</p>
                                                 </div>
                                             );
                                         }
@@ -217,7 +217,7 @@ function ChatComponent() {
                     </div>
 
                     {initialLoading && (
-                        <p className="loading">
+                        <p className='loading'>
                             <img src={loader} alt={'loading...'} />
                         </p>
                     )}
@@ -225,26 +225,26 @@ function ChatComponent() {
                     {!initialLoading && (
                         <>
                             {newChat === false && !isNewWallet(getChat()?.chatAddress) && (
-                                <div className="chat-messages">
-                                    {error && <p className="ChatError">{error}</p>}
+                                <div className='chat-messages'>
+                                    {error && <p className='ChatError'>{error}</p>}
 
                                     {TXID && (
-                                        <div className="hasBeenSent">
-                                            <button className="btnClose" onClick={() => clearTXID()}>
+                                        <div className='hasBeenSent'>
+                                            <button className='btnClose' onClick={() => clearTXID()}>
                                                 X
                                             </button>
                                             <p>
                                                 <strong>Message has been sent. Refresh to show message.</strong>
                                             </p>
-                                            <div className="msgSuccess">Transaction ID: </div>
-                                            <strong className="txID">{TXID}</strong>
+                                            <div className='msgSuccess'>Transaction ID:</div>
+                                            <strong className='txID'>{TXID}</strong>
 
                                             <div>
-                                                <ul className="links">
+                                                <ul className='links'>
                                                     <li>
                                                         <button
-                                                            className="link"
-                                                            title="Copy address to clipboard"
+                                                            className='link'
+                                                            title='Copy address to clipboard'
                                                             onClick={() => electron.clipboard.writeText(TXID)}
                                                         >
                                                             Copy
@@ -252,10 +252,10 @@ function ChatComponent() {
                                                     </li>
                                                     <li>
                                                         <button
-                                                            className="link"
+                                                            className='link'
                                                             onClick={() =>
                                                                 electron.shell.openExternal(
-                                                                    `https://insight.smartcash.cc/tx/${TXID}`
+                                                                    `https://insight.smartcash.cc/tx/${TXID}`,
                                                                 )
                                                             }
                                                         >
@@ -264,10 +264,10 @@ function ChatComponent() {
                                                     </li>
                                                     <li>
                                                         <button
-                                                            className="link"
+                                                            className='link'
                                                             onClick={() =>
                                                                 electron.shell.openExternal(
-                                                                    `http://explorer.smartcash.cc/tx/${TXID}`
+                                                                    `http://explorer.smartcash.cc/tx/${TXID}`,
                                                                 )
                                                             }
                                                         >
@@ -279,85 +279,46 @@ function ChatComponent() {
                                         </div>
                                     )}
 
-                                    <input type="hidden" value={getChat()?.chatAddress} id="chatAddress" />
-                                    <div className="transaction chatAddress">
-                                        <p className="label">Chat Address</p>
-                                        <p className="value">{getChat()?.chatAddress}</p>
+                                    <input type='hidden' value={getChat()?.chatAddress} id='chatAddress' />
+                                    <div className='transaction chatAddress'>
+                                        <p className='label'>Chat Address</p>
+                                        <p className='value'>{getChat()?.chatAddress}</p>
                                     </div>
 
                                     <Scrollbars
                                         ref={messagesRef}
-                                        renderThumbVertical={(props) => <div {...props} className="thumb-vertical" />}
+                                        renderThumbVertical={(props) => <div {...props} className='thumb-vertical' />}
                                     >
                                         {initialLoading && (
-                                            <p className="loading">
+                                            <p className='loading'>
                                                 <img src={loader} alt={'loading...'} />
                                             </p>
                                         )}
                                         {!initialLoading &&
-                                            getChat() &&
-                                            getChat()?.messages.map((m, index) => {
-                                                if (isAccept()) {
-                                                    if (m.direction == 'Sent') {
-                                                        if (!isRSAPublicKey({ message: m.message })) {
-                                                            return (
-                                                                <div
-                                                                    className={`transaction message message-${m.direction}`}
-                                                                    key={m.time + index}
-                                                                >
-                                                                    <p className="value">{parseMessage(m)}</p>
-                                                                    <p className="label">
-                                                                        {m.direction} at{' '}
-                                                                        {new Date(m.time * 1000).toLocaleString()}
-                                                                    </p>
-                                                                </div>
-                                                            );
-                                                        } else {
-                                                            return (
-                                                                <div class="transaction chatAddress">
-                                                                    This chat is not accepted yet, please await for response.
-                                                                </div>
-                                                            );
-                                                        }
+                                        getChat() &&
+                                        getChat()?.messages.map((m, index) => {
+                                            if (isAccept()) {
+                                                if (m.direction == 'Sent') {
+                                                    if (!isRSAPublicKey({ message: m.message })) {
+                                                        return (
+                                                            <div
+                                                                className={`transaction message message-${m.direction}`}
+                                                                key={m.time + index}
+                                                            >
+                                                                <p className='value'>{parseMessage(m)}</p>
+                                                                <p className='label'>
+                                                                    {m.direction} at{' '}
+                                                                    {new Date(m.time * 1000).toLocaleString()}
+                                                                </p>
+                                                            </div>
+                                                        );
                                                     } else {
-                                                        if (!isRSAPublicKey({ message: m.message })) {
-                                                            return (
-                                                                <div
-                                                                    className={`transaction message message-${m.direction}`}
-                                                                    key={m.time + index}
-                                                                >
-                                                                    <p className="value">{parseMessage(m)}</p>
-                                                                    <p className="label">
-                                                                        {m.direction} at{' '}
-                                                                        {new Date(m.time * 1000).toLocaleString()}
-                                                                    </p>
-                                                                </div>
-                                                            );
-                                                        } else {
-                                                            return (
-                                                                <div className="accept" key={m.time + index}>
-                                                                    <div class="transaction chatAddress">
-                                                                        This chat is not active yet, you need accept this invite.
-                                                                    </div>
-                                                                    <br />
-
-                                                                    {!hasBalance() && (
-                                                                        <p className="errorBalance">
-                                                                            You don't have balance to send messages, please make a
-                                                                            deposit in your wallet.
-                                                                        </p>
-                                                                    )}
-
-                                                                    <button
-                                                                        onClick={() => handleAcceptChat(m.toAddress, getPass())}
-                                                                        className="acceptInvite"
-                                                                        disabled={!canAcceptInvite()}
-                                                                    >
-                                                                        Accept invite
-                                                                    </button>
-                                                                </div>
-                                                            );
-                                                        }
+                                                        return (
+                                                            <div class='transaction chatAddress'>
+                                                                This chat is not accepted yet, please await for
+                                                                response.
+                                                            </div>
+                                                        );
                                                     }
                                                 } else {
                                                     if (!isRSAPublicKey({ message: m.message })) {
@@ -366,52 +327,96 @@ function ChatComponent() {
                                                                 className={`transaction message message-${m.direction}`}
                                                                 key={m.time + index}
                                                             >
-                                                                <p className="value">{parseMessage(m)}</p>
-                                                                <p className="label">
-                                                                    {m.direction} at {new Date(m.time * 1000).toLocaleString()}
+                                                                <p className='value'>{parseMessage(m)}</p>
+                                                                <p className='label'>
+                                                                    {m.direction} at{' '}
+                                                                    {new Date(m.time * 1000).toLocaleString()}
                                                                 </p>
+                                                            </div>
+                                                        );
+                                                    } else {
+                                                        return (
+                                                            <div className='accept' key={m.time + index}>
+                                                                <div class='transaction chatAddress'>
+                                                                    This chat is not active yet, you need accept this
+                                                                    invite.
+                                                                </div>
+                                                                <br />
+
+                                                                {!hasBalance() && (
+                                                                    <p className='errorBalance'>
+                                                                        You don't have balance to send messages, please
+                                                                        make a
+                                                                        deposit in your wallet.
+                                                                    </p>
+                                                                )}
+
+                                                                <button
+                                                                    onClick={() => handleAcceptChat(m.toAddress, getPass())}
+                                                                    className='acceptInvite'
+                                                                    disabled={!canAcceptInvite()}
+                                                                >
+                                                                    Accept invite
+                                                                </button>
                                                             </div>
                                                         );
                                                     }
                                                 }
-                                            })}
+                                            } else {
+                                                if (!isRSAPublicKey({ message: m.message })) {
+                                                    return (
+                                                        <div
+                                                            className={`transaction message message-${m.direction}`}
+                                                            key={m.time + index}
+                                                        >
+                                                            <p className='value'>{parseMessage(m)}</p>
+                                                            <p className='label'>
+                                                                {m.direction} at {new Date(m.time * 1000).toLocaleString()}
+                                                            </p>
+                                                        </div>
+                                                    );
+                                                }
+                                            }
+                                        })}
                                     </Scrollbars>
 
                                     {isAccept() === false && (
-                                        <div className="send-wrapper">
-                                            <div className="message-wrap">
+                                        <div className='send-wrapper'>
+                                            <div className='message-wrap'>
                                                 <textarea
-                                                    id="messageTo"
-                                                    className="send-input"
-                                                    placeholder="Type a message..."
-                                                    autoComplete="off"
-                                                    type="text"
-                                                    maxLength="450"
+                                                    id='messageTo'
+                                                    className='send-input'
+                                                    placeholder='Type a message...'
+                                                    autoComplete='off'
+                                                    type='text'
+                                                    maxLength='450'
                                                     onChange={(event) => delayedMessageToSend(event.target.value)}
                                                 />
                                             </div>
 
-                                            <div className="">
+                                            <div className=''>
                                                 {!hasBalance() && (
-                                                    <p className="errorBalance">
-                                                        You don't have balance to send messages, please make a deposit in your
+                                                    <p className='errorBalance'>
+                                                        You don't have balance to send messages, please make a deposit
+                                                        in your
                                                         wallet.
                                                     </p>
                                                 )}
 
                                                 <button
-                                                    className="btn send-button"
+                                                    className='btn send-button'
                                                     onClick={() =>
                                                         handleSubmitSendAmount(
                                                             currentChatAddress,
                                                             messageToSend,
                                                             getPass(),
-                                                            getRecipientRSAPublicKey()
+                                                            getRecipientRSAPublicKey(),
                                                         )
                                                     }
                                                     disabled={!canSend()}
                                                 >
-                                                    Send (amount and fee: {chatFee + 0.001})  Characters left: {450 - messageToSend.length}
+                                                    Send (amount and fee: {chatFee + 0.001}) Characters
+                                                    left: {450 - messageToSend.length}
                                                 </button>
                                             </div>
                                         </div>
