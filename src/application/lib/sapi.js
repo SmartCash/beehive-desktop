@@ -1,5 +1,6 @@
 import { sumFloats } from './math';
 import * as CryptoJS from 'crypto-js';
+import { fromBase58Check } from 'smartcashjs-lib/src/address';
 
 const smartCash = require('smartcashjs-lib');
 const request = require('request-promise');
@@ -13,6 +14,7 @@ const MIN_FEE_CHAT = 0.005;
 const MIN_AMOUNT_TO_SEND = 0.001;
 const SAPI_SERVERS_KEY = 'sapiServers';
 const random = require('random');
+const bip65 = require('bip65');
 
 const ping = (url, timeout = 5000) => {
     return new Promise((resolve, reject) => {
@@ -85,7 +87,7 @@ export async function testNodeResponseTime(sapis) {
             } catch (e) {
                 return null;
             }
-        }),
+        })
     );
 
     const fastNodes = testedNodes
@@ -112,18 +114,20 @@ export function tryToDecryptAES({ textToDecrypt, password }) {
 }
 
 export async function createAndSendRawTransaction({
-                                                      toAddress,
-                                                      amount,
-                                                      privateKey,
-                                                      messageOpReturn,
-                                                      unspentList,
-                                                      fee,
-                                                      unlockedBalance,
-                                                      password,
-                                                      isChat,
-                                                      rsaKeyPairFromSender,
-                                                      rsaKeyPairFromRecipient,
-                                                  }) {
+    toAddress,
+    amount,
+    privateKey,
+    messageOpReturn,
+    unspentList,
+    fee,
+    unlockedBalance,
+    password,
+    isChat,
+    rsaKeyPairFromSender,
+    rsaKeyPairFromRecipient,
+    locked = false,
+    lockTimePeriod = null,
+}) {
     if (!toAddress) {
         return {
             status: 400,
@@ -207,10 +211,21 @@ export async function createAndSendRawTransaction({
         let fromAddress = key.getAddress().toString();
         let transaction = new smartCash.TransactionBuilder();
         let change = unlockedBalance - amount - fee;
-        transaction.setLockTime(unspentList.blockHeight);
 
-        //SEND TO
-        transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
+        if (locked) {
+            // Right now or in the time sent
+            const utc = Math.floor((lockTimePeriod ? lockTimePeriod : new Date().getTime()) / 1000.0);
+            const lockTime = bip65.encode({ utc: utc });
+            transaction.setLockTime(lockTime);
+            transaction.addOutput(
+                cltvBasicByAddressTemplate(toAddress, lockTime),
+                parseFloat(smartCash.amount(amount.toString()).toString())
+            );
+        } else {
+            //SEND TO
+            transaction.setLockTime(unspentList.blockHeight);
+            transaction.addOutput(toAddress, parseFloat(smartCash.amount(amount.toString()).toString()));
+        }
 
         if (messageOpReturn && messageOpReturn.trim().length > 0) {
             let dataScript = null;
@@ -268,6 +283,22 @@ export async function createAndSendRawTransaction({
             value: err.message,
         };
     }
+}
+
+function cltvBasicByAddressTemplate(address, lockTime) {
+    let asm = smartCash.script.fromASM(
+        `${smartCash.script.number.encode(lockTime).toString('hex')}
+        OP_CHECKLOCKTIMEVERIFY
+        OP_DROP
+        OP_DUP
+        OP_HASH160
+        ${fromBase58Check(address).hash.toString('hex')}
+        OP_EQUALVERIFY
+        OP_CHECKSIG`
+            .trim()
+            .replace(/\s+/g, ' ')
+    );
+    return asm;
 }
 
 export function encryptChatMessage({ rsaKeyPairFromRecipient, rsaKeyPairFromSender, messageOpReturn }) {
@@ -498,7 +529,7 @@ export async function getTransactionHistoryFromMemoryPool(address) {
                 tx.direction = getTransactionDirection(tx, address);
                 tx.time = parseInt(new Date().getTime() / 1000);
                 return tx;
-            }),
+            })
         );
         return mappedTx;
     } catch (err) {
@@ -540,7 +571,7 @@ export async function getTransactionHistoryGroupedByAddresses(address) {
                     tx.time = parseInt(new Date().getTime() / 1000);
                 }
                 return tx;
-            }),
+            })
         );
         return groupByAddress([...new Set(mappedHistory)]);
     } catch (err) {
@@ -559,7 +590,7 @@ export function isLockedTransaction(tx, address) {
                     f?.scriptPubKey?.addresses &&
                     f?.scriptPubKey?.addresses?.includes(address) &&
                     f.scriptPubKey.type &&
-                    f.scriptPubKey.type === LOCKED,
+                    f.scriptPubKey.type === LOCKED
             )
         );
     } catch (err) {
@@ -572,7 +603,7 @@ export function getOpReturnMessage(tx) {
     try {
         if (tx && tx?.vout) {
             const outWithOpReturn = tx?.vout?.find(
-                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN'),
+                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN')
             );
             if (outWithOpReturn) {
                 const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
@@ -602,7 +633,7 @@ export function isChat(tx) {
     try {
         if (tx && tx?.vout) {
             const outWithOpReturn = tx?.vout?.find(
-                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN'),
+                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN')
             );
             if (outWithOpReturn) {
                 const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
@@ -641,7 +672,7 @@ export function groupByAddress(txs) {
 
         var grouped = _(parsedTransactions)
             .groupBy('toAddress')
-            .map(function(messages, key) {
+            .map(function (messages, key) {
                 return {
                     chatAddress: key,
                     messages: messages,
@@ -668,7 +699,7 @@ export function getAddressAndMessage(tx) {
                         f?.scriptPubKey &&
                         f?.scriptPubKey?.addresses &&
                         f?.scriptPubKey?.addresses.length > 0 &&
-                        !f?.scriptPubKey?.addresses?.includes(tx.address),
+                        !f?.scriptPubKey?.addresses?.includes(tx.address)
                 );
 
                 if (outAddress) {
@@ -684,7 +715,7 @@ export function getAddressAndMessage(tx) {
             }
 
             const outWithOpReturn = tx?.vout?.find(
-                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN'),
+                (f) => f?.scriptPubKey && f?.scriptPubKey?.asm && f?.scriptPubKey?.asm?.includes('OP_RETURN')
             );
             if (outWithOpReturn) {
                 const message = outWithOpReturn?.scriptPubKey?.asm?.toString().replace('OP_RETURN ', '');
@@ -743,7 +774,7 @@ async function getSmallestUnspentInput({ unspentList }) {
     unspentAux.utxos = [
         _.minBy(
             unspentList.utxos.filter((w) => w.value > MIN_AMOUNT_TO_SEND + MIN_FEE),
-            'value',
+            'value'
         ),
     ];
     return unspentAux;
@@ -808,12 +839,7 @@ export async function sendTransaction(hex, isChat) {
     }
 }
 
-export async function calculateChatFee({
-                                           messageOpReturn,
-                                           unspentList,
-                                           rsaKeyPairFromSender,
-                                           rsaKeyPairFromRecipient,
-                                       }) {
+export async function calculateChatFee({ messageOpReturn, unspentList, rsaKeyPairFromSender, rsaKeyPairFromRecipient }) {
     if (messageOpReturn && messageOpReturn?.includes('-----BEGIN PUBLIC KEY-----')) return 0.01;
     return MIN_FEE_CHAT;
 }

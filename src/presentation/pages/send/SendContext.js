@@ -11,6 +11,7 @@ const initialValue = {
     messageToSend: '',
     listUnspent: null,
     TXIDLoading: false,
+    selectedTimelock: 0,
 };
 
 const sendReducer = (state, action) => {
@@ -36,6 +37,10 @@ const sendReducer = (state, action) => {
         case 'setSelectedFiat': {
             return { ...state, selectedFiat: action.payload };
         }
+        case 'setSelectedTimelock': {
+            return { ...state, selectedTimelock: action.payload };
+        }
+        //selectedTimelock
         case 'setNetFee': {
             return { ...state, netFee: action.payload };
         }
@@ -128,6 +133,10 @@ export const SendProvider = ({ children }) => {
         dispatch({ type: 'setMessageToSend', payload: value });
     };
 
+    const setSelectedTimelock = (value) => {
+        dispatch({ type: 'setSelectedTimelock', payload: value });
+    };
+
     useEffect(() => {
         dispatch({ type: 'clearState' });
     }, [walletCurrent]);
@@ -139,6 +148,22 @@ export const SendProvider = ({ children }) => {
         // You must get the latest unspent from the NODE
         const unspent = await getSpendableInputs(walletCurrent);
 
+        var dateTimeLockNow = new Date();
+
+        dateTimeLockNow.setMonth(dateTimeLockNow.getMonth() + parseInt(state.selectedTimelock));
+
+        let isLocked = parseInt(state.selectedTimelock) > 0;
+
+        let lockTimePeriod = dateTimeLockNow.getTime();
+
+        // let epochLockPeriod = Math.floor((lockTimePeriod ? lockTimePeriod : new Date().getTime()) / 1000.0);
+
+        // console.log(`isLocked`, isLocked);
+
+        // console.log(`time lock`, lockTimePeriod);
+
+        // console.log(`epoch lock`, epochLockPeriod);
+
         createAndSendRawTransaction({
             toAddress: state.addressToSend,
             amount: Number(Number(state.amountToSend).toFixed(8)),
@@ -148,6 +173,8 @@ export const SendProvider = ({ children }) => {
             fee: state.netFee,
             unlockedBalance: balance.unlocked,
             password: password,
+            locked: isLocked,
+            lockTimePeriod: lockTimePeriod,
         })
             .then((data) => {
                 if (!data) {
@@ -172,6 +199,11 @@ export const SendProvider = ({ children }) => {
     function handleSelectedFiat(e) {
         const { value } = e.target;
         dispatch({ type: 'setSelectedFiat', payload: value });
+    }
+
+    function handleSelectedTimelock(e) {
+        const { value } = e.target;
+        dispatch({ type: 'setSelectedTimelock', payload: value });
     }
 
     function isSmartFiat() {
@@ -228,8 +260,10 @@ export const SendProvider = ({ children }) => {
         checkAmounToSendError,
         setAddressToSend,
         setMessageToSend,
+        setSelectedTimelock,
         submitSendAmount,
         handleSelectedFiat,
+        handleSelectedTimelock,
         isSmartFiat,
         calculateSendAll,
         calculateSendAmount,
