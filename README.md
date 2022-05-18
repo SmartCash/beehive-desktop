@@ -7,7 +7,9 @@ This an SAPI based wallet that is 100% decentralized using SAPI layer on Smartno
 sudo apt update -y
 sudo apt upgrade -y
 sudo apt install build-essential git npm curl -y
-curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+
+Only use for Ubuntu20 or before:  curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+
 sudo apt install nodejs -y
 ```
 
@@ -29,7 +31,7 @@ npm start
 ## Install it all in one if you are using linux, then just run:
 
 ```
-sudo apt update -y && sudo apt upgrade -y && sudo apt install build-essential git npm curl -y && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt install nodejs -y && git clone https://github.com/SmartCash/smarthub_local.git && cd smarthub_local && npm i && npm start
+sudo apt update -y && sudo apt upgrade -y && sudo apt install build-essential git npm curl -y && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt install nodejs -y && git clone https://github.com/SmartCash/beehive-desktop.git && cd beehive-desktop && npm i && npm start
 ```
 
 ### Your equivalent to wallet.dat but called config.json is stored at:
